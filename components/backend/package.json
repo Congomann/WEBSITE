@@ -2,6 +2,7 @@
   "name": "new-holland-financial-backend",
   "version": "1.0.0",
   "description": "Backend server for New Holland Financial Group website.",
+  "type": "module",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",

@@ -3,35 +3,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Service } from '../types';
 import Logo from './Logo';
-import { API_BASE_URL } from '../constants';
+import { core_services } from '../data';
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
     const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
-    const [services, setServices] = useState<Service[]>([]);
+    const services: Service[] = core_services;
     
     const location = useLocation();
     const desktopServicesRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/services`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data: Service[] = await response.json();
-                // We need the icon property, which isn't in the API response.
-                // It's only used on the homepage, so we can omit it here.
-                const servicesWithoutIcons = data.map(({ icon, ...rest }) => rest);
-                setServices(servicesWithoutIcons as Service[]);
-            } catch (error) {
-                console.error("Failed to fetch services:", error);
-            }
-        };
-        fetchServices();
-    }, []);
 
     // Close menus on route change
     useEffect(() => {

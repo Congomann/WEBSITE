@@ -1,24 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ServicePageLayout from './ServicePageLayout';
 import type { ServiceDetail } from '../../types';
-import { API_BASE_URL } from '../../constants';
+import { service_details } from '../../data';
 
 const PropertyInsurancePage: React.FC = () => {
-    const [details, setDetails] = useState<ServiceDetail[]>([]);
-
-    useEffect(() => {
-        const fetchDetails = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/services/property`);
-                const data = await response.json();
-                setDetails(data);
-            } catch (error) {
-                console.error("Failed to fetch property insurance details:", error);
-            }
-        };
-        fetchDetails();
-    }, []);
+    const details: ServiceDetail[] = service_details.property || [];
 
     return (
         <ServicePageLayout

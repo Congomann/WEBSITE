@@ -52,7 +52,7 @@
       {
         "name": "Term Life",
         "description": "Affordable coverage for a set period (10, 20, 30 years).",
-        "benefits": ["High coverage for lower cost", "Simple, straightforward protection", "Ideal for specific timeframes"]
+        "benefits": ["High coverage", "Low cost", "Simple protection"]
       },
       {
         "name": "Term Life with Living Benefits",
@@ -63,64 +63,64 @@
     "auto": [
       {
         "name": "Passenger Auto",
-        "description": "Protection for your everyday cars, trucks, and SUVs.",
-        "benefits": ["Covers liability for bodily injury and property damage", "Collision coverage for accidents", "Comprehensive coverage for theft, fire, and other non-collision events"]
+        "description": "Protection for everyday vehicles.",
+        "benefits": ["Covers liability, collision, and comprehensive damages."]
       },
       {
         "name": "Classic & Custom Cars",
         "description": "Tailored coverage for collectible and modified vehicles.",
-        "benefits": ["Agreed value coverage", "Specialized repair options", "Flexible usage policies"]
+        "benefits": []
       },
       {
         "name": "Commercial (Heavy-Duty) Vehicles",
-        "description": "Coverage for trucks, fleets, and contractor vehicles.",
-        "benefits": ["Protects against liability from business operations", "Covers physical damage to vehicles", "Minimizes financial loss from downtime"]
+        "description": "Coverage for trucks, fleets, and contractors.",
+        "benefits": ["Protects against liability, damage, and downtime."]
       }
     ],
     "property": [
       {
         "name": "Homeowners Insurance",
-        "description": "Comprehensive protection for your home, personal belongings, and liability.",
-        "benefits": ["Covers damage to your dwelling and other structures", "Protects personal property like furniture and electronics", "Provides liability coverage for accidents on your property"]
+        "description": "Protection for home, belongings, and liability.",
+        "benefits": []
       },
       {
         "name": "Renters Insurance",
-        "description": "Protects your personal items within a rental property and provides liability coverage.",
-        "benefits": ["Affordable coverage for your belongings", "Liability protection against accidents", "Covers living expenses if your rental becomes uninhabitable"]
+        "description": "Protects personal items and provides liability coverage.",
+        "benefits": []
       },
       {
         "name": "Theft, Flood & Fire Coverage",
-        "description": "Specialized add-ons for protection against specific perils.",
-        "benefits": ["Coverage for losses due to theft", "Protection from flood damage (often a separate policy)", "Financial security in case of a fire"]
+        "description": "Add-ons for natural and accidental damages.",
+        "benefits": []
       }
     ],
     "health": [
       {
         "name": "Health & Dental",
-        "description": "Individual and family medical coverage to ensure you have access to the care you need.",
-        "benefits": ["Access to a network of quality healthcare providers", "Coverage for preventive care to stay healthy", "Affordable premiums and cost-sharing options"]
+        "description": "Individual and family medical coverage.",
+        "benefits": ["Access to quality care", "Preventive benefits", "Affordable premiums"]
       }
     ],
     "group-benefits": [
       {
         "name": "Supplemental Health Plans",
-        "description": "Help protect your income and savings during an unexpected illness or injury.",
-        "benefits": ["Cash benefits paid directly to you", "Helps cover out-of-pocket expenses", "Complements your existing health insurance"]
+        "description": "Protect income during illness or injury.",
+        "benefits": []
       },
       {
         "name": "Family Health Insurance",
-        "description": "Group options to provide comprehensive health coverage for dependents and employees.",
-        "benefits": ["Often more affordable than individual plans", "Wide range of coverage options", "Promotes a healthy and productive workforce"]
+        "description": "Group options for dependents and employees.",
+        "benefits": []
       },
       {
         "name": "Income Protector",
-        "description": "Provides a monthly income if you are unable to work due to a qualifying disability.",
-        "benefits": ["Replaces a portion of your lost income", "Helps you maintain your standard of living", "Peace of mind during recovery"]
+        "description": "Provides monthly income if unable to work.",
+        "benefits": []
       },
       {
         "name": "Accidental AD & Disability",
-        "description": "Covers long and short-term disabilities, as well as Accidental Death & Dismemberment.",
-        "benefits": ["Financial support for short-term recovery", "Long-term income for extended disabilities", "Lump-sum payments for covered accidents"]
+        "description": "Covers long and short-term disabilities and accidents.",
+        "benefits": []
       }
     ]
   },

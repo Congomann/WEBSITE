@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
     const socialLinks = [
         { name: 'Facebook', icon: <FacebookIcon />, url: 'https://facebook.com/newhollandfinancial' },
         { name: 'Instagram', icon: <InstagramIcon />, url: 'https://instagram.com/newhollandfinancial' },
-        { name: 'Twitter', icon: <TwitterIcon />, url: 'https://twitter.com/newhollandfinancial' },
+        { name: 'Twitter', icon: <TwitterIcon />, url: 'https://twitter.com/Newhollandfg' },
         { name: 'LinkedIn', icon: <LinkedInIcon />, url: 'https://linkedin.com/company/newhollandfinancial' },
         { name: 'TikTok', icon: <TikTokIcon />, url: 'https://tiktok.com/@newhollandfinancial' },
         { name: 'Snapchat', icon: <SnapchatIcon />, url: 'https://snapchat.com/add/newhollandfinancial' },

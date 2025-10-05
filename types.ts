@@ -4,8 +4,8 @@ export interface Service {
   name: string;
   path: string;
   description: string;
-  // Fix: Use imported ReactNode type.
-  icon: ReactNode;
+  // Fix: Made icon optional to correctly reflect API response and simplify usage.
+  icon?: ReactNode;
 }
 
 export interface ServiceDetail {

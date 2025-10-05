@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import { Link } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
 import QuoteForm from '../components/QuoteForm';
 import type { Service } from '../types';
 import SEO from '../components/SEO';
-import { API_BASE_URL } from '../constants';
+import { core_services } from '../data';
 
 // Icons need to be defined in the component since they are JSX, not simple data.
 const ShieldIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 018.618-3.04 11.955 11.955 0 018.618 3.04 12.02 12.02 0 00-3-15.904z" /> </svg> );
@@ -29,25 +30,10 @@ const WHY_CHOOSE_US = [
 ];
 
 const HomePage: React.FC = () => {
-    const [coreServices, setCoreServices] = useState<Service[]>([]);
-
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/services`);
-                if (!response.ok) throw new Error('Failed to fetch services');
-                const data: Service[] = await response.json();
-                const servicesWithIcons = data.map(service => ({
-                    ...service,
-                    icon: iconMap[service.name] || <ShieldIcon /> // Default icon
-                }));
-                setCoreServices(servicesWithIcons);
-            } catch (error) {
-                console.error("Error fetching services:", error);
-            }
-        };
-        fetchServices();
-    }, []);
+    const servicesWithIcons: Service[] = core_services.map(service => ({
+        ...service,
+        icon: iconMap[service.name] || <ShieldIcon /> // Default icon
+    }));
 
     return (
         <div>
@@ -98,7 +84,7 @@ const HomePage: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Core Services</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {coreServices.map((service, index) => (
+                        {servicesWithIcons.map((service, index) => (
                             <ServiceCard 
                                 key={service.name} 
                                 service={service} 
