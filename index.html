@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Holland Financial Group</title>
+  
+  <!-- SEO & Social Sharing -->
+  <meta name="description" content="Protecting what matters most. Your life, your family, your future. Offering tailored insurance solutions for life, auto, home, and business." />
+  <link rel="canonical" href="http://www.newhollandfinancial.com/" />
+  <link rel="icon" href="data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='32' height='32' rx='6' fill='%231D2B3A'/%3e%3ccircle cx='16' cy='14' r='8' fill='white' fill-opacity='0.1'/%3e%3cpath d='M9 24V17L16 11L23 17V24H9Z' fill='white' fill-opacity='0.8'/%3e%3c/svg%3e" type="image/svg+xml">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://www.newhollandfinancial.com/" />
+  <meta property="og:title" content="New Holland Financial Group | Protecting What Matters Most" />
+  <meta property="og:description" content="Offering tailored insurance solutions for life, auto, home, and business to secure your financial peace of mind." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=1200&auto=format&fit=crop" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="http://www.newhollandfinancial.com/" />
+  <meta property="twitter:title" content="New Holland Financial Group | Protecting What Matters Most" />
+  <meta property="twitter:description" content="Offering tailored insurance solutions for life, auto, home, and business to secure your financial peace of mind." />
+  <meta property="twitter:image" content="https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=1200&auto=format&fit=crop" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'brand-blue': '#0D2C54',
+            'brand-gold': '#F7C548',
+            'brand-light': '#F1F4F8',
+          },
+          animation: {
+            'fade-in-down': 'fadeInDown 0.8s ease-out forwards',
+            'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+            'fade-in': 'fadeIn 0.8s ease-out forwards',
+          },
+          keyframes: {
+            fadeInDown: {
+              '0%': { opacity: 0, transform: 'translateY(-20px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+            fadeInUp: {
+              '0%': { opacity: 0, transform: 'translateY(20px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: 0 },
+              '100%': { opacity: 1 },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.3",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+</head>
+<body class="bg-brand-light">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
