@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { ADVISORS, YOUTUBE_VIDEOS, DOCUMENT_RESOURCES } from '../constants';
 import type { Advisor, YouTubeVideo, DocumentResource } from '../types';
@@ -31,18 +32,11 @@ const GeneratedCodeBlock: React.FC<{ title: string; code: string }> = ({ title, 
     );
 };
 
-// FIX: Define a type for documents managed in the admin state, ensuring 'id' is required.
-// This resolves a TypeScript error where the generic `handleDeleteItem` function
-// expected a type with a required `id` property.
-type ManagedDocumentResource = DocumentResource & { id: string };
-
 const AdminPage: React.FC = () => {
     // States for existing content
     const [advisors, setAdvisors] = useState<Advisor[]>(ADVISORS);
     const [videos, setVideos] = useState<YouTubeVideo[]>(YOUTUBE_VIDEOS);
-    const [documents, setDocuments] = useState<ManagedDocumentResource[]>(() =>
-        DOCUMENT_RESOURCES.map(doc => ({ ...doc, id: crypto.randomUUID() }))
-    );
+    const [documents, setDocuments] = useState<DocumentResource[]>(DOCUMENT_RESOURCES);
 
     // States for form visibility
     const [showAdvisorForm, setShowAdvisorForm] = useState(false);
@@ -60,8 +54,7 @@ const AdminPage: React.FC = () => {
     const generatedAdvisorsCode = useMemo(() => `export const ADVISORS: Advisor[] = ${JSON.stringify(advisors, null, 2)};`, [advisors]);
     const generatedVideosCode = useMemo(() => `export const YOUTUBE_VIDEOS: YouTubeVideo[] = ${JSON.stringify(videos, null, 2)};`, [videos]);
     const generatedDocumentsCode = useMemo(() => {
-         const docsToExport = documents.map(({ id, ...rest }) => rest);
-         return `export const DOCUMENT_RESOURCES: DocumentResource[] = ${JSON.stringify(docsToExport, null, 2)};`;
+         return `export const DOCUMENT_RESOURCES: DocumentResource[] = ${JSON.stringify(documents, null, 2)};`;
     }, [documents]);
 
     // Delete handler
@@ -107,7 +100,7 @@ const AdminPage: React.FC = () => {
             alert("Title and File Path are required.");
             return;
         }
-        setDocuments(prev => [...prev, { ...newDocument, id: crypto.randomUUID() }]);
+        setDocuments(prev => [...prev, { ...newDocument, id: `doc-${crypto.randomUUID()}` }]);
         setNewDocument({ title: '', description: '', filePath: '' });
         setShowDocumentForm(false);
     };

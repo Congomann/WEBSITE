@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react';
 
 export interface Service {
   name: string;
   path: string;
   description: string;
-  icon: React.ReactNode;
+  // Fix: Use imported ReactNode type.
+  icon: ReactNode;
 }
 
 export interface ServiceDetail {

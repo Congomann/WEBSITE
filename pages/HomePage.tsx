@@ -92,8 +92,7 @@ const HomePage: React.FC = () => {
             <section className="py-20 bg-brand-blue">
                 <div className="container mx-auto px-6">
                     <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-2xl">
-                        <h2 className="text-3xl font-bold text-center text-brand-blue mb-2">Get a Personalized Quote</h2>
-                        <p className="text-center text-gray-600 mb-8">Fill out the form below and one of our expert advisors will be in touch.</p>
+                        <h2 className="text-3xl font-bold text-center text-brand-blue mb-8">Request Your Free Quote Today!</h2>
                         <QuoteForm />
                     </div>
                 </div>

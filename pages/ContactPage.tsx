@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import QuoteForm from '../components/QuoteForm';
@@ -38,8 +37,8 @@ const ContactPage: React.FC = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-5 gap-10">
-                    <div className="lg:col-span-3 bg-gray-50 p-8 rounded-lg shadow-xl">
-                        <h2 className="text-2xl font-bold text-brand-blue mb-6">Request Your Free Quote Today!</h2>
+                    <div className="lg:col-span-3 bg-white p-8 rounded-lg shadow-xl">
+                        <h2 className="text-3xl font-bold text-brand-blue text-center mb-6">Request Your Free Quote Today!</h2>
                         {advisorName && (
                             <p className="text-center text-gray-700 mb-6 bg-brand-light p-3 rounded-md">
                                 You are scheduling a consultation with <strong>{advisorName}</strong>.
@@ -68,7 +67,7 @@ const ContactPage: React.FC = () => {
                                 <svg className="w-7 h-7 mr-4 mt-1 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 <div>
                                     <h3 className="font-semibold">Email</h3>
-                                    <a href="mailto:Info@newhollandfinancial.com" className="text-gray-300 hover:text-brand-gold">Info@newhollandfinancial.com</a>
+                                    <a href="mailto:support@newhollandfinancial.com" className="text-gray-300 hover:text-brand-gold">support@newhollandfinancial.com</a>
                                 </div>
                             </div>
                         </div>

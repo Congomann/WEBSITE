@@ -1,4 +1,3 @@
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
@@ -10,21 +9,24 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
+  // Fix: State is initialized as a class property. The previous initialization inside
+  // the constructor was causing TypeScript errors. This is the modern and correct
+  // approach for React class components.
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
-  public static getDerivedStateFromError(_: Error): State {
+  static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // You can also log the error to an error reporting service
     console.error("Uncaught error:", error, errorInfo);
   }
 
-  public render() {
+  render() {
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center h-screen text-center bg-brand-light p-8">
