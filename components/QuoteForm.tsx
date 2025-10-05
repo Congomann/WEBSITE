@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CORE_SERVICES } from '../constants';
+import type { Service } from '../types';
+import { API_BASE_URL } from '../constants';
 
 interface QuoteFormProps {
     advisorName?: string | null;
@@ -13,10 +14,25 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
         service: '',
         message: '',
     });
+    const [services, setServices] = useState<Service[]>([]);
     const [submitted, setSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services`);
+                if (!response.ok) throw new Error('Failed to fetch services');
+                const data = await response.json();
+                setServices(data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        fetchServices();
+    }, []);
 
     useEffect(() => {
         if (advisorName) {
@@ -54,24 +70,32 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         if (!validateForm()) return;
 
         setIsLoading(true);
-        // Mock API call
-        setTimeout(() => {
-            try {
-                // Simulate a successful submission
-                console.log('Form submitted:', formData);
-                setIsLoading(false);
-                setSubmitted(true);
-            } catch (err) {
-                setIsLoading(false);
-                setError('An unexpected error occurred. Please try again later.');
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/quotes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit quote. Please try again.');
             }
-        }, 1500);
+            
+            setSubmitted(true);
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred.';
+            setError(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     if (submitted) {
@@ -111,7 +135,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
                     <label htmlFor="service" className={labelStyles}>Type of Insurance</label>
                     <select name="service" id="service" value={formData.service} onChange={handleChange} required className={`${lightSelectStyles} ${fieldErrors.service ? 'border-red-500' : 'border-gray-300'}`}>
                         <option value="" disabled>Select a service</option>
-                        {CORE_SERVICES.map(service => (
+                        {services.map(service => (
                             <option key={service.path} value={service.name}>{service.name}</option>
                         ))}
                     </select>

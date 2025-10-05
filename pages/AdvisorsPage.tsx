@@ -1,11 +1,35 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AdvisorCard from '../components/AdvisorCard';
-import { ADVISORS } from '../constants';
+import type { Advisor } from '../types';
 import SEO from '../components/SEO';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { API_BASE_URL } from '../constants';
 
 const AdvisorsPage: React.FC = () => {
+    const [advisors, setAdvisors] = useState<Advisor[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAdvisors = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/advisors`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch advisors');
+                }
+                const data: Advisor[] = await response.json();
+                setAdvisors(data);
+            } catch (error) {
+                console.error("Error fetching advisors:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchAdvisors();
+    }, []);
+
     return (
         <div className="bg-brand-light">
             <SEO
@@ -29,11 +53,15 @@ const AdvisorsPage: React.FC = () => {
                             Back to Home
                         </Link>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        {ADVISORS.map(advisor => (
-                            <AdvisorCard key={advisor.id} advisor={advisor} />
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <div className="flex justify-center py-10"><LoadingSpinner /></div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                            {advisors.map(advisor => (
+                                <AdvisorCard key={advisor.id} advisor={advisor} />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
         </div>

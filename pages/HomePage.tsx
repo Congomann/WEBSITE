@@ -1,11 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
 import QuoteForm from '../components/QuoteForm';
-import { CORE_SERVICES, WHY_CHOOSE_US } from '../constants';
+import type { Service } from '../types';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../constants';
+
+// Icons need to be defined in the component since they are JSX, not simple data.
+const ShieldIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 018.618-3.04 11.955 11.955 0 018.618 3.04 12.02 12.02 0 00-3-15.904z" /> </svg> );
+const CarIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /> <path strokeLinecap="round" strokeLinejoin="round" d="M9 22l-4-4 1.5-1.5L9 18l4.5-4.5L19 18l-4 4-2.5-2.5L9 22zM12 12v.01" /> </svg> );
+const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /> </svg> );
+const HeartIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /> </svg> );
+const UsersIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}> <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.122-1.28-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.122-1.28.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /> </svg> );
+
+const iconMap: { [key: string]: React.ReactNode } = {
+    'Life Insurance': <ShieldIcon />,
+    'Auto & Commercial': <CarIcon />,
+    'Property Insurance': <HomeIcon />,
+    'Health Insurance': <HeartIcon />,
+    'Group Benefits': <UsersIcon />,
+};
+
+const WHY_CHOOSE_US = [
+    { text: 'Trusted Carriers', description: 'We partner with top-rated insurance carriers to offer you reliable and competitive policies.' },
+    { text: 'Personalized Coverage', description: 'Our agents work with you to understand your needs and craft a policy that fits your life and budget.' },
+    { text: 'Licensed Agents in Multiple States', description: 'Our experienced team is licensed and ready to assist clients across various states.' },
+    { text: 'Fast Claims Assistance', description: 'When you need to make a claim, we are here to guide you through the process quickly and efficiently.' },
+];
 
 const HomePage: React.FC = () => {
+    const [coreServices, setCoreServices] = useState<Service[]>([]);
+
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services`);
+                if (!response.ok) throw new Error('Failed to fetch services');
+                const data: Service[] = await response.json();
+                const servicesWithIcons = data.map(service => ({
+                    ...service,
+                    icon: iconMap[service.name] || <ShieldIcon /> // Default icon
+                }));
+                setCoreServices(servicesWithIcons);
+            } catch (error) {
+                console.error("Error fetching services:", error);
+            }
+        };
+        fetchServices();
+    }, []);
+
     return (
         <div>
             <SEO
@@ -55,7 +98,7 @@ const HomePage: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Core Services</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {CORE_SERVICES.map((service, index) => (
+                        {coreServices.map((service, index) => (
                             <ServiceCard 
                                 key={service.name} 
                                 service={service} 

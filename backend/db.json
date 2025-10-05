@@ -1,0 +1,179 @@
+{
+  "quotes": [],
+  "core_services": [
+    {
+      "name": "Life Insurance",
+      "path": "/services/life",
+      "description": "Protect your family's future with comprehensive life insurance policies."
+    },
+    {
+      "name": "Auto & Commercial",
+      "path": "/services/auto",
+      "description": "Coverage for your personal vehicles, classic cars, and commercial fleets."
+    },
+    {
+      "name": "Property Insurance",
+      "path": "/services/property",
+      "description": "Secure your home and belongings against unforeseen events."
+    },
+    {
+      "name": "Health Insurance",
+      "path": "/services/health",
+      "description": "Access quality healthcare with individual and family plans."
+    },
+    {
+      "name": "Group Benefits",
+      "path": "/services/group-benefits",
+      "description": "Offer your employees valuable benefits like health and disability coverage."
+    }
+  ],
+  "service_details": {
+    "life": [
+      {
+        "name": "Whole Life Insurance",
+        "description": "Permanent coverage that builds cash value over time.",
+        "benefits": ["Lifetime protection", "Tax-deferred growth", "Borrowing options"]
+      },
+      {
+        "name": "Universal Life Insurance",
+        "description": "Flexible premiums and adjustable death benefits.",
+        "benefits": ["Cash value growth", "Flexibility", "Tax advantages"]
+      },
+      {
+        "name": "Indexed Universal Life (IUL)",
+        "description": "Tied to market performance (e.g., S&P 500) with downside protection.",
+        "benefits": ["Growth potential", "Living benefits", "Tax-free loans"]
+      },
+      {
+        "name": "Annuities",
+        "description": "Guaranteed income for retirement.",
+        "benefits": ["Lifetime income", "Principal protection", "Growth options"]
+      },
+      {
+        "name": "Term Life",
+        "description": "Affordable coverage for a set period (10, 20, 30 years).",
+        "benefits": ["High coverage for lower cost", "Simple, straightforward protection", "Ideal for specific timeframes"]
+      },
+      {
+        "name": "Term Life with Living Benefits",
+        "description": "Adds protection for illness or injury.",
+        "benefits": ["Access cash while living for critical, chronic, or terminal conditions."]
+      }
+    ],
+    "auto": [
+      {
+        "name": "Passenger Auto",
+        "description": "Protection for your everyday cars, trucks, and SUVs.",
+        "benefits": ["Covers liability for bodily injury and property damage", "Collision coverage for accidents", "Comprehensive coverage for theft, fire, and other non-collision events"]
+      },
+      {
+        "name": "Classic & Custom Cars",
+        "description": "Tailored coverage for collectible and modified vehicles.",
+        "benefits": ["Agreed value coverage", "Specialized repair options", "Flexible usage policies"]
+      },
+      {
+        "name": "Commercial (Heavy-Duty) Vehicles",
+        "description": "Coverage for trucks, fleets, and contractor vehicles.",
+        "benefits": ["Protects against liability from business operations", "Covers physical damage to vehicles", "Minimizes financial loss from downtime"]
+      }
+    ],
+    "property": [
+      {
+        "name": "Homeowners Insurance",
+        "description": "Comprehensive protection for your home, personal belongings, and liability.",
+        "benefits": ["Covers damage to your dwelling and other structures", "Protects personal property like furniture and electronics", "Provides liability coverage for accidents on your property"]
+      },
+      {
+        "name": "Renters Insurance",
+        "description": "Protects your personal items within a rental property and provides liability coverage.",
+        "benefits": ["Affordable coverage for your belongings", "Liability protection against accidents", "Covers living expenses if your rental becomes uninhabitable"]
+      },
+      {
+        "name": "Theft, Flood & Fire Coverage",
+        "description": "Specialized add-ons for protection against specific perils.",
+        "benefits": ["Coverage for losses due to theft", "Protection from flood damage (often a separate policy)", "Financial security in case of a fire"]
+      }
+    ],
+    "health": [
+      {
+        "name": "Health & Dental",
+        "description": "Individual and family medical coverage to ensure you have access to the care you need.",
+        "benefits": ["Access to a network of quality healthcare providers", "Coverage for preventive care to stay healthy", "Affordable premiums and cost-sharing options"]
+      }
+    ],
+    "group-benefits": [
+      {
+        "name": "Supplemental Health Plans",
+        "description": "Help protect your income and savings during an unexpected illness or injury.",
+        "benefits": ["Cash benefits paid directly to you", "Helps cover out-of-pocket expenses", "Complements your existing health insurance"]
+      },
+      {
+        "name": "Family Health Insurance",
+        "description": "Group options to provide comprehensive health coverage for dependents and employees.",
+        "benefits": ["Often more affordable than individual plans", "Wide range of coverage options", "Promotes a healthy and productive workforce"]
+      },
+      {
+        "name": "Income Protector",
+        "description": "Provides a monthly income if you are unable to work due to a qualifying disability.",
+        "benefits": ["Replaces a portion of your lost income", "Helps you maintain your standard of living", "Peace of mind during recovery"]
+      },
+      {
+        "name": "Accidental AD & Disability",
+        "description": "Covers long and short-term disabilities, as well as Accidental Death & Dismemberment.",
+        "benefits": ["Financial support for short-term recovery", "Long-term income for extended disabilities", "Lump-sum payments for covered accidents"]
+      }
+    ]
+  },
+  "advisors": [
+    {
+      "id": 1,
+      "name": "Jessica Miller",
+      "title": "Senior Life & Health Advisor",
+      "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
+      "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"],
+      "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies for families and individuals, ensuring their long-term security."
+    },
+    {
+      "id": 2,
+      "name": "Brian Carter",
+      "title": "Property & Commercial Specialist",
+      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop",
+      "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"],
+      "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets with tailored coverage."
+    },
+    {
+      "id": 3,
+      "name": "Samantha Chen",
+      "title": "Family & Auto Protection Advisor",
+      "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop",
+      "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"],
+      "bio": "Samantha is passionate about helping young families and individuals find affordable and effective coverage for their cars, homes, and loved ones."
+    }
+  ],
+  "youtube_videos": [
+    {
+      "id": "h_43-16PS5k",
+      "title": "Term vs. Whole Life Insurance Explained",
+      "description": "Understand the key differences between term and whole life insurance to decide which is right for you."
+    },
+    {
+      "id": "fTTGALaI-1w",
+      "title": "Understanding Annuities: A Beginner's Guide",
+      "description": "Learn the basics of annuities and how they can provide a steady income stream during retirement."
+    }
+  ],
+  "document_resources": [
+    {
+      "id": "doc-fact-finder-1",
+      "title": "Financial Fact Finder",
+      "description": "A comprehensive worksheet to help you organize your finances and plan for your family's future.",
+      "filePath": "https://www.newyorklife.com/content/dam/nyl/docs/pdfs/financial-calculators/client-fact-finder.pdf"
+    },
+    {
+      "id": "doc-inventory-checklist-2",
+      "title": "Home Inventory Checklist",
+      "description": "A helpful guide and template for creating a home inventory for your property insurance records.",
+      "filePath": "https://www.iii.org/sites/default/files/docs/pdf/home_inventory_checklist.pdf"
+    }
+  ]
+}

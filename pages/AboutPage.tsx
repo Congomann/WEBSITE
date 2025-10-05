@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
 
@@ -31,7 +32,8 @@ const AboutPage: React.FC = () => {
         { name: 'Aflac', domain: 'aflac.com' },
         { name: 'Americo', domain: 'americo.com' },
         { name: 'American Continental Insurance Co', domain: 'aetna.com' },
-        { name: 'Banner Life', domain: 'bannerlife.com' },
+        // Fix: Use parent company domain for better logo resolution.
+        { name: 'Banner Life', domain: 'lgamerica.com' },
         // Blue Ridge is part of the Donegal Insurance Group
         { name: 'Blue Ridge Ins Co.', domain: 'donegalgroup.com' },
         { name: 'Bristol West', domain: 'bristolwest.com' },
@@ -46,7 +48,8 @@ const AboutPage: React.FC = () => {
         { name: 'Illinois Mutual', domain: 'illinoismutual.com' },
         { name: 'John Hancock', domain: 'johnhancock.com' },
         { name: 'LSW', domain: 'lsw.com' },
-        { name: 'Liberty Bankers', domain: 'lbig.com' },
+        // Fix: Update company name for clarity.
+        { name: 'Liberty Bankers Life', domain: 'lbig.com' },
         { name: 'Lincoln Financial', domain: 'lfg.com' },
         { name: 'National Life Group', domain: 'nationallife.com' },
         { name: 'New York Life', domain: 'newyorklife.com' },
