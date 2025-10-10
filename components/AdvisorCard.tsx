@@ -9,10 +9,13 @@ interface AdvisorCardProps {
 
 const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor }) => {
     return (
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col transform hover:-translate-y-2 transition-transform duration-300">
+        <Link 
+            to={`/advisors/${advisor.id}`} 
+            className="block group bg-white rounded-lg shadow-xl overflow-hidden flex flex-col transform hover:-translate-y-2 transition-transform duration-300"
+        >
             <img src={advisor.imageUrl} alt={advisor.name} className="w-full h-56 object-cover" />
             <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-2xl font-bold text-brand-blue">{advisor.name}</h3>
+                <h3 className="text-2xl font-bold text-brand-blue group-hover:text-brand-gold transition-colors duration-300">{advisor.name}</h3>
                 <p className="text-brand-gold font-semibold mb-3">{advisor.title}</p>
                 <div className="mb-4">
                     <h4 className="font-bold text-gray-700">Specialties:</h4>
@@ -22,15 +25,12 @@ const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor }) => {
                         ))}
                     </div>
                 </div>
-                <p className="text-gray-600 mb-6 flex-grow">{advisor.bio}</p>
-                <Link 
-                    to={`/contact?advisor=${encodeURIComponent(advisor.name)}`} 
-                    className="mt-auto block text-center w-full bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300"
-                >
-                    Speak with {advisor.name.split(' ')[0]}
-                </Link>
+                <p className="text-gray-600 mb-6 flex-grow">{advisor.bio.substring(0, 100)}...</p>
+                <span className="mt-auto text-brand-gold font-bold self-start opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    View Profile &rarr;
+                </span>
             </div>
-        </div>
+        </Link>
     );
 };
 

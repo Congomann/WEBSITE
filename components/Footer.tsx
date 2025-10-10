@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
                                     target="_blank" 
                                     rel="noopener noreferrer" 
                                     aria-label={`Follow us on ${social.name}`} 
-                                    className="text-gray-400 hover:text-brand-gold transition-colors duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-white"
+                                    className="text-gray-300 hover:text-brand-gold transition-colors duration-300 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-white"
                                 >
                                     {social.icon}
                                 </a>

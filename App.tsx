@@ -1,4 +1,3 @@
-
 import React, { Suspense, lazy } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
@@ -8,15 +7,25 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
+import CartToast from './components/CartToast';
+
+// Context Providers
+import { CartProvider } from './contexts/CartContext';
+import { ProductProvider } from './contexts/ProductContext';
 
 // Lazy-loaded Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AdvisorsPage = lazy(() => import('./pages/AdvisorsPage'));
+const AdvisorProfilePage = lazy(() => import('./pages/AdvisorProfilePage'));
 const ResourcesPage = lazy(() => import('./pages/ResourcesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
 
 // Lazy-loaded Service Pages
 const LifeInsurancePage = lazy(() => import('./pages/services/LifeInsurancePage'));
@@ -28,31 +37,41 @@ const GroupBenefitsPage = lazy(() => import('./pages/services/GroupBenefitsPage'
 const App: React.FC = () => {
   return (
     <HashRouter>
-      <ScrollToTop />
-      <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
-        <Header />
-        <main className="flex-grow">
-          <ErrorBoundary>
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/advisors" element={<AdvisorsPage />} />
-                <Route path="/resources" element={<ResourcesPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/services/life" element={<LifeInsurancePage />} />
-                <Route path="/services/auto" element={<AutoInsurancePage />} />
-                <Route path="/services/property" element={<PropertyInsurancePage />} />
-                <Route path="/services/health" element={<HealthInsurancePage />} />
-                <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </Suspense>
-          </ErrorBoundary>
-        </main>
-        <Footer />
-      </div>
+      <ProductProvider>
+        <CartProvider>
+          <ScrollToTop />
+          <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
+            <Header />
+            <CartToast />
+            <main className="flex-grow">
+              <ErrorBoundary>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/advisors" element={<AdvisorsPage />} />
+                    <Route path="/advisors/:advisorId" element={<AdvisorProfilePage />} />
+                    <Route path="/resources" element={<ResourcesPage />} />
+                    <Route path="/products" element={<ProductsPage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/order-success" element={<OrderSuccessPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="/admin" element={<AdminPage />} />
+                    <Route path="/services/life" element={<LifeInsurancePage />} />
+                    <Route path="/services/auto" element={<AutoInsurancePage />} />
+                    <Route path="/services/property" element={<PropertyInsurancePage />} />
+                    <Route path="/services/health" element={<HealthInsurancePage />} />
+                    <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Routes>
+                </Suspense>
+              </ErrorBoundary>
+            </main>
+            <Footer />
+          </div>
+        </CartProvider>
+      </ProductProvider>
     </HashRouter>
   );
 };

@@ -4,12 +4,20 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Service } from '../types';
 import Logo from './Logo';
 import { core_services } from '../data';
+import { useCart } from '../contexts/CartContext';
+
+const ShoppingCartIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+);
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
     const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
     const services: Service[] = core_services;
+    const { cartCount } = useCart();
     
     const location = useLocation();
     const desktopServicesRef = useRef<HTMLDivElement>(null);
@@ -83,11 +91,22 @@ const Header: React.FC = () => {
                         )}
                     </div>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
+                    <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
                 </nav>
-                 <Link to="/contact" className="hidden lg:inline-block bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-yellow-400">
-                    Get a Free Quote
-                </Link>
+                 <div className="hidden lg:flex items-center space-x-4">
+                    <Link to="/contact" className="inline-block bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-yellow-400">
+                        Get a Free Quote
+                    </Link>
+                     <Link to="/cart" className="relative text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white" aria-label={`Shopping cart with ${cartCount} items`}>
+                        <ShoppingCartIcon />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
+                </div>
 
                 {/* Mobile Menu Button */}
                 <div className="lg:hidden">
@@ -130,10 +149,19 @@ const Header: React.FC = () => {
                          )}
                     </div>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
+                    <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
-                    <div className="mt-4 px-4">
-                        <Link to="/contact" className="block w-full text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300">
+                    <div className="mt-4 px-4 flex items-center justify-between gap-4">
+                        <Link to="/contact" className="flex-grow text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300">
                             Get a Free Quote
+                        </Link>
+                         <Link to="/cart" className="relative flex-shrink-0 text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300" aria-label={`Shopping cart with ${cartCount} items`}>
+                            <ShoppingCartIcon />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                    {cartCount}
+                                </span>
+                            )}
                         </Link>
                     </div>
                 </div>

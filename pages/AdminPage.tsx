@@ -1,39 +1,60 @@
 
 import React, { useState } from 'react';
-import type { Advisor, YouTubeVideo, DocumentResource } from '../types';
+import type { Advisor, VideoResource, DocumentResource, Product } from '../types';
 import Accordion from '../components/Accordion';
 import SEO from '../components/SEO';
-import { advisors as initialAdvisors, youtube_videos as initialVideos, document_resources as initialDocuments } from '../data';
+import { advisors as initialAdvisors, video_resources as initialVideos, document_resources as initialDocuments } from '../data';
+import { useProducts } from '../contexts/ProductContext';
+
 
 const AdminPage: React.FC = () => {
+    // Products are now managed via context
+    const { products, addProduct, deleteProduct } = useProducts();
+
     // States for existing content, initialized with static data
     const [advisors, setAdvisors] = useState<Advisor[]>(initialAdvisors);
-    const [videos, setVideos] = useState<YouTubeVideo[]>(initialVideos);
+    const [videos, setVideos] = useState<VideoResource[]>(initialVideos);
     const [documents, setDocuments] = useState<DocumentResource[]>(initialDocuments);
 
     // States for form visibility
     const [showAdvisorForm, setShowAdvisorForm] = useState(false);
     const [showVideoForm, setShowVideoForm] = useState(false);
     const [showDocumentForm, setShowDocumentForm] = useState(false);
+    const [showProductForm, setShowProductForm] = useState(false);
     
     // States for new items
     const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
-    const [newVideo, setNewVideo] = useState({ id: '', title: '', description: '' });
+    const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '', type: 'youtube' as 'youtube' | 'direct' });
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', description: '' });
 
     const [openSection, setOpenSection] = useState<string | null>(null);
 
+    const extractYouTubeID = (url: string): string | null => {
+        if (!url) return null;
+        if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+            return url;
+        }
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        if (match && match[2].length === 11) {
+            return match[2];
+        }
+        return null;
+    };
+
     // --- State Management Handlers (simulating API) ---
-    const handleDeleteItem = (type: 'advisors' | 'videos' | 'documents', id: any) => {
+    const handleDeleteItem = (type: 'advisors' | 'videos' | 'documents' | 'products', id: any) => {
         if (!window.confirm('Are you sure you want to delete this item?')) return;
         
         if (type === 'advisors') setAdvisors(advisors.filter(a => a.id !== id));
         if (type === 'videos') setVideos(videos.filter(v => v.id !== id));
         if (type === 'documents') setDocuments(documents.filter(d => d.id !== id));
+        if (type === 'products') deleteProduct(id);
     };
 
     // Generic form input change handler
-    const handleInputChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = <T,>(setter: React.Dispatch<React.SetStateAction<T>>, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setter(prev => ({ ...prev, [name]: value }));
     };
@@ -53,9 +74,27 @@ const AdminPage: React.FC = () => {
 
     const handleAddVideo = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newVideo.id || !newVideo.title) return alert("YouTube ID and Title are required.");
-        setVideos(prev => [...prev, newVideo]);
-        setNewVideo({ id: '', title: '', description: '' });
+        if (!newVideo.url || !newVideo.title) return alert("Video URL and Title are required.");
+
+        let source = newVideo.url;
+        if (newVideo.type === 'youtube') {
+            const youtubeId = extractYouTubeID(newVideo.url);
+            if (!youtubeId) {
+                return alert("Invalid YouTube URL. Please provide a valid video link or ID.");
+            }
+            source = youtubeId;
+        }
+        
+        const videoData: VideoResource = {
+            id: `vid-${Date.now()}`,
+            title: newVideo.title,
+            description: newVideo.description,
+            type: newVideo.type,
+            source: source
+        };
+
+        setVideos(prev => [...prev, videoData]);
+        setNewVideo({ url: '', title: '', description: '', type: 'youtube' });
         setShowVideoForm(false);
     };
 
@@ -67,6 +106,19 @@ const AdminPage: React.FC = () => {
         setNewDocument({ title: '', description: '', filePath: '' });
         setShowDocumentForm(false);
     };
+    
+    const handleAddProduct = (e: React.FormEvent) => {
+        e.preventDefault();
+        const price = parseFloat(newProduct.price);
+        if (isNaN(price) || price <= 0) {
+            alert("Please enter a valid price.");
+            return;
+        }
+        addProduct({ ...newProduct, price });
+        setNewProduct({ name: '', price: '', imageUrl: '', description: '' });
+        setShowProductForm(false);
+    };
+
 
     const toggleSection = (sectionId: string) => {
         setOpenSection(prev => (prev === sectionId ? null : sectionId));
@@ -92,11 +144,42 @@ const AdminPage: React.FC = () => {
             <div className="container mx-auto px-6 py-16">
                  <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-12" role="alert">
                     <p className="font-bold">Demonstration Mode</p>
-                    <p>This is a demonstration of the admin panel. Changes made here will not be saved permanently.</p>
+                    <p>This is a demonstration of the admin panel. Changes are saved to your browser's local storage and will be visible on the site until the data is cleared.</p>
                 </div>
 
                 <h2 className="text-3xl font-bold text-brand-blue mb-6">Manage Content Sections</h2>
                 <div className="rounded-lg shadow-lg overflow-hidden mb-12">
+                    {/* MANAGE PRODUCTS */}
+                    <Accordion
+                        title="Manage Products"
+                        isOpen={openSection === 'manage-products'}
+                        onToggle={() => toggleSection('manage-products')}
+                    >
+                        <div className="space-y-4">
+                            {products.map(prod => (
+                                <div key={prod.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                    <div>
+                                        <p className="font-bold text-lg">{prod.name}</p>
+                                        <p className="text-sm text-gray-600">${prod.price.toFixed(2)}</p>
+                                    </div>
+                                    <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                </div>
+                            ))}
+                        </div>
+                        {showProductForm ? (
+                            <form onSubmit={handleAddProduct} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                                <h4 className="text-lg font-bold text-brand-blue">Add New Product</h4>
+                                <div><label htmlFor="prod-name" className={formLabelClass}>Product Name</label><input type="text" name="name" id="prod-name" required value={newProduct.name} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
+                                <div><label htmlFor="prod-price" className={formLabelClass}>Price</label><input type="number" name="price" id="prod-price" required step="0.01" value={newProduct.price} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
+                                <div><label htmlFor="prod-imageUrl" className={formLabelClass}>Image URL</label><input type="text" name="imageUrl" id="prod-imageUrl" required value={newProduct.imageUrl} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
+                                <div><label htmlFor="prod-description" className={formLabelClass}>Description</label><textarea name="description" id="prod-description" required rows={3} value={newProduct.description} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass}></textarea></div>
+                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Product</button><button type="button" onClick={() => setShowProductForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                            </form>
+                        ) : (
+                             <button onClick={() => setShowProductForm(true)} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Product</button>
+                        )}
+                    </Accordion>
+                    
                     {/* MANAGE ADVISORS */}
                     <Accordion
                         title="Manage Advisors"
@@ -140,7 +223,7 @@ const AdminPage: React.FC = () => {
                                  <div key={vid.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
                                      <div>
                                          <p className="font-bold text-lg">{vid.title}</p>
-                                         <p className="text-sm text-gray-600">YouTube ID: {vid.id}</p>
+                                         <p className="text-sm text-gray-600 capitalize">Type: {vid.type}</p>
                                      </div>
                                      <button onClick={() => handleDeleteItem('videos', vid.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
                                  </div>
@@ -149,7 +232,27 @@ const AdminPage: React.FC = () => {
                         {showVideoForm ? (
                              <form onSubmit={handleAddVideo} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
                                 <h4 className="text-lg font-bold text-brand-blue">Add New Video</h4>
-                                <div><label htmlFor="vid-id" className={formLabelClass}>YouTube Video ID</label><input type="text" name="id" id="vid-id" required value={newVideo.id} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass} /></div>
+                                
+                                <div>
+                                    <label className={formLabelClass}>Video Type</label>
+                                    <div className="mt-2 flex gap-x-6">
+                                        <label className="flex items-center">
+                                            <input type="radio" name="type" value="youtube" checked={newVideo.type === 'youtube'} onChange={(e) => setNewVideo(prev => ({...prev, type: 'youtube'}))} className="focus:ring-brand-blue h-4 w-4 text-brand-blue border-gray-300" />
+                                            <span className="ml-2 text-gray-700">YouTube</span>
+                                        </label>
+                                        <label className="flex items-center">
+                                            <input type="radio" name="type" value="direct" checked={newVideo.type === 'direct'} onChange={(e) => setNewVideo(prev => ({...prev, type: 'direct'}))} className="focus:ring-brand-blue h-4 w-4 text-brand-blue border-gray-300" />
+                                            <span className="ml-2 text-gray-700">Direct Link</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                  <label htmlFor="vid-url" className={formLabelClass}>
+                                    {newVideo.type === 'youtube' ? 'YouTube URL or Video ID' : 'Direct Video URL (.mp4, .webm)'}
+                                  </label>
+                                  <input type="text" name="url" id="vid-url" required value={newVideo.url} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass} />
+                                </div>
                                 <div><label htmlFor="vid-title" className={formLabelClass}>Title</label><input type="text" name="title" id="vid-title" required value={newVideo.title} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="vid-desc" className={formLabelClass}>Description</label><textarea name="description" id="vid-desc" rows={3} value={newVideo.description} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass}></textarea></div>
                                 <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Video</button><button type="button" onClick={() => setShowVideoForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>

@@ -1,5 +1,5 @@
 
-import type { Service, ServiceDetail, Advisor, YouTubeVideo, DocumentResource } from './types';
+import type { Service, ServiceDetail, Advisor, VideoResource, DocumentResource, Product } from './types';
 
 export const core_services: Omit<Service, 'icon'>[] = [
   {
@@ -154,16 +154,20 @@ export const advisors: Advisor[] = [
   }
 ];
 
-export const youtube_videos: YouTubeVideo[] = [
+export const video_resources: VideoResource[] = [
   {
     "id": "h_43-16PS5k",
     "title": "Term vs. Whole Life Insurance Explained",
-    "description": "Understand the key differences between term and whole life insurance to decide which is right for you."
+    "description": "Understand the key differences between term and whole life insurance to decide which is right for you.",
+    "type": "youtube",
+    "source": "h_43-16PS5k"
   },
   {
     "id": "fTTGALaI-1w",
     "title": "Understanding Annuities: A Beginner's Guide",
-    "description": "Learn the basics of annuities and how they can provide a steady income stream during retirement."
+    "description": "Learn the basics of annuities and how they can provide a steady income stream during retirement.",
+    "type": "youtube",
+    "source": "fTTGALaI-1w"
   }
 ];
 
@@ -179,5 +183,36 @@ export const document_resources: DocumentResource[] = [
     "title": "Home Inventory Checklist",
     "description": "A helpful guide and template for creating a home inventory for your property insurance records.",
     "filePath": "https://www.iii.org/sites/default/files/docs/pdf/home_inventory_checklist.pdf"
+  }
+];
+
+export const products: Product[] = [
+  {
+    id: 101,
+    name: "Financial Peace of Mind Mug",
+    price: 15.99,
+    imageUrl: "https://images.unsplash.com/photo-1594228949824-c15535b248a3?q=80&w=600&auto=format&fit=crop",
+    description: "Start your day with a reminder of your financial goals. A sturdy and glossy ceramic mug."
+  },
+  {
+    id: 102,
+    name: "Insure Your Future T-Shirt",
+    price: 24.50,
+    imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=600&auto=format&fit=crop",
+    description: "A comfortable 100% cotton t-shirt that makes a statement about planning for the future."
+  },
+  {
+    id: 103,
+    name: "The Complete Guide to Personal Finance (eBook)",
+    price: 9.99,
+    imageUrl: "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=600&auto=format&fit=crop",
+    description: "A comprehensive digital guide covering everything from budgeting to investing. Instant download."
+  },
+    {
+    id: 104,
+    name: "Secure Future Leather-bound Journal",
+    price: 29.99,
+    imageUrl: "https://images.unsplash.com/photo-1516414447565-b14be0adf13e?q=80&w=600&auto=format&fit=crop",
+    description: "A high-quality journal to track your financial journey, goals, and achievements."
   }
 ];

@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 
 export interface Service {
@@ -23,10 +24,12 @@ export interface Advisor {
   bio: string;
 }
 
-export interface YouTubeVideo {
+export interface VideoResource {
   id: string;
   title: string;
   description: string;
+  type: 'youtube' | 'direct';
+  source: string; // YouTube Video ID or full URL for a direct video file
 }
 
 export interface DocumentResource {
@@ -34,4 +37,16 @@ export interface DocumentResource {
   title: string;
   description: string;
   filePath: string;
+}
+
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  imageUrl: string;
+  description: string;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
 }

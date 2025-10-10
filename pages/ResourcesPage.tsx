@@ -1,9 +1,8 @@
-
 import React from 'react';
-import type { YouTubeVideo, DocumentResource } from '../types';
-import YouTubeEmbed from '../components/YouTubeEmbed';
+import type { VideoResource, DocumentResource } from '../types';
+import VideoPlayer from '../components/VideoPlayer';
 import SEO from '../components/SEO';
-import { youtube_videos, document_resources } from '../data';
+import { video_resources, document_resources } from '../data';
 
 const ResourcesPage: React.FC = () => {
     return (
@@ -30,10 +29,10 @@ const ResourcesPage: React.FC = () => {
                     <section id="videos">
                         <h2 className="text-3xl font-bold text-brand-blue mb-8 text-center">Educational Videos</h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                            {youtube_videos.map(video => (
+                            {video_resources.map(video => (
                                 <div key={video.id} className="bg-white p-6 rounded-lg shadow-xl flex flex-col">
                                     <div className="mb-4 rounded-lg overflow-hidden">
-                                        <YouTubeEmbed embedId={video.id} />
+                                        <VideoPlayer video={video} />
                                     </div>
                                     <h3 className="text-2xl font-bold text-brand-blue mb-2">{video.title}</h3>
                                     <p className="text-gray-600 flex-grow">{video.description}</p>
