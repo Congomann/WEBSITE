@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product } from '../types';
 import Accordion from '../components/Accordion';
@@ -22,8 +21,9 @@ const AdminPage: React.FC = () => {
     const [showDocumentForm, setShowDocumentForm] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
     
-    // States for new items
+    // States for new/editing items
     const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+    const [editingAdvisor, setEditingAdvisor] = useState<Advisor | null>(null);
     const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '', type: 'youtube' as 'youtube' | 'direct' });
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
     const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', description: '' });
@@ -59,19 +59,56 @@ const AdminPage: React.FC = () => {
         setter(prev => ({ ...prev, [name]: value }));
     };
 
-    // Add handlers for each content type
-    const handleAddAdvisor = (e: React.FormEvent) => {
+    // --- Advisor Handlers ---
+    const handleAdvisorFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const advisorData = {
+        
+        const advisorDataFromForm = {
             ...newAdvisor,
             specialties: newAdvisor.specialties.split(',').map(s => s.trim()).filter(Boolean),
-            id: Date.now() // Simulate new ID
         };
-        setAdvisors(prev => [...prev, advisorData]);
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+
+        if (editingAdvisor) {
+            // Update existing advisor
+            const updatedAdvisor = { ...editingAdvisor, ...advisorDataFromForm };
+            setAdvisors(advisors.map(a => a.id === editingAdvisor.id ? updatedAdvisor : a));
+        } else {
+            // Add new advisor
+            const newAdvisorWithId = { ...advisorDataFromForm, id: Date.now() };
+            setAdvisors(prev => [...prev, newAdvisorWithId]);
+        }
+        
+        // Reset form and state
         setShowAdvisorForm(false);
+        setEditingAdvisor(null);
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
     };
 
+    const handleEditAdvisor = (advisor: Advisor) => {
+        setEditingAdvisor(advisor);
+        setNewAdvisor({
+            name: advisor.name,
+            title: advisor.title,
+            imageUrl: advisor.imageUrl,
+            bio: advisor.bio,
+            specialties: advisor.specialties.join(', '),
+        });
+        setShowAdvisorForm(true);
+    };
+    
+    const handleAddNewAdvisorClick = () => {
+        setEditingAdvisor(null); // Ensure we are in "add" mode
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+        setShowAdvisorForm(true);
+    };
+
+    const handleAdvisorFormCancel = () => {
+        setShowAdvisorForm(false);
+        setEditingAdvisor(null);
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+    };
+
+    // --- Other Content Handlers ---
     const handleAddVideo = (e: React.FormEvent) => {
         e.preventDefault();
         if (!newVideo.url || !newVideo.title) return alert("Video URL and Title are required.");
@@ -188,27 +225,33 @@ const AdminPage: React.FC = () => {
                     >
                         <div className="space-y-4">
                             {advisors.map(adv => (
-                                <div key={adv.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                <div key={adv.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                     <div>
                                         <p className="font-bold text-lg">{adv.name}</p>
                                         <p className="text-sm text-gray-600">{adv.title}</p>
                                     </div>
-                                    <button onClick={() => handleDeleteItem('advisors', adv.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    <div className="flex gap-4">
+                                        <button onClick={() => handleEditAdvisor(adv)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button>
+                                        <button onClick={() => handleDeleteItem('advisors', adv.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                         {showAdvisorForm ? (
-                            <form onSubmit={handleAddAdvisor} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
-                                <h4 className="text-lg font-bold text-brand-blue">Add New Advisor</h4>
+                            <form onSubmit={handleAdvisorFormSubmit} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                                <h4 className="text-lg font-bold text-brand-blue">{editingAdvisor ? 'Edit Advisor' : 'Add New Advisor'}</h4>
                                 <div><label htmlFor="name" className={formLabelClass}>Name</label><input type="text" name="name" id="name" required value={newAdvisor.name} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="title" className={formLabelClass}>Title</label><input type="text" name="title" id="title" required value={newAdvisor.title} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="imageUrl" className={formLabelClass}>Image URL</label><input type="text" name="imageUrl" id="imageUrl" required value={newAdvisor.imageUrl} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="specialties" className={formLabelClass}>Specialties</label><input type="text" name="specialties" id="specialties" required placeholder="comma, separated, values" value={newAdvisor.specialties} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="bio" className={formLabelClass}>Bio</label><textarea name="bio" id="bio" required rows={3} value={newAdvisor.bio} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass}></textarea></div>
-                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Advisor</button><button type="button" onClick={() => setShowAdvisorForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                                <div className="flex gap-4">
+                                    <button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">{editingAdvisor ? 'Save Changes' : 'Save Advisor'}</button>
+                                    <button type="button" onClick={handleAdvisorFormCancel} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button>
+                                </div>
                             </form>
                         ) : (
-                            <button onClick={() => setShowAdvisorForm(true)} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Advisor</button>
+                            <button onClick={handleAddNewAdvisorClick} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Advisor</button>
                         )}
                     </Accordion>
 
