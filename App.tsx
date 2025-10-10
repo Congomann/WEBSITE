@@ -8,6 +8,7 @@ import ScrollToTop from './components/ScrollToTop';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import CartToast from './components/CartToast';
+import AnalyticsTracker from './components/AnalyticsTracker';
 
 // Context Providers
 import { CartProvider } from './contexts/CartContext';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
       <ProductProvider>
         <CartProvider>
           <ScrollToTop />
+          <AnalyticsTracker />
           <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
             <Header />
             <CartToast />
