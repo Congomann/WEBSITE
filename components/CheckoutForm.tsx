@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { useCart } from '../contexts/CartContext';
-import { useNavigate } from 'react-router-dom';
 
 const CheckoutForm: React.FC = () => {
   const stripe = useStripe();
   const elements = useElements();
-  const { clearCart, totalPrice } = useCart();
-  const navigate = useNavigate();
+  const { totalPrice } = useCart();
 
   const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,23 +15,13 @@ const CheckoutForm: React.FC = () => {
 
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
+      // Make sure to disable form submission until Stripe.js has loaded.
       return;
     }
 
     setIsLoading(true);
+    setMessage(null);
 
-    // This is a SIMULATION. In a real app, `confirmPayment` would be used.
-    // Since we don't have a real backend to create a valid PaymentIntent,
-    // we cannot actually call `confirmPayment`. We will simulate a successful payment.
-    setTimeout(() => {
-        console.log("Simulating successful payment confirmation.");
-        setMessage("Payment successful!");
-        setIsLoading(false);
-        clearCart();
-        navigate('/order-success');
-    }, 2000);
-
-    /*
     // REAL IMPLEMENTATION for handling various payment methods:
     // The `confirmPayment` call below works for all payment methods supported
     // by the Payment Element, including credit cards, Google Pay, and Apple Pay.
@@ -44,13 +32,14 @@ const CheckoutForm: React.FC = () => {
         // The `return_url` is where the user will be redirected after completing the payment.
         // Stripe will append payment intent details to this URL, which you can use on the
         // success page to display order details.
-        return_url: `${window.location.origin}/order-success`,
+        // We use the HashRouter syntax `/#/` for the path.
+        return_url: `${window.location.origin}/#/order-success`,
       },
     });
 
     // This point will only be reached if there is an immediate error during confirmation.
     // Otherwise, the user is redirected to the `return_url`. For example, if they
-    // close the payment popup from their bank.
+    // close the payment popup from their bank or the card is declined.
     if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error.message || "An unexpected error occurred.");
     } else {
@@ -58,12 +47,11 @@ const CheckoutForm: React.FC = () => {
     }
 
     setIsLoading(false);
-    */
   };
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" />
+      <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
       <button 
         disabled={isLoading || !stripe || !elements} 
         id="submit"

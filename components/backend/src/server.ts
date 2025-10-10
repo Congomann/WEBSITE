@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { fileURLToPath } from 'url';
+import Stripe from 'stripe';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,6 +17,14 @@ const __dirname = path.dirname(__filename);
 const DB_PATH = path.join(__dirname, '..', 'db.json');
 // Define the path to the root of the project to serve static files
 const STATIC_PATH = path.join(__dirname, '..', '..', '..');
+
+// IMPORTANT: Replace with your secret key in a real environment.
+// For this simulation, we use a test key.
+// Ensure this is kept secret and not exposed on the client side.
+const stripe = new Stripe('sk_test_51PcbO7RsgfplLnehYvM5eB3Sfo1Sg6sWp9o2mvy0vKb8c13Vp5lC5fT9V3A3h6W2wF2f1v8a4c1n4Q0w2U7l9d2L004KjV2H2E', {
+  apiVersion: '2024-06-20',
+});
+
 
 // --- Middleware ---
 app.use(cors());
@@ -44,6 +53,33 @@ const writeDb = async (data: any) => {
 };
 
 // --- API Routes with Error Handling ---
+
+// ADD a new route to create a payment intent
+app.post('/api/create-payment-intent', async (req, res) => {
+    try {
+        const { amount, currency = 'usd' } = req.body;
+
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ message: 'Invalid amount' });
+        }
+
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount,
+            currency: currency,
+            automatic_payment_methods: {
+                enabled: true,
+            },
+        });
+
+        res.send({
+            clientSecret: paymentIntent.client_secret,
+        });
+    } catch (error: any) {
+        console.error('Error creating payment intent:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // GET all core services
 app.get('/api/services', async (req, res) => {

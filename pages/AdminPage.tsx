@@ -193,15 +193,19 @@ const AdminPage: React.FC = () => {
                         onToggle={() => toggleSection('manage-products')}
                     >
                         <div className="space-y-4">
-                            {products.map(prod => (
-                                <div key={prod.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
-                                    <div>
-                                        <p className="font-bold text-lg">{prod.name}</p>
-                                        <p className="text-sm text-gray-600">${prod.price.toFixed(2)}</p>
+                            {products.length > 0 ? (
+                                products.map(prod => (
+                                    <div key={prod.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                        <div>
+                                            <p className="font-bold text-lg">{prod.name}</p>
+                                            <p className="text-sm text-gray-600">${prod.price.toFixed(2)}</p>
+                                        </div>
+                                        <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
                                     </div>
-                                    <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-gray-500 text-center py-4">No products found. Add a new product to get started.</p>
+                            )}
                         </div>
                         {showProductForm ? (
                             <form onSubmit={handleAddProduct} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
