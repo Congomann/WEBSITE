@@ -77,7 +77,7 @@ const AboutPage: React.FC = () => {
 
                 <div className="grid md:grid-cols-2 gap-12 items-center mt-16">
                     <div className="rounded-lg overflow-hidden shadow-2xl">
-                        <img src="https://picsum.photos/800/600?random=1" alt="Professional team meeting" className="w-full h-full object-cover" />
+                        <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=800&auto=format&fit=crop" alt="Professional team meeting" className="w-full h-full object-cover" />
                     </div>
                     <div>
                         <h2 className="text-3xl font-bold text-brand-blue mb-4">Our History & Mission</h2>
@@ -104,7 +104,7 @@ const AboutPage: React.FC = () => {
                         </ul>
                     </div>
                      <div className="rounded-lg overflow-hidden shadow-2xl order-1 md:order-2">
-                        <img src="https://picsum.photos/800/600?random=2" alt="Community involvement" className="w-full h-full object-cover" />
+                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop" alt="Community involvement" className="w-full h-full object-cover" />
                     </div>
                 </div>
                 
