@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
@@ -32,6 +33,7 @@ const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
 const LifeInsurancePage = lazy(() => import('./pages/services/LifeInsurancePage'));
 const AutoInsurancePage = lazy(() => import('./pages/services/AutoInsurancePage'));
 const PropertyInsurancePage = lazy(() => import('./pages/services/PropertyInsurancePage'));
+const RealEstatePage = lazy(() => import('./pages/services/RealEstatePage'));
 const HealthInsurancePage = lazy(() => import('./pages/services/HealthInsurancePage'));
 const GroupBenefitsPage = lazy(() => import('./pages/services/GroupBenefitsPage'));
 
@@ -63,6 +65,7 @@ const App: React.FC = () => {
                     <Route path="/services/life" element={<LifeInsurancePage />} />
                     <Route path="/services/auto" element={<AutoInsurancePage />} />
                     <Route path="/services/property" element={<PropertyInsurancePage />} />
+                    <Route path="/services/real-estate" element={<RealEstatePage />} />
                     <Route path="/services/health" element={<HealthInsurancePage />} />
                     <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
                     <Route path="*" element={<NotFoundPage />} />

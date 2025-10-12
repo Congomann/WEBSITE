@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
 
@@ -58,6 +57,13 @@ const AboutPage: React.FC = () => {
         { name: 'Root Insurance', domain: 'joinroot.com' },
         { name: 'Symetra', domain: 'symetra.com' },
         { name: 'Transamerica', domain: 'transamerica.com' },
+        // New partners
+        { name: 'AIG', domain: 'aig.com' },
+        { name: 'Allianz', domain: 'allianz.com' },
+        { name: 'Ameritas Life', domain: 'ameritas.com' },
+        { name: 'Foresters Financial', domain: 'foresters.com' },
+        { name: 'Kansas City Life', domain: 'kclife.com' },
+        { name: 'Mutual of Omaha', domain: 'mutualofomaha.com' },
     ].sort((a, b) => a.name.localeCompare(b.name));
     
     return (
@@ -121,13 +127,16 @@ const AboutPage: React.FC = () => {
                     <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
                         We partner with the nation's top-rated insurance carriers to provide you with reliable coverage and competitive rates.
                     </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8 items-center max-w-6xl mx-auto">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-10 items-start max-w-6xl mx-auto">
                        {carriers.map((carrier) => (
-                            <div key={carrier.name} className="p-2 flex justify-center items-center h-24 opacity-80 hover:opacity-100 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105" title={carrier.name}>
-                                <CarrierLogo 
-                                    name={carrier.name} 
-                                    url={carrier.domain ? `https://logo.clearbit.com/${carrier.domain}` : null} 
-                                />
+                            <div key={carrier.name} className="text-center group transition-transform duration-300 transform hover:-translate-y-1" title={carrier.name}>
+                                <div className="p-4 flex justify-center items-center h-24 bg-gray-50 rounded-lg border border-gray-200 group-hover:shadow-lg transition-shadow">
+                                    <CarrierLogo 
+                                        name={carrier.name} 
+                                        url={carrier.domain ? `https://logo.clearbit.com/${carrier.domain}` : null} 
+                                    />
+                                </div>
+                                <p className="text-sm text-gray-700 font-medium mt-3">{carrier.name}</p>
                             </div>
                         ))}
                     </div>

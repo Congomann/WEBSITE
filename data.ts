@@ -18,6 +18,11 @@ export const core_services: Omit<Service, 'icon'>[] = [
     "description": "Secure your home and belongings against unforeseen events."
   },
   {
+    "name": "Real Estate",
+    "path": "/services/real-estate",
+    "description": "Guidance on buying, selling, and investing in residential and commercial properties."
+  },
+  {
     "name": "Health Insurance",
     "path": "/services/health",
     "description": "Access quality healthcare with individual and family plans."
@@ -95,6 +100,23 @@ export const service_details: { [key: string]: ServiceDetail[] } = {
       "description": "Add-ons for natural and accidental damages.",
       "benefits": []
     }
+  ],
+  "real-estate": [
+      {
+        "name": "Residential Sales",
+        "description": "Expert guidance for buying or selling your primary home, vacation property, or investment rental.",
+        "benefits": ["Market analysis", "Expert negotiation", "Seamless closing process"]
+      },
+      {
+        "name": "Commercial Properties",
+        "description": "Strategic advice for acquiring or divesting commercial real estate, including office, retail, and industrial spaces.",
+        "benefits": ["Investment analysis", "Lease negotiation", "Property management"]
+      },
+      {
+        "name": "Investment Properties",
+        "description": "Identify and analyze opportunities for real estate investment to build long-term wealth.",
+        "benefits": ["Cash flow analysis", "Portfolio diversification", "1031 exchanges"]
+      }
   ],
   "health": [
     {
