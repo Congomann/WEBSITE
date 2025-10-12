@@ -2,58 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { useCart } from '../contexts/CartContext';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
-import LoadingSpinner from '../components/LoadingSpinner';
-
-// IMPORTANT: Replace with your actual publishable key
-const stripePromise = loadStripe('pk_test_51PcbO7RsgfplLnehtjRGeE4YadTYHloObTd2MbF2F3g5yA1rKf43zW8WpG45jXg0mq1b0eDgRo8B3j2XnEUp2G9K00d23VWl1J');
-
 
 const OrderSuccessPage: React.FC = () => {
     const { clearCart } = useCart();
     const location = useLocation();
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-    const [message, setMessage] = useState<string | null>(null);
+    const [message, setMessage] = useState<string>('');
 
     useEffect(() => {
-        const clientSecret = new URLSearchParams(location.search).get(
-            'payment_intent_client_secret'
-        );
+        const query = new URLSearchParams(location.search);
+        const redirectStatus = query.get('redirect_status');
 
-        if (!clientSecret) {
+        if (redirectStatus === 'succeeded') {
+            setStatus('success');
+            setMessage('Your payment was successful!');
+            clearCart();
+        } else if (redirectStatus === 'failed') {
             setStatus('error');
-            setMessage('Could not verify payment status. Please check your account for order details.');
-            return;
-        }
-
-        const verifyPayment = async (stripe: Stripe | null) => {
-            if (!stripe) {
+            const paymentIntentError = query.get('payment_intent_error_message');
+            setMessage(paymentIntentError || 'Your payment failed. Please try again or contact support.');
+        } else {
+             setStatus('loading');
+             setMessage('Verifying your payment status...');
+             // A fallback or a more sophisticated check could be implemented here
+             // but for this flow, redirect_status is the primary indicator.
+             // If we arrive here without a status, something is wrong.
+             setTimeout(() => {
                 setStatus('error');
-                setMessage('Stripe could not be loaded.');
-                return;
-            }
-            const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
-
-            switch (paymentIntent?.status) {
-                case 'succeeded':
-                    setStatus('success');
-                    setMessage('Your payment was successful!');
-                    clearCart(); // Clear the cart only on successful payment verification
-                    break;
-                case 'processing':
-                    setStatus('success'); // Still show success, but with a different message
-                    setMessage('Your payment is processing. We will notify you when it is completed.');
-                    clearCart();
-                    break;
-                default:
-                    setStatus('error');
-                    setMessage('Payment failed. Please try again or contact support.');
-                    break;
-            }
-        };
-
-        stripePromise.then(verifyPayment);
-
+                setMessage('Could not determine payment status. Please check your account for order details.');
+             }, 3000);
+        }
     }, [location.search, clearCart]);
 
 
@@ -65,7 +43,7 @@ const OrderSuccessPage: React.FC = () => {
                         <div className="flex justify-center items-center h-24 w-full">
                            <div className="animate-spin rounded-full h-24 w-24 border-t-4 border-b-4 border-brand-blue"></div>
                         </div>
-                        <p className="mt-4 text-lg text-gray-700">Verifying your payment...</p>
+                        <p className="mt-4 text-lg text-gray-700">{message}</p>
                     </div>
                 );
             case 'success':
@@ -105,7 +83,7 @@ const OrderSuccessPage: React.FC = () => {
                         to="/products"
                         className="inline-block mt-4 bg-brand-gold text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-all duration-300 text-lg"
                     >
-                        Continue Shopping
+                        {status === 'success' ? 'Continue Shopping' : 'Try Again'}
                     </Link>
                 </div>
             </div>

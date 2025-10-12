@@ -1,10 +1,24 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import SEO from '../components/SEO';
 
 const CartPage: React.FC = () => {
     const { cartItems, removeFromCart, updateItemQuantity, totalPrice } = useCart();
+    const location = useLocation();
+    const [showCanceledMessage, setShowCanceledMessage] = useState(false);
+
+    useEffect(() => {
+        const query = new URLSearchParams(location.search);
+        if (query.get('canceled')) {
+            setShowCanceledMessage(true);
+            // Clean the URL so the message doesn't reappear on refresh
+            const url = new URL(window.location.href);
+            url.searchParams.delete('canceled');
+            window.history.replaceState({}, '', url.toString());
+        }
+    }, [location.search]);
+
 
     const handleQuantityChange = (productId: number, newQuantity: string) => {
         const quantity = parseInt(newQuantity, 10);
@@ -21,6 +35,13 @@ const CartPage: React.FC = () => {
             />
             <div className="container mx-auto px-6">
                 <h1 className="text-4xl font-extrabold text-brand-blue mb-8 text-center">Your Shopping Cart</h1>
+                
+                {showCanceledMessage && (
+                    <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md mb-8" role="alert">
+                        <p className="font-bold">Checkout Canceled</p>
+                        <p>You have canceled the checkout process. Your cart has been saved.</p>
+                    </div>
+                )}
 
                 {cartItems.length === 0 ? (
                     <div className="text-center py-16">

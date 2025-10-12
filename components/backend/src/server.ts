@@ -1,4 +1,3 @@
-
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -21,7 +20,7 @@ const STATIC_PATH = path.join(__dirname, '..', '..', '..');
 // IMPORTANT: Replace with your secret key in a real environment.
 // For this simulation, we use a test key.
 // Ensure this is kept secret and not exposed on the client side.
-const stripe = new Stripe('sk_test_51PcbO7RsgfplLnehYvM5eB3Sfo1Sg6sWp9o2mvy0vKb8c13Vp5lC5fT9V3A3h6W2wF2f1v8a4c1n4Q0w2U7l9d2L004KjV2H2E', {
+const stripe = new Stripe('sk_test_51SGWYuAyRjRzCXot6TLt1NcVnZXiknLKaT2t2ZJvXC3Rq9rZCaQKDtzKBQ5aspDlxoFDZfjou2to8mAhjWWTxvEI00dSlrfjgc', {
   apiVersion: '2024-06-20',
 });
 
@@ -54,19 +53,34 @@ const writeDb = async (data: any) => {
 
 // --- API Routes with Error Handling ---
 
-// ADD a new route to create a payment intent
 app.post('/api/create-payment-intent', async (req, res) => {
     try {
-        const { amount, currency = 'usd' } = req.body;
+        const { cartItems } = req.body;
 
-        if (!amount || amount <= 0) {
-            return res.status(400).json({ message: 'Invalid amount' });
+        if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+            return res.status(400).json({ message: 'Invalid cart items provided.' });
         }
 
-        // Create a PaymentIntent with the order amount and currency
+        // In a real application, you should fetch product prices from your database
+        // to prevent price manipulation on the client-side.
+        const amount = cartItems.reduce((total, item: any) => {
+            // Basic validation for item structure
+            if (typeof item.price !== 'number' || typeof item.quantity !== 'number' || item.price <= 0 || item.quantity <= 0) {
+                throw new Error(`Invalid item in cart: ${item.name}`);
+            }
+            return total + item.price * item.quantity;
+        }, 0);
+
+        // Convert to cents
+        const amountInCents = Math.round(amount * 100);
+
+        if (amountInCents <= 0) {
+            return res.status(400).json({ message: 'Invalid cart total.' });
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,
-            currency: currency,
+            amount: amountInCents,
+            currency: 'usd',
             automatic_payment_methods: {
                 enabled: true,
             },

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product } from '../types';
 import Accordion from '../components/Accordion';
@@ -27,6 +28,8 @@ const AdminPage: React.FC = () => {
     const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '', type: 'youtube' as 'youtube' | 'direct' });
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
     const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', description: '' });
+    const [productFormErrors, setProductFormErrors] = useState({ price: '', imageUrl: '' });
+
 
     const [openSection, setOpenSection] = useState<string | null>(null);
 
@@ -42,6 +45,17 @@ const AdminPage: React.FC = () => {
         }
         return null;
     };
+
+    const isValidUrl = (urlString: string): boolean => {
+        try {
+            new URL(urlString);
+            // Check for common image extensions for better validation, though not foolproof
+            return /\.(jpeg|jpg|gif|png|svg|webp)$/.test(urlString.toLowerCase());
+        } catch (e) {
+            return false;
+        }
+    };
+
 
     // --- State Management Handlers (simulating API) ---
     const handleDeleteItem = (type: 'advisors' | 'videos' | 'documents' | 'products', id: any) => {
@@ -146,14 +160,40 @@ const AdminPage: React.FC = () => {
     
     const handleAddProduct = (e: React.FormEvent) => {
         e.preventDefault();
+        const errors = { price: '', imageUrl: '' };
+        let isValid = true;
+
         const price = parseFloat(newProduct.price);
         if (isNaN(price) || price <= 0) {
-            alert("Please enter a valid price.");
+            errors.price = 'Please enter a valid positive number for the price.';
+            isValid = false;
+        }
+
+        if (!isValidUrl(newProduct.imageUrl)) {
+            errors.imageUrl = 'Please enter a valid URL for the image (e.g., https://.../image.png).';
+            isValid = false;
+        }
+        
+        setProductFormErrors(errors);
+
+        if (!isValid) {
             return;
         }
+
         addProduct({ ...newProduct, price });
         setNewProduct({ name: '', price: '', imageUrl: '', description: '' });
         setShowProductForm(false);
+    };
+
+    const handleShowProductForm = () => {
+        setShowProductForm(true);
+        setProductFormErrors({ price: '', imageUrl: '' });
+    };
+
+    const handleCancelProductForm = () => {
+        setShowProductForm(false);
+        setNewProduct({ name: '', price: '', imageUrl: '', description: '' });
+        setProductFormErrors({ price: '', imageUrl: '' });
     };
 
 
@@ -208,16 +248,33 @@ const AdminPage: React.FC = () => {
                             )}
                         </div>
                         {showProductForm ? (
-                            <form onSubmit={handleAddProduct} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                            <form onSubmit={handleAddProduct} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4" noValidate>
                                 <h4 className="text-lg font-bold text-brand-blue">Add New Product</h4>
-                                <div><label htmlFor="prod-name" className={formLabelClass}>Product Name</label><input type="text" name="name" id="prod-name" required value={newProduct.name} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
-                                <div><label htmlFor="prod-price" className={formLabelClass}>Price</label><input type="number" name="price" id="prod-price" required step="0.01" value={newProduct.price} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
-                                <div><label htmlFor="prod-imageUrl" className={formLabelClass}>Image URL</label><input type="text" name="imageUrl" id="prod-imageUrl" required value={newProduct.imageUrl} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} /></div>
-                                <div><label htmlFor="prod-description" className={formLabelClass}>Description</label><textarea name="description" id="prod-description" required rows={3} value={newProduct.description} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass}></textarea></div>
-                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Product</button><button type="button" onClick={() => setShowProductForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                                <div>
+                                    <label htmlFor="prod-name" className={formLabelClass}>Product Name</label>
+                                    <input type="text" name="name" id="prod-name" required value={newProduct.name} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} placeholder="e.g., Financial Peace Mug" />
+                                </div>
+                                <div>
+                                    <label htmlFor="prod-price" className={formLabelClass}>Price</label>
+                                    <input type="number" name="price" id="prod-price" required step="0.01" value={newProduct.price} onChange={(e) => handleInputChange(setNewProduct, e)} className={`${formInputClass} ${productFormErrors.price ? 'border-red-500' : ''}`} placeholder="e.g., 15.99" />
+                                    {productFormErrors.price && <p className="mt-1 text-sm text-red-600">{productFormErrors.price}</p>}
+                                </div>
+                                <div>
+                                    <label htmlFor="prod-imageUrl" className={formLabelClass}>Image URL</label>
+                                    <input type="text" name="imageUrl" id="prod-imageUrl" required value={newProduct.imageUrl} onChange={(e) => handleInputChange(setNewProduct, e)} className={`${formInputClass} ${productFormErrors.imageUrl ? 'border-red-500' : ''}`} placeholder="e.g., https://example.com/image.png" />
+                                    {productFormErrors.imageUrl && <p className="mt-1 text-sm text-red-600">{productFormErrors.imageUrl}</p>}
+                                </div>
+                                <div>
+                                    <label htmlFor="prod-description" className={formLabelClass}>Description</label>
+                                    <textarea name="description" id="prod-description" required rows={3} value={newProduct.description} onChange={(e) => handleInputChange(setNewProduct, e)} className={formInputClass} placeholder="e.g., A sturdy ceramic mug for your morning coffee."></textarea>
+                                </div>
+                                <div className="flex gap-4">
+                                    <button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Product</button>
+                                    <button type="button" onClick={handleCancelProductForm} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button>
+                                </div>
                             </form>
                         ) : (
-                             <button onClick={() => setShowProductForm(true)} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Product</button>
+                             <button onClick={handleShowProductForm} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Product</button>
                         )}
                     </Accordion>
                     
