@@ -1,4 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {
   children: ReactNode;
@@ -9,11 +10,11 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: Reverted to class property state initialization. The constructor-based
-  // approach was causing TypeScript errors where `this.props` and `this.state` were not
-  // recognized. The class property syntax is a more concise and modern way to
-  // initialize state in React class components.
-  state: State = { hasError: false };
+  // FIX: Replaced class property state initialization with a constructor to ensure `this.props` is correctly set up and recognized by TypeScript.
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
@@ -28,17 +29,30 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex flex-col items-center justify-center h-screen text-center bg-brand-light p-8">
-            <h1 className="text-4xl font-bold text-brand-blue mb-4">Oops! Something went wrong.</h1>
-            <p className="text-lg text-gray-700 mb-6">
-                We're sorry for the inconvenience. Please try refreshing the page.
-            </p>
-            <button
-                onClick={() => window.location.reload()}
-                className="bg-brand-gold text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-all duration-300 text-lg"
-            >
-                Refresh Page
-            </button>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center bg-brand-light p-8">
+            <div className="max-w-md">
+                <svg className="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <h1 className="text-4xl font-bold text-brand-blue mb-4">Oops! A Glitch Occurred.</h1>
+                <p className="text-lg text-gray-700 mb-8">
+                    We've encountered a temporary technical issue. Please don't worry, our team has been notified. You can try refreshing the page or return to our homepage.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="w-full sm:w-auto bg-brand-gold text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-yellow-400 transition-all duration-300 text-lg"
+                    >
+                        Refresh Page
+                    </button>
+                    <Link
+                        to="/"
+                        className="w-full sm:w-auto bg-transparent border-2 border-brand-blue text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-brand-blue hover:text-white transition-all duration-300 text-lg"
+                    >
+                        Go to Homepage
+                    </Link>
+                </div>
+            </div>
         </div>
       );
     }
