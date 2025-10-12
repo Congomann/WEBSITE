@@ -155,12 +155,29 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
         if (!validateForm()) return;
 
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            // The backend is set up to receive this request at `/api/quotes`
+            const response = await fetch('/api/quotes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                // Try to get a meaningful error message from the backend
+                const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred.' }));
+                throw new Error(errorData.message || 'Failed to submit quote. Please try again.');
+            }
+            
             console.log("Form Submitted:", formData);
             setSubmitted(true);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
     
     const isFormInvalid = useMemo(() => {
