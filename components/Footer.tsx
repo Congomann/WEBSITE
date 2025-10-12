@@ -93,7 +93,11 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
                 <div className="mt-8 border-t border-gray-700 pt-6 text-center text-gray-400 text-sm">
-                    <p>&copy; {currentYear} New Holland Financial Group. All Rights Reserved.</p>
+                    <div className="flex flex-col sm:flex-row justify-center items-center gap-x-4 gap-y-2">
+                        <span>&copy; {currentYear} New Holland Financial Group. All Rights Reserved.</span>
+                        <span className="hidden sm:inline">|</span>
+                        <Link to="/privacy-policy" className={linkClasses}>Privacy Policy</Link>
+                    </div>
                 </div>
             </div>
         </footer>

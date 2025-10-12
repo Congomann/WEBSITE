@@ -28,6 +28,7 @@ const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 
 // Lazy-loaded Service Pages
 const LifeInsurancePage = lazy(() => import('./pages/services/LifeInsurancePage'));
@@ -62,6 +63,7 @@ const App: React.FC = () => {
                     <Route path="/order-success" element={<OrderSuccessPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/admin" element={<AdminPage />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                     <Route path="/services/life" element={<LifeInsurancePage />} />
                     <Route path="/services/auto" element={<AutoInsurancePage />} />
                     <Route path="/services/property" element={<PropertyInsurancePage />} />
