@@ -22,6 +22,7 @@ export interface Advisor {
   specialties: string[];
   bio: string;
   languages?: string[];
+  email?: string;
 }
 
 export interface VideoResource {

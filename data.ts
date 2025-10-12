@@ -156,7 +156,8 @@ export const advisors: Advisor[] = [
     "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
     "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"],
     "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies for families and individuals, ensuring their long-term security.",
-    "languages": ["English", "Spanish"]
+    "languages": ["English", "Spanish"],
+    "email": "jessica.miller@newhollandfinancial-demo.com"
   },
   {
     "id": 2,
@@ -165,7 +166,8 @@ export const advisors: Advisor[] = [
     "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop",
     "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"],
     "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets with tailored coverage.",
-    "languages": ["English"]
+    "languages": ["English"],
+    "email": "brian.carter@newhollandfinancial-demo.com"
   },
   {
     "id": 3,
@@ -174,7 +176,8 @@ export const advisors: Advisor[] = [
     "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop",
     "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"],
     "bio": "Samantha is passionate about helping young families and individuals find affordable and effective coverage for their cars, homes, and loved ones.",
-    "languages": ["English", "Mandarin", "Cantonese"]
+    "languages": ["English", "Mandarin", "Cantonese"],
+    "email": "samantha.chen@newhollandfinancial-demo.com"
   }
 ];
 
