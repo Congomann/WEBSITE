@@ -54,19 +54,23 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, advisor })
     const handleTimeSelect = (time: string) => {
         setSelectedTime(time);
         
+        if (!selectedDate) return;
+
         // Generate Google Calendar link and open it
         const [hours, minutes] = time.split(':').map(Number);
-        const startTime = new Date(selectedDate!);
+        const startTime = new Date(selectedDate);
         startTime.setHours(hours, minutes, 0, 0);
 
         const endTime = new Date(startTime);
         endTime.setHours(startTime.getHours() + 1); // Assume 1-hour consultation
 
         const toGoogleISO = (date: Date) => date.toISOString().replace(/[-:]/g, '').slice(0, -5) + 'Z';
-
-        const googleMeetLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Consultation with ${advisor.name}`)}&dates=${toGoogleISO(startTime)}/${toGoogleISO(endTime)}&details=${encodeURIComponent(`Financial consultation regarding services from New Holland Financial Group.`)}&location=Google%20Meet&add=${encodeURIComponent(advisor.email || '')}`;
         
-        window.open(googleMeetLink, '_blank');
+        const eventDetails = `This is a 1-hour consultation with ${advisor.name} from New Holland Financial Group to discuss your financial needs.\n\nA Google Meet link will be automatically added to this event.`;
+        
+        const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(`Consultation with ${advisor.name}`)}&dates=${toGoogleISO(startTime)}/${toGoogleISO(endTime)}&details=${encodeURIComponent(eventDetails)}&location=${encodeURIComponent('Video conference via Google Meet')}&add=${encodeURIComponent(advisor.email || '')}`;
+        
+        window.open(googleCalendarUrl, '_blank');
         onClose();
     };
 
@@ -139,7 +143,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, advisor })
                             ))}
                         </div>
                          <p className="text-xs text-gray-500 mt-4 text-center">
-                            Note: Selecting a time will open Google Calendar in a new tab to confirm your 1-hour appointment.
+                            Note: Selecting a time will open Google Calendar in a new tab to create a 1-hour appointment with a <span className="font-semibold">Google Meet</span> video link included.
                         </p>
                     </div>
                 )}
