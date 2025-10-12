@@ -10,6 +10,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ErrorBoundary from './components/ErrorBoundary';
 import CartToast from './components/CartToast';
 import AnalyticsTracker from './components/AnalyticsTracker';
+import Breadcrumbs from './components/Breadcrumbs';
 
 // Context Providers
 import { CartProvider } from './contexts/CartContext';
@@ -49,6 +50,7 @@ const App: React.FC = () => {
             <Header />
             <CartToast />
             <main className="flex-grow">
+              <Breadcrumbs />
               <ErrorBoundary>
                 <Suspense fallback={<LoadingSpinner />}>
                   <Routes>

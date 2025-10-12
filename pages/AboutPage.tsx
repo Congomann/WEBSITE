@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import SEO from '../components/SEO';
 
 // A helper component to render logos with a fallback for clarity and reuse.
-const CarrierLogo: React.FC<{ name: string; url: string | null }> = ({ name, url }) => {
+const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: React.ReactNode }> = ({ name, url, customLogo }) => {
     const [error, setError] = useState(false);
+
+    if (customLogo) {
+        return <>{customLogo}</>;
+    }
 
     if (error || !url) {
         return (
@@ -27,13 +31,25 @@ const CarrierLogo: React.FC<{ name: string; url: string | null }> = ({ name, url
 
 
 const AboutPage: React.FC = () => {
-    const carriers = [
+    // Custom AIG Logo component
+    const AIGLogo = () => (
+        <svg role="img" aria-label="AIG logo" viewBox="0 0 1200 630" className="max-h-12 w-auto">
+            <rect width="1200" height="630" fill="#005daa"/>
+            <path d="M459.1,234.3h32.2l61.3,103.5l61.3-103.5h32.2v161.4h-28.9V275.6l-57.1,96.3h-15.1l-57.1-96.3 v120.1h-28.9V234.3z M711.9,234.3h80.7c28.9,0,48.1,19.3,48.1,47.2c0,21.7-13.4,36.9-32.2,42.5l39,71.7h-35.3l-34.4-66.5 h-37.8v66.5h-28.1V234.3z M740,261.3v47.2h38.7c14.2,0,23.4-8.8,23.4-23.4c0-14.6-9.2-23.8-23.4-23.8H740z M282.8,395.7V234.3 h28.9v161.4H282.8z" fill="#FFFFFF"/>
+        </svg>
+    );
+
+    interface Carrier {
+        name: string;
+        domain: string;
+        customLogo?: React.ReactNode;
+    }
+
+    const carriers: Carrier[] = [
         { name: 'Aflac', domain: 'aflac.com' },
         { name: 'Americo', domain: 'americo.com' },
         { name: 'American Continental Insurance Co', domain: 'aetna.com' },
-        // Fix: Use parent company domain for better logo resolution.
         { name: 'Banner Life', domain: 'lgamerica.com' },
-        // Blue Ridge is part of the Donegal Insurance Group
         { name: 'Blue Ridge Ins Co.', domain: 'donegalgroup.com' },
         { name: 'Bristol West', domain: 'bristolwest.com' },
         { name: 'Combined Insurance', domain: 'combinedinsurance.com' },
@@ -46,8 +62,7 @@ const AboutPage: React.FC = () => {
         { name: 'The Hartford', domain: 'thehartford.com' },
         { name: 'Illinois Mutual', domain: 'illinoismutual.com' },
         { name: 'John Hancock', domain: 'johnhancock.com' },
-        { name: 'LSW', domain: 'lsw.com' },
-        // Fix: Update company name for clarity.
+        { name: 'Protective Life', domain: 'protective.com' },
         { name: 'Liberty Bankers Life', domain: 'lbig.com' },
         { name: 'Lincoln Financial', domain: 'lfg.com' },
         { name: 'National Life Group', domain: 'nationallife.com' },
@@ -57,8 +72,7 @@ const AboutPage: React.FC = () => {
         { name: 'Root Insurance', domain: 'joinroot.com' },
         { name: 'Symetra', domain: 'symetra.com' },
         { name: 'Transamerica', domain: 'transamerica.com' },
-        // New partners
-        { name: 'AIG', domain: 'aig.com' },
+        { name: 'AIG', domain: 'aig.com', customLogo: <AIGLogo /> },
         { name: 'Allianz', domain: 'allianz.com' },
         { name: 'Ameritas Life', domain: 'ameritas.com' },
         { name: 'Foresters Financial', domain: 'foresters.com' },
@@ -134,6 +148,7 @@ const AboutPage: React.FC = () => {
                                     <CarrierLogo 
                                         name={carrier.name} 
                                         url={carrier.domain ? `https://logo.clearbit.com/${carrier.domain}` : null} 
+                                        customLogo={carrier.customLogo}
                                     />
                                 </div>
                                 <p className="text-sm text-gray-700 font-medium mt-3">{carrier.name}</p>
