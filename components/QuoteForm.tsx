@@ -65,6 +65,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
                 if (!value.trim()) return 'Email is required.';
                 if (!/\S+@\S+\.\S+/.test(value)) return 'Email is invalid.';
                 return '';
+            case 'phone':
+                if (!value.trim()) return 'Phone number is required.';
+                if (!/^\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})$/.test(value)) {
+                    return 'Please enter a valid 10-digit phone number.';
+                }
+                return '';
             case 'service':
                 return value ? '' : 'Please select a service.';
             case 'zipCode':
@@ -112,7 +118,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
     };
 
     const getRequiredFields = (service: string): (keyof FormDataState)[] => {
-        const baseFields: (keyof FormDataState)[] = ['name', 'email', 'service'];
+        const baseFields: (keyof FormDataState)[] = ['name', 'email', 'service', 'phone'];
         switch (service) {
             case 'Life Insurance':
                 return [...baseFields, 'dateOfBirth', 'maritalStatus'];
@@ -307,8 +313,12 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
                     {fieldErrors.email && <p id="email-error" className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>}
                 </div>
                 <div>
-                    <label htmlFor="phone" className={labelStyles}>Phone Number (Optional)</label>
-                    <input type="tel" name="phone" id="phone" value={formData.phone} onChange={handleChange} className={`${darkInputStyles} border-brand-blue`} />
+                    <label htmlFor="phone" className={labelStyles}>Phone Number</label>
+                    <div className="relative">
+                        <input type="tel" name="phone" id="phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} required aria-invalid={!!fieldErrors.phone} aria-describedby={fieldErrors.phone ? "phone-error" : undefined} className={`${darkInputStyles} ${fieldErrors.phone ? 'border-red-500 pr-10' : 'border-brand-blue'}`} />
+                        {fieldErrors.phone && <ErrorIcon />}
+                    </div>
+                    {fieldErrors.phone && <p id="phone-error" className="mt-1 text-sm text-red-600">{fieldErrors.phone}</p>}
                 </div>
                 <div>
                     <label htmlFor="message" className={labelStyles}>Notes / Message (Optional)</label>
