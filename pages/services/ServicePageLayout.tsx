@@ -11,15 +11,17 @@ interface ServicePageLayoutProps {
     serviceDetails: ServiceDetail[];
     seoDescription: string;
     seoKeywords: string;
+    structuredData: object;
 }
 
-const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({ title, icon, subtitle, serviceDetails, seoDescription, seoKeywords }) => {
+const ServicePageLayout: React.FC<ServicePageLayoutProps> = ({ title, icon, subtitle, serviceDetails, seoDescription, seoKeywords, structuredData }) => {
     return (
         <div className="bg-brand-light">
             <SEO
                 title={title}
                 description={seoDescription}
                 keywords={seoKeywords}
+                structuredData={structuredData}
             />
             <section className="bg-brand-blue text-white py-20">
                 <div className="container mx-auto px-6 text-center">

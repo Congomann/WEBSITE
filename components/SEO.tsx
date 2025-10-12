@@ -6,9 +6,10 @@ interface SEOProps {
   description: string;
   keywords?: string;
   noIndex?: boolean;
+  structuredData?: object;
 }
 
-const SEO: React.FC<SEOProps> = ({ title, description, keywords, noIndex }) => {
+const SEO: React.FC<SEOProps> = ({ title, description, keywords, noIndex, structuredData }) => {
   useEffect(() => {
     document.title = `${title} | New Holland Financial Group`;
 
@@ -43,7 +44,24 @@ const SEO: React.FC<SEOProps> = ({ title, description, keywords, noIndex }) => {
         removeMetaTag('robots');
     }
 
-  }, [title, description, keywords, noIndex]);
+    // Handle Structured Data (JSON-LD)
+    const scriptId = 'structured-data-script';
+    let scriptElement = document.getElementById(scriptId) as HTMLScriptElement | null;
+
+    if (structuredData) {
+        if (!scriptElement) {
+            scriptElement = document.createElement('script');
+            scriptElement.id = scriptId;
+            scriptElement.type = 'application/ld+json';
+            document.head.appendChild(scriptElement);
+        }
+        scriptElement.innerHTML = JSON.stringify(structuredData);
+    } else if (scriptElement) {
+        // If no structured data is provided for this page, remove the old one.
+        scriptElement.remove();
+    }
+
+  }, [title, description, keywords, noIndex, structuredData]);
 
   return null; // This component does not render anything
 };
