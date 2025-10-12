@@ -307,7 +307,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
                 <div>
                     <label htmlFor="email" className={labelStyles}>Email Address</label>
                     <div className="relative">
-                        <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} required aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? "email-error" : undefined} className={`${darkInputStyles} ${fieldErrors.email ? 'border-red-500 pr-10' : 'border-brand-blue'}`} />
+                        <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} required placeholder="you@example.com" aria-invalid={!!fieldErrors.email} aria-describedby={fieldErrors.email ? "email-error" : undefined} className={`${darkInputStyles} ${fieldErrors.email ? 'border-red-500 pr-10' : 'border-brand-blue'}`} />
                         {fieldErrors.email && <ErrorIcon />}
                     </div>
                     {fieldErrors.email && <p id="email-error" className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>}
