@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product } from '../types';
 import Accordion from '../components/Accordion';
@@ -23,7 +22,7 @@ const AdminPage: React.FC = () => {
     const [showProductForm, setShowProductForm] = useState(false);
     
     // States for new/editing items
-    const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+    const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
     const [editingAdvisor, setEditingAdvisor] = useState<Advisor | null>(null);
     const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '', type: 'youtube' as 'youtube' | 'direct' });
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
@@ -78,8 +77,12 @@ const AdminPage: React.FC = () => {
         e.preventDefault();
         
         const advisorDataFromForm = {
-            ...newAdvisor,
+            name: newAdvisor.name,
+            title: newAdvisor.title,
+            imageUrl: newAdvisor.imageUrl,
+            bio: newAdvisor.bio,
             specialties: newAdvisor.specialties.split(',').map(s => s.trim()).filter(Boolean),
+            languages: newAdvisor.languages.split(',').map(s => s.trim()).filter(Boolean),
         };
 
         if (editingAdvisor) {
@@ -95,7 +98,7 @@ const AdminPage: React.FC = () => {
         // Reset form and state
         setShowAdvisorForm(false);
         setEditingAdvisor(null);
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
     };
 
     const handleEditAdvisor = (advisor: Advisor) => {
@@ -106,20 +109,21 @@ const AdminPage: React.FC = () => {
             imageUrl: advisor.imageUrl,
             bio: advisor.bio,
             specialties: advisor.specialties.join(', '),
+            languages: advisor.languages ? advisor.languages.join(', ') : '',
         });
         setShowAdvisorForm(true);
     };
     
     const handleAddNewAdvisorClick = () => {
         setEditingAdvisor(null); // Ensure we are in "add" mode
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
         setShowAdvisorForm(true);
     };
 
     const handleAdvisorFormCancel = () => {
         setShowAdvisorForm(false);
         setEditingAdvisor(null);
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '' });
+        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
     };
 
     // --- Other Content Handlers ---
@@ -305,6 +309,7 @@ const AdminPage: React.FC = () => {
                                 <div><label htmlFor="title" className={formLabelClass}>Title</label><input type="text" name="title" id="title" required value={newAdvisor.title} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="imageUrl" className={formLabelClass}>Image URL</label><input type="text" name="imageUrl" id="imageUrl" required value={newAdvisor.imageUrl} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="specialties" className={formLabelClass}>Specialties</label><input type="text" name="specialties" id="specialties" required placeholder="comma, separated, values" value={newAdvisor.specialties} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
+                                <div><label htmlFor="languages" className={formLabelClass}>Languages</label><input type="text" name="languages" id="languages" placeholder="English, Spanish, French" value={newAdvisor.languages} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="bio" className={formLabelClass}>Bio</label><textarea name="bio" id="bio" required rows={3} value={newAdvisor.bio} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass}></textarea></div>
                                 <div className="flex gap-4">
                                     <button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">{editingAdvisor ? 'Save Changes' : 'Save Advisor'}</button>

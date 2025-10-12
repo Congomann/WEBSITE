@@ -16,7 +16,7 @@ const AdvisorProfilePage: React.FC = () => {
             <SEO
                 title={`${advisor.name} | Financial Advisor`}
                 description={`Learn more about ${advisor.name}, a ${advisor.title} at New Holland Financial Group. Specializing in ${advisor.specialties.join(', ')}. ${advisor.bio.substring(0, 120)}...`}
-                keywords={`financial advisor, insurance agent, ${advisor.name}, ${advisor.specialties.join(', ')}, New Holland Financial Group`}
+                keywords={`financial advisor, insurance agent, ${advisor.name}, ${advisor.specialties.join(', ')}, New Holland Financial Group, ${advisor.languages?.join(', ')}`}
             />
 
             <section className="bg-brand-blue text-white py-12">
@@ -56,6 +56,19 @@ const AdvisorProfilePage: React.FC = () => {
                                 </span>
                             ))}
                         </div>
+
+                        {advisor.languages && advisor.languages.length > 0 && (
+                            <>
+                                <h2 className="text-2xl font-bold text-brand-blue mt-10 mb-4 border-b pb-2">Languages Spoken</h2>
+                                <div className="flex flex-wrap gap-3">
+                                    {advisor.languages.map(lang => (
+                                        <span key={lang} className="bg-gray-200 text-gray-800 text-md font-semibold px-4 py-2 rounded-full">
+                                            {lang}
+                                        </span>
+                                    ))}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

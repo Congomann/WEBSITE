@@ -1,4 +1,3 @@
-
 import type { ReactNode } from 'react';
 
 export interface Service {
@@ -22,6 +21,7 @@ export interface Advisor {
   imageUrl: string;
   specialties: string[];
   bio: string;
+  languages?: string[];
 }
 
 export interface VideoResource {
