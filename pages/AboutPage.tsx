@@ -29,19 +29,30 @@ const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: Rea
     );
 };
 
+// AIG Logo SVG component
+const AIGLogo = () => (
+    <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" className="max-h-12 w-auto" aria-label="AIG Logo">
+        <rect width="100" height="50" rx="5" fill="#004b90" />
+        <text 
+            x="50" 
+            y="32" 
+            fontFamily="Arial, sans-serif" 
+            fontSize="24" 
+            fontWeight="bold" 
+            fill="white" 
+            textAnchor="middle" 
+            letterSpacing="2"
+        >
+            AIG
+        </text>
+    </svg>
+);
+
 
 const AboutPage: React.FC = () => {
-    // Custom AIG Logo component
-    const AIGLogo = () => (
-        <svg role="img" aria-label="AIG logo" viewBox="0 0 1200 630" className="max-h-12 w-auto">
-            <rect width="1200" height="630" fill="#005daa"/>
-            <path d="M459.1,234.3h32.2l61.3,103.5l61.3-103.5h32.2v161.4h-28.9V275.6l-57.1,96.3h-15.1l-57.1-96.3 v120.1h-28.9V234.3z M711.9,234.3h80.7c28.9,0,48.1,19.3,48.1,47.2c0,21.7-13.4,36.9-32.2,42.5l39,71.7h-35.3l-34.4-66.5 h-37.8v66.5h-28.1V234.3z M740,261.3v47.2h38.7c14.2,0,23.4-8.8,23.4-23.4c0-14.6-9.2-23.8-23.4-23.8H740z M282.8,395.7V234.3 h28.9v161.4H282.8z" fill="#FFFFFF"/>
-        </svg>
-    );
-
     interface Carrier {
         name: string;
-        domain: string;
+        domain: string | null;
         customLogo?: React.ReactNode;
     }
 
@@ -72,7 +83,7 @@ const AboutPage: React.FC = () => {
         { name: 'Root Insurance', domain: 'joinroot.com' },
         { name: 'Symetra', domain: 'symetra.com' },
         { name: 'Transamerica', domain: 'transamerica.com' },
-        { name: 'AIG', domain: 'aig.com', customLogo: <AIGLogo /> },
+        { name: 'AIG', domain: null, customLogo: <AIGLogo /> },
         { name: 'Allianz', domain: 'allianz.com' },
         { name: 'Ameritas Life', domain: 'ameritas.com' },
         { name: 'Foresters Financial', domain: 'foresters.com' },
