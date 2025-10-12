@@ -16,13 +16,16 @@ export interface ServiceDetail {
 
 export interface Advisor {
   id: number;
-  name: string;
+  name:string;
   title: string;
   imageUrl: string;
   specialties: string[];
   bio: string;
   languages?: string[];
   email?: string;
+  availability?: {
+    [dayOfWeek: string]: string[]; // e.g., { "Monday": ["09:00", "14:00"], ... }
+  };
 }
 
 export interface VideoResource {

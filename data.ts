@@ -157,7 +157,14 @@ export const advisors: Advisor[] = [
     "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"],
     "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies for families and individuals, ensuring their long-term security.",
     "languages": ["English", "Spanish"],
-    "email": "jessica.miller@newhollandfinancial-demo.com"
+    "email": "jessica.miller@newhollandfinancial-demo.com",
+    "availability": {
+      "Monday": ["09:00", "10:00", "11:00", "14:00"],
+      "Tuesday": ["09:00", "10:00", "14:00", "15:00"],
+      "Wednesday": ["10:00", "11:00", "12:00"],
+      "Thursday": ["09:00", "10:00", "15:00", "16:00"],
+      "Friday": ["09:00", "10:00"]
+    }
   },
   {
     "id": 2,
@@ -167,7 +174,12 @@ export const advisors: Advisor[] = [
     "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"],
     "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets with tailored coverage.",
     "languages": ["English"],
-    "email": "brian.carter@newhollandfinancial-demo.com"
+    "email": "brian.carter@newhollandfinancial-demo.com",
+    "availability": {
+      "Monday": ["10:00", "11:00", "13:00"],
+      "Wednesday": ["09:00", "10:00", "11:00", "14:00", "15:00"],
+      "Friday": ["13:00", "14:00", "15:00"]
+    }
   },
   {
     "id": 3,
@@ -177,7 +189,12 @@ export const advisors: Advisor[] = [
     "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"],
     "bio": "Samantha is passionate about helping young families and individuals find affordable and effective coverage for their cars, homes, and loved ones.",
     "languages": ["English", "Mandarin", "Cantonese"],
-    "email": "samantha.chen@newhollandfinancial-demo.com"
+    "email": "samantha.chen@newhollandfinancial-demo.com",
+    "availability": {
+      "Tuesday": ["10:00", "11:00", "13:00", "14:00", "15:00"],
+      "Wednesday": ["10:00", "11:00", "12:00"],
+      "Thursday": ["10:00", "11:00", "13:00", "14:00"]
+    }
   }
 ];
 
