@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
@@ -69,6 +70,7 @@ const Footer: React.FC = () => {
                             <li className="mb-2"><Link to="/services/life" className={linkClasses}>Services</Link></li>
                             <li className="mb-2"><Link to="/advisors" className={linkClasses}>Advisors</Link></li>
                             <li className="mb-2"><Link to="/resources" className={linkClasses}>Resources</Link></li>
+                            <li className="mb-2"><Link to="/join-our-team" className={linkClasses}>Join Our Team</Link></li>
                             <li className="mb-2"><Link to="/contact" className={linkClasses}>Contact Us</Link></li>
                         </ul>
                     </div>

@@ -11,11 +11,8 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: The original code used a class property for state initialization, which is modern syntax. However, the error 'Property 'props' does not exist' suggests a potential issue with the TypeScript environment's understanding of class fields. Reverting to a classic constructor with `super(props)` explicitly ensures that `this.props` is correctly initialized, resolving the error.
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  // FIX: The original implementation with a constructor was leading to type errors where `state` and `props` were not recognized on the class instance. Using a class property initializer for `state` is a more modern syntax and correctly declares the `state` property on the component instance, resolving the type errors.
+  state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
@@ -32,7 +29,7 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center bg-brand-light p-8">
             <div className="max-w-md">
-                <svg className="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" viewBox="0 0 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <h1 className="text-4xl font-bold text-brand-blue mb-4">Oops! A Glitch Occurred.</h1>

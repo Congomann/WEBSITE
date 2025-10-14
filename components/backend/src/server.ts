@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -258,6 +259,51 @@ app.post('/api/quotes', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
+// GET all agent applications
+app.get('/api/agent-applications', async (req, res) => {
+    try {
+        const db = await readDb();
+        res.json(db.agent_applications || []);
+    } catch (error) {
+        console.error('Error in /api/agent-applications:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// POST a new agent application
+app.post('/api/agent-applications', async (req, res) => {
+    try {
+        const newApplication = req.body;
+        const db = await readDb();
+        if (!db.agent_applications) {
+            db.agent_applications = [];
+        }
+        const newId = db.agent_applications.length > 0 ? Math.max(...db.agent_applications.map((a: any) => a.id)) + 1 : 1;
+        const applicationToSave = { ...newApplication, id: newId, submittedAt: new Date().toISOString() };
+        db.agent_applications.push(applicationToSave);
+        await writeDb(db);
+        res.status(201).json({ message: 'Application submitted successfully!', application: applicationToSave });
+    } catch (error) {
+        console.error('Error in POST /api/agent-applications:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// DELETE an agent application
+app.delete('/api/agent-applications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const db = await readDb();
+        db.agent_applications = db.agent_applications.filter((a: any) => a.id !== parseInt(id, 10));
+        await writeDb(db);
+        res.status(204).send();
+    } catch (error) {
+        console.error(`Error in DELETE /api/agent-applications/${req.params.id}:`, error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 
 // --- Static File Serving ---
 // Serve static files from the root of the project

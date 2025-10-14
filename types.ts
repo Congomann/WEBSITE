@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 
 export interface Service {
@@ -53,4 +54,16 @@ export interface Product {
 
 export interface CartItem extends Product {
   quantity: number;
+}
+
+export interface AgentApplication {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  licenses: string;
+  experience: number;
+  linkedin?: string;
+  message?: string;
+  submittedAt: string;
 }

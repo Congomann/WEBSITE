@@ -101,6 +101,7 @@ const Header: React.FC = () => {
                     </div>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
                     <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
+                    <NavLink to="/join-our-team" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Join Our Team</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
                 </nav>
                  <div className="hidden lg:flex items-center space-x-4">
@@ -168,6 +169,7 @@ const Header: React.FC = () => {
                     </div>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
                     <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
+                    <NavLink to="/join-our-team" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Join Our Team</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
                     <div className="mt-4 px-4 flex items-center justify-between gap-4">
                         <Link to="/contact" className="flex-grow text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300">

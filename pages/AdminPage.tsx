@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import type { Advisor, VideoResource, DocumentResource, Product } from '../types';
+
+import React, { useState, useEffect } from 'react';
+import type { Advisor, VideoResource, DocumentResource, Product, AgentApplication } from '../types';
 import Accordion from '../components/Accordion';
 import SEO from '../components/SEO';
 import { advisors as initialAdvisors, video_resources as initialVideos, document_resources as initialDocuments } from '../data';
@@ -14,6 +15,24 @@ const AdminPage: React.FC = () => {
     const [advisors, setAdvisors] = useState<Advisor[]>(initialAdvisors);
     const [videos, setVideos] = useState<VideoResource[]>(initialVideos);
     const [documents, setDocuments] = useState<DocumentResource[]>(initialDocuments);
+    const [applications, setApplications] = useState<AgentApplication[]>([]);
+
+    useEffect(() => {
+        // Fetch applications from the backend
+        const fetchApplications = async () => {
+            try {
+                const response = await fetch('/api/agent-applications');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch applications');
+                }
+                const data = await response.json();
+                setApplications(data);
+            } catch (error) {
+                console.error("Error fetching agent applications:", error);
+            }
+        };
+        fetchApplications();
+    }, []);
 
     // States for form visibility
     const [showAdvisorForm, setShowAdvisorForm] = useState(false);
@@ -57,13 +76,25 @@ const AdminPage: React.FC = () => {
 
 
     // --- State Management Handlers (simulating API) ---
-    const handleDeleteItem = (type: 'advisors' | 'videos' | 'documents' | 'products', id: any) => {
+    const handleDeleteItem = async (type: 'advisors' | 'videos' | 'documents' | 'products' | 'applications', id: any) => {
         if (!window.confirm('Are you sure you want to delete this item?')) return;
         
         if (type === 'advisors') setAdvisors(advisors.filter(a => a.id !== id));
         if (type === 'videos') setVideos(videos.filter(v => v.id !== id));
         if (type === 'documents') setDocuments(documents.filter(d => d.id !== id));
         if (type === 'products') deleteProduct(id);
+        if (type === 'applications') {
+            try {
+                const response = await fetch(`/api/agent-applications/${id}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    throw new Error('Failed to delete application');
+                }
+                setApplications(applications.filter(a => a.id !== id));
+            } catch (error) {
+                 console.error("Error deleting application:", error);
+                 alert('Could not delete application. Please try again.');
+            }
+        }
     };
 
     // Generic form input change handler
@@ -230,6 +261,39 @@ const AdminPage: React.FC = () => {
 
                 <h2 className="text-3xl font-bold text-brand-blue mb-6">Manage Content Sections</h2>
                 <div className="rounded-lg shadow-lg overflow-hidden mb-12">
+                    {/* MANAGE AGENT APPLICATIONS */}
+                    <Accordion
+                        title={`Manage Agent Applications (${applications.length})`}
+                        isOpen={openSection === 'manage-applications'}
+                        onToggle={() => toggleSection('manage-applications')}
+                    >
+                        <div className="space-y-4">
+                            {applications.length > 0 ? (
+                                applications.map(app => (
+                                    <div key={app.id} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <p className="font-bold text-lg">{app.name}</p>
+                                                <p className="text-sm text-gray-600">Submitted: {new Date(app.submittedAt).toLocaleString()}</p>
+                                            </div>
+                                            <button onClick={() => handleDeleteItem('applications', app.id)} className="text-red-500 hover:text-red-700 font-semibold flex-shrink-0 ml-4">Delete</button>
+                                        </div>
+                                        <div className="mt-4 border-t pt-4 text-sm text-gray-800 space-y-2">
+                                            <p><strong>Email:</strong> <a href={`mailto:${app.email}`} className="text-brand-blue hover:underline">{app.email}</a></p>
+                                            <p><strong>Phone:</strong> <a href={`tel:${app.phone}`} className="text-brand-blue hover:underline">{app.phone}</a></p>
+                                            <p><strong>Experience:</strong> {app.experience} years</p>
+                                            <p><strong>Licenses:</strong> {app.licenses}</p>
+                                            {app.linkedin && <p><strong>LinkedIn:</strong> <a href={app.linkedin} target="_blank" rel="noopener noreferrer" className="text-brand-blue hover:underline">View Profile</a></p>}
+                                            {app.message && <div className="mt-2"><p><strong>Message:</strong></p><p className="whitespace-pre-wrap bg-white p-2 border rounded">{app.message}</p></div>}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-gray-500 text-center py-4">No agent applications found.</p>
+                            )}
+                        </div>
+                    </Accordion>
+
                     {/* MANAGE PRODUCTS */}
                     <Accordion
                         title="Manage Products"
