@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
+import useIntersectionObserver from '../hooks/useIntersectionObserver';
 
 // A helper component to render logos with a fallback for clarity and reuse.
 const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: React.ReactNode }> = ({ name, url, customLogo }) => {
@@ -31,7 +31,7 @@ const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: Rea
 
 // AIG Logo SVG component
 const AIGLogo = () => (
-    <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" className="max-h-12 w-auto" aria-label="AIG Logo">
+    <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" className="max-h-16 w-auto" aria-label="AIG Logo">
         <rect width="100" height="50" rx="5" fill="#004b90" />
         <text 
             x="50" 
@@ -50,6 +50,8 @@ const AIGLogo = () => (
 
 
 const AboutPage: React.FC = () => {
+    const [containerRef, isVisible] = useIntersectionObserver({ threshold: 0.05 });
+
     interface Carrier {
         name: string;
         domain: string | null;
@@ -91,12 +93,29 @@ const AboutPage: React.FC = () => {
         { name: 'Mutual of Omaha', domain: 'mutualofomaha.com' },
     ].sort((a, b) => a.name.localeCompare(b.name));
     
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "FinancialService",
+        "name": "New Holland Financial Group",
+        "image": "https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=800&auto=format&fit=crop",
+        "url": "https://newhollandfinancial.com/",
+        "telephone": "(515) 555-0123",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Des Moines",
+          "addressRegion": "IA",
+          "addressCountry": "US"
+        },
+        "description": "Learn about New Holland Financial Group in Des Moines, IA. Discover our history, mission, and our commitment to providing tailored insurance solutions with integrity."
+    };
+    
     return (
         <div className="bg-white">
             <SEO
-                title="About Us"
-                description="Learn about New Holland Financial Group's history, mission, and commitment to providing tailored insurance solutions with integrity and personalized service."
-                keywords="about New Holland Financial, insurance agency, company history, financial advisors"
+                title="About New Holland Financial Group | Des Moines, IA"
+                description="Learn about New Holland Financial Group in Des Moines, IA. Discover our history, mission, and our commitment to providing tailored insurance solutions with integrity."
+                keywords="about New Holland Financial, insurance agency Des Moines, company history, financial advisors Iowa"
+                structuredData={structuredData}
             />
             <div className="container mx-auto px-6 py-20">
                 <div className="text-center">
@@ -152,17 +171,24 @@ const AboutPage: React.FC = () => {
                     <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
                         We partner with the nation's top-rated insurance carriers to provide you with reliable coverage and competitive rates.
                     </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-6 gap-y-10 items-start max-w-6xl mx-auto">
-                       {carriers.map((carrier) => (
-                            <div key={carrier.name} className="text-center group transition-transform duration-300 transform hover:-translate-y-1" title={carrier.name}>
-                                <div className="p-4 flex justify-center items-center h-24 bg-gray-50 rounded-lg border border-gray-200 group-hover:shadow-lg transition-shadow">
-                                    <CarrierLogo 
-                                        name={carrier.name} 
-                                        url={carrier.domain ? `https://logo.clearbit.com/${carrier.domain}` : null} 
-                                        customLogo={carrier.customLogo}
-                                    />
-                                </div>
-                                <p className="text-sm text-gray-700 font-medium mt-3">{carrier.name}</p>
+                    <div
+                        ref={containerRef}
+                        className="w-full max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+                    >
+                        {carriers.map((carrier, index) => (
+                            <div
+                                key={carrier.name}
+                                title={carrier.name}
+                                className={`aspect-square flex justify-center items-center p-4 bg-white rounded-lg shadow-md transition-all duration-500 ease-in-out transform filter grayscale hover:grayscale-0 hover:scale-105 ${
+                                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                                }`}
+                                style={{ transitionDelay: `${index * 50}ms` }}
+                            >
+                                <CarrierLogo
+                                    name={carrier.name}
+                                    url={carrier.domain ? `https://logo.clearbit.com/${carrier.domain}` : null}
+                                    customLogo={carrier.customLogo}
+                                />
                             </div>
                         ))}
                     </div>

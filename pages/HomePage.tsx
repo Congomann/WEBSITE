@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
@@ -47,8 +46,8 @@ const HomePage: React.FC = () => {
     return (
         <div>
             <SEO
-                title="Protecting Your Life, Family & Future"
-                description="A professional website for New Holland Financial Group, an insurance company, showcasing their services, company information, and providing a way for customers to get a quote."
+                title="Insurance in Des Moines, IA | Protecting Your Life, Family & Future"
+                description="New Holland Financial Group in Des Moines, IA, offers tailored insurance solutions for life, auto, home, and business to protect what matters most. Get your free quote today."
                 keywords="New Holland Financial, insurance, life insurance, auto insurance, home insurance, group benefits, Des Moines insurance"
             />
             {/* Hero Section */}

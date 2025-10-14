@@ -38,6 +38,7 @@
             'fade-in-down': 'fadeInDown 0.8s ease-out forwards',
             'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
             'fade-in': 'fadeIn 0.8s ease-out forwards',
+            'marquee': 'marquee 60s linear infinite',
           },
           keyframes: {
             fadeInDown: {
@@ -51,6 +52,10 @@
             fadeIn: {
               '0%': { opacity: 0 },
               '100%': { opacity: 1 },
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-100%)' },
             }
           }
         }

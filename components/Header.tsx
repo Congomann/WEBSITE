@@ -5,6 +5,7 @@ import type { Service } from '../types';
 import Logo from './Logo';
 import { core_services } from '../data';
 import { useCart } from '../contexts/CartContext';
+import GlobalSearch from './GlobalSearch';
 
 const ShoppingCartIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -12,10 +13,18 @@ const ShoppingCartIcon = () => (
     </svg>
 );
 
+const SearchIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+);
+
+
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
     const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const services: Service[] = core_services;
     const { cartCount } = useCart();
     
@@ -98,14 +107,23 @@ const Header: React.FC = () => {
                     <Link to="/contact" className="inline-block bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-yellow-400">
                         Get a Free Quote
                     </Link>
-                     <Link to="/cart" className="relative text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white" aria-label={`Shopping cart with ${cartCount} items`}>
-                        <ShoppingCartIcon />
-                        {cartCount > 0 && (
-                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                {cartCount}
-                            </span>
-                        )}
-                    </Link>
+                    <div className="flex items-center space-x-1">
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                            aria-label="Open search"
+                        >
+                            <SearchIcon />
+                        </button>
+                        <Link to="/cart" className="relative text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white" aria-label={`Shopping cart with ${cartCount} items`}>
+                            <ShoppingCartIcon />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -155,17 +173,27 @@ const Header: React.FC = () => {
                         <Link to="/contact" className="flex-grow text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300">
                             Get a Free Quote
                         </Link>
-                         <Link to="/cart" className="relative flex-shrink-0 text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300" aria-label={`Shopping cart with ${cartCount} items`}>
-                            <ShoppingCartIcon />
-                            {cartCount > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </Link>
+                         <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setIsSearchOpen(true)}
+                                className="relative flex-shrink-0 text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300"
+                                aria-label="Open search"
+                            >
+                                <SearchIcon />
+                            </button>
+                            <Link to="/cart" className="relative flex-shrink-0 text-white p-2 rounded-full hover:bg-white/10 transition-colors duration-300" aria-label={`Shopping cart with ${cartCount} items`}>
+                                <ShoppingCartIcon />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </Link>
+                         </div>
                     </div>
                 </div>
             )}
+            <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </header>
     );
 };
