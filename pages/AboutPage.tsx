@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
 import useIntersectionObserver from '../hooks/useIntersectionObserver';
+import { trusted_carriers } from '../data';
 
 // A helper component to render logos with a fallback for clarity and reuse.
 const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: React.ReactNode }> = ({ name, url, customLogo }) => {
@@ -29,70 +30,9 @@ const CarrierLogo: React.FC<{ name: string; url: string | null; customLogo?: Rea
     );
 };
 
-// AIG Logo SVG component
-const AIGLogo = () => (
-    <svg viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" className="max-h-16 w-auto" aria-label="AIG Logo">
-        <rect width="100" height="50" rx="5" fill="#004b90" />
-        <text 
-            x="50" 
-            y="32" 
-            fontFamily="Arial, sans-serif" 
-            fontSize="24" 
-            fontWeight="bold" 
-            fill="white" 
-            textAnchor="middle" 
-            letterSpacing="2"
-        >
-            AIG
-        </text>
-    </svg>
-);
-
-
 const AboutPage: React.FC = () => {
     const [containerRef, isVisible] = useIntersectionObserver({ threshold: 0.05 });
 
-    interface Carrier {
-        name: string;
-        domain: string | null;
-        customLogo?: React.ReactNode;
-    }
-
-    const carriers: Carrier[] = [
-        { name: 'Aflac', domain: 'aflac.com' },
-        { name: 'Americo', domain: 'americo.com' },
-        { name: 'American Continental Insurance Co', domain: 'aetna.com' },
-        { name: 'Banner Life', domain: 'lgamerica.com' },
-        { name: 'Blue Ridge Ins Co.', domain: 'donegalgroup.com' },
-        { name: 'Bristol West', domain: 'bristolwest.com' },
-        { name: 'Combined Insurance', domain: 'combinedinsurance.com' },
-        { name: 'Corebridge Financial', domain: 'corebridgefinancial.com' },
-        { name: 'F&G', domain: 'fglife.com' },
-        { name: 'Foremost', domain: 'foremost.com' },
-        { name: 'Geico', domain: 'geico.com' },
-        { name: 'Gerber Life', domain: 'gerberlife.com' },
-        { name: 'Great American Insurance Group', domain: 'greatamericaninsurancegroup.com' },
-        { name: 'The Hartford', domain: 'thehartford.com' },
-        { name: 'Illinois Mutual', domain: 'illinoismutual.com' },
-        { name: 'John Hancock', domain: 'johnhancock.com' },
-        { name: 'Protective Life', domain: 'protective.com' },
-        { name: 'Liberty Bankers Life', domain: 'lbig.com' },
-        { name: 'Lincoln Financial', domain: 'lfg.com' },
-        { name: 'National Life Group', domain: 'nationallife.com' },
-        { name: 'New York Life', domain: 'newyorklife.com' },
-        { name: 'Next Insurance', domain: 'nextinsurance.com' },
-        { name: 'Prudential', domain: 'prudential.com' },
-        { name: 'Root Insurance', domain: 'joinroot.com' },
-        { name: 'Symetra', domain: 'symetra.com' },
-        { name: 'Transamerica', domain: 'transamerica.com' },
-        { name: 'AIG', domain: null, customLogo: <AIGLogo /> },
-        { name: 'Allianz', domain: 'allianz.com' },
-        { name: 'Ameritas Life', domain: 'ameritas.com' },
-        { name: 'Foresters Financial', domain: 'foresters.com' },
-        { name: 'Kansas City Life', domain: 'kclife.com' },
-        { name: 'Mutual of Omaha', domain: 'mutualofomaha.com' },
-    ].sort((a, b) => a.name.localeCompare(b.name));
-    
     const structuredData = {
         "@context": "https://schema.org",
         "@type": "FinancialService",
@@ -175,7 +115,7 @@ const AboutPage: React.FC = () => {
                         ref={containerRef}
                         className="w-full max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
                     >
-                        {carriers.map((carrier, index) => (
+                        {trusted_carriers.map((carrier, index) => (
                             <div
                                 key={carrier.name}
                                 title={carrier.name}

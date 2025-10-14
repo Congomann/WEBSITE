@@ -5,6 +5,7 @@ import QuoteForm from '../components/QuoteForm';
 import type { Service } from '../types';
 import SEO from '../components/SEO';
 import { core_services } from '../data';
+import PartnerLogos from '../components/PartnerLogos';
 
 // Icons need to be defined in the component since they are JSX, not simple data.
 const LifeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -122,6 +123,14 @@ const HomePage: React.FC = () => {
                             </div>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            {/* Partner Logos Section */}
+            <section className="py-20 bg-brand-light">
+                <div className="container mx-auto px-6">
+                    <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Trusted Partners</h2>
+                    <PartnerLogos />
                 </div>
             </section>
             

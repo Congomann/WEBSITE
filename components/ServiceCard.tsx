@@ -11,7 +11,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, animationDelay = '0m
     return (
         <Link to={service.path} className="block group">
             <div
-                className="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col items-center text-center transition-all duration-[5000ms] ease-out transform group-hover:-translate-y-2"
+                className="bg-white rounded-lg shadow-lg p-8 h-full flex flex-col items-center text-center transition-all duration-300 ease-out transform group-hover:-translate-y-2"
             >
                 <div className="mb-4 transition-transform duration-300 ease-in-out group-hover:scale-110">
                     {service.icon}
