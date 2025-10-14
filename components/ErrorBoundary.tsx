@@ -11,11 +11,8 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: Property 'props' does not exist on type 'ErrorBoundary'. Re-introducing the constructor with explicit props typing ensures that `this.props` is correctly initialized and recognized by the type checker.
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  // FIX: Replaced the constructor with a public class field for state initialization. This is a more modern and robust syntax that resolves TypeScript errors where 'this.state' and 'this.props' were not being correctly recognized on the component instance.
+  state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.

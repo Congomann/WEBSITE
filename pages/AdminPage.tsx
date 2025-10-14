@@ -8,14 +8,34 @@ import { useProducts } from '../contexts/ProductContext';
 
 
 const AdminPage: React.FC = () => {
-    // Products are now managed via context
+    // Products are managed via context
     const { products, addProduct, deleteProduct } = useProducts();
 
-    // States for existing content, initialized with static data
-    const [advisors, setAdvisors] = useState<Advisor[]>(initialAdvisors);
-    const [videos, setVideos] = useState<VideoResource[]>(initialVideos);
-    const [documents, setDocuments] = useState<DocumentResource[]>(initialDocuments);
+    // States for content, initialized from localStorage or initial data
+    const [advisors, setAdvisors] = useState<Advisor[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-advisors');
+            return localData ? JSON.parse(localData) : initialAdvisors;
+        } catch (error) { return initialAdvisors; }
+    });
+    const [videos, setVideos] = useState<VideoResource[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-videos');
+            return localData ? JSON.parse(localData) : initialVideos;
+        } catch (error) { return initialVideos; }
+    });
+    const [documents, setDocuments] = useState<DocumentResource[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-documents');
+            return localData ? JSON.parse(localData) : initialDocuments;
+        } catch (error) { return initialDocuments; }
+    });
     const [applications, setApplications] = useState<AgentApplication[]>([]);
+
+    // Persist changes to localStorage
+    useEffect(() => { localStorage.setItem('nhf-advisors', JSON.stringify(advisors)); }, [advisors]);
+    useEffect(() => { localStorage.setItem('nhf-videos', JSON.stringify(videos)); }, [videos]);
+    useEffect(() => { localStorage.setItem('nhf-documents', JSON.stringify(documents)); }, [documents]);
 
     useEffect(() => {
         // Fetch applications from the backend
@@ -44,7 +64,9 @@ const AdminPage: React.FC = () => {
     const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
     const [editingAdvisor, setEditingAdvisor] = useState<Advisor | null>(null);
     const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '', type: 'youtube' as 'youtube' | 'direct' });
+    const [editingVideo, setEditingVideo] = useState<VideoResource | null>(null);
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
+    const [editingDocument, setEditingDocument] = useState<DocumentResource | null>(null);
     const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', description: '' });
     const [productFormErrors, setProductFormErrors] = useState({ price: '', imageUrl: '' });
 
@@ -157,8 +179,32 @@ const AdminPage: React.FC = () => {
         setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '' });
     };
 
-    // --- Other Content Handlers ---
-    const handleAddVideo = (e: React.FormEvent) => {
+    // --- Video Handlers ---
+    const handleAddNewVideoClick = () => {
+        setEditingVideo(null);
+        setNewVideo({ url: '', title: '', description: '', type: 'youtube' });
+        setShowVideoForm(true);
+    };
+
+    const handleEditVideo = (video: VideoResource) => {
+        setEditingVideo(video);
+        const url = video.type === 'youtube' ? `https://www.youtube.com/watch?v=${video.source}` : video.source;
+        setNewVideo({
+            url: url,
+            title: video.title,
+            description: video.description,
+            type: video.type,
+        });
+        setShowVideoForm(true);
+    };
+
+    const handleVideoFormCancel = () => {
+        setShowVideoForm(false);
+        setEditingVideo(null);
+        setNewVideo({ url: '', title: '', description: '', type: 'youtube' });
+    };
+
+    const handleVideoFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!newVideo.url || !newVideo.title) return alert("Video URL and Title are required.");
 
@@ -171,28 +217,61 @@ const AdminPage: React.FC = () => {
             source = youtubeId;
         }
         
-        const videoData: VideoResource = {
-            id: `vid-${Date.now()}`,
+        const videoData = {
             title: newVideo.title,
             description: newVideo.description,
             type: newVideo.type,
             source: source
         };
 
-        setVideos(prev => [...prev, videoData]);
-        setNewVideo({ url: '', title: '', description: '', type: 'youtube' });
-        setShowVideoForm(false);
+        if (editingVideo) {
+            setVideos(videos.map(v => v.id === editingVideo.id ? { ...editingVideo, ...videoData } : v));
+        } else {
+            const newVideoWithId: VideoResource = { ...videoData, id: `vid-${Date.now()}` };
+            setVideos(prev => [...prev, newVideoWithId]);
+        }
+        
+        handleVideoFormCancel();
     };
 
-    const handleAddDocument = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newDocument.title || !newDocument.filePath) return alert("Title and File Path are required.");
-        const docData = { ...newDocument, id: `doc-${Date.now()}` };
-        setDocuments(prev => [...prev, docData]);
+    // --- Document Handlers ---
+    const handleAddNewDocumentClick = () => {
+        setEditingDocument(null);
         setNewDocument({ title: '', description: '', filePath: '' });
-        setShowDocumentForm(false);
+        setShowDocumentForm(true);
     };
     
+    const handleEditDocument = (doc: DocumentResource) => {
+        setEditingDocument(doc);
+        setNewDocument({
+            title: doc.title,
+            description: doc.description,
+            filePath: doc.filePath,
+        });
+        setShowDocumentForm(true);
+    };
+
+    const handleDocumentFormCancel = () => {
+        setShowDocumentForm(false);
+        setEditingDocument(null);
+        setNewDocument({ title: '', description: '', filePath: '' });
+    };
+
+    const handleDocumentFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newDocument.title || !newDocument.filePath) return alert("Title and File Path are required.");
+        
+        if (editingDocument) {
+            setDocuments(documents.map(d => d.id === editingDocument.id ? { ...editingDocument, ...newDocument } : d));
+        } else {
+            const docData = { ...newDocument, id: `doc-${Date.now()}` };
+            setDocuments(prev => [...prev, docData]);
+        }
+        
+        handleDocumentFormCancel();
+    };
+    
+    // --- Product Handlers ---
     const handleAddProduct = (e: React.FormEvent) => {
         e.preventDefault();
         const errors = { price: '', imageUrl: '' };
@@ -394,18 +473,21 @@ const AdminPage: React.FC = () => {
                     >
                         <div className="space-y-4">
                             {videos.map(vid => (
-                                 <div key={vid.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                 <div key={vid.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                      <div>
                                          <p className="font-bold text-lg">{vid.title}</p>
                                          <p className="text-sm text-gray-600 capitalize">Type: {vid.type}</p>
                                      </div>
-                                     <button onClick={() => handleDeleteItem('videos', vid.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                     <div className="flex gap-4">
+                                        <button onClick={() => handleEditVideo(vid)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button>
+                                        <button onClick={() => handleDeleteItem('videos', vid.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                     </div>
                                  </div>
                             ))}
                         </div>
                         {showVideoForm ? (
-                             <form onSubmit={handleAddVideo} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
-                                <h4 className="text-lg font-bold text-brand-blue">Add New Video</h4>
+                             <form onSubmit={handleVideoFormSubmit} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                                <h4 className="text-lg font-bold text-brand-blue">{editingVideo ? 'Edit Video' : 'Add New Video'}</h4>
                                 
                                 <div>
                                     <label className={formLabelClass}>Video Type</label>
@@ -429,10 +511,13 @@ const AdminPage: React.FC = () => {
                                 </div>
                                 <div><label htmlFor="vid-title" className={formLabelClass}>Title</label><input type="text" name="title" id="vid-title" required value={newVideo.title} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="vid-desc" className={formLabelClass}>Description</label><textarea name="description" id="vid-desc" rows={3} value={newVideo.description} onChange={(e) => handleInputChange(setNewVideo, e)} className={formInputClass}></textarea></div>
-                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Video</button><button type="button" onClick={() => setShowVideoForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                                <div className="flex gap-4">
+                                    <button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">{editingVideo ? 'Save Changes' : 'Save Video'}</button>
+                                    <button type="button" onClick={handleVideoFormCancel} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button>
+                                </div>
                             </form>
                         ) : (
-                            <button onClick={() => setShowVideoForm(true)} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Video</button>
+                            <button onClick={handleAddNewVideoClick} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Video</button>
                         )}
                     </Accordion>
 
@@ -444,25 +529,31 @@ const AdminPage: React.FC = () => {
                     >
                         <div className="space-y-4">
                             {documents.map(doc => (
-                                <div key={doc.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                <div key={doc.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                     <div>
                                         <p className="font-bold text-lg">{doc.title}</p>
                                         <p className="text-sm text-gray-600">{doc.filePath}</p>
                                     </div>
-                                    <button onClick={() => handleDeleteItem('documents', doc.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    <div className="flex gap-4">
+                                        <button onClick={() => handleEditDocument(doc)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button>
+                                        <button onClick={() => handleDeleteItem('documents', doc.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                         {showDocumentForm ? (
-                            <form onSubmit={handleAddDocument} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
-                                <h4 className="text-lg font-bold text-brand-blue">Add New Document</h4>
+                            <form onSubmit={handleDocumentFormSubmit} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4">
+                                <h4 className="text-lg font-bold text-brand-blue">{editingDocument ? 'Edit Document' : 'Add New Document'}</h4>
                                 <div><label htmlFor="doc-title" className={formLabelClass}>Title</label><input type="text" name="title" id="doc-title" required value={newDocument.title} onChange={(e) => handleInputChange(setNewDocument, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="doc-desc" className={formLabelClass}>Description</label><textarea name="description" id="doc-desc" rows={3} value={newDocument.description} onChange={(e) => handleInputChange(setNewDocument, e)} className={formInputClass}></textarea></div>
                                 <div><label htmlFor="doc-path" className={formLabelClass}>File Path (URL)</label><input type="text" name="filePath" id="doc-path" required value={newDocument.filePath} onChange={(e) => handleInputChange(setNewDocument, e)} className={formInputClass} /></div>
-                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Document</button><button type="button" onClick={() => setShowDocumentForm(false)} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                                <div className="flex gap-4">
+                                    <button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">{editingDocument ? 'Save Changes' : 'Save Document'}</button>
+                                    <button type="button" onClick={handleDocumentFormCancel} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button>
+                                </div>
                             </form>
                         ) : (
-                            <button onClick={() => setShowDocumentForm(true)} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Document</button>
+                            <button onClick={handleAddNewDocumentClick} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors">Add New Document</button>
                         )}
                     </Accordion>
                 </div>
