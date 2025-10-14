@@ -1,4 +1,3 @@
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,8 +10,11 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: Replaced the constructor with a public class field for state initialization. This is a more modern and robust syntax that resolves TypeScript errors where 'this.state' and 'this.props' were not being correctly recognized on the component instance.
-  state: State = { hasError: false };
+  // FIX: Re-introduced the constructor for state initialization. The public class field syntax for `state` can cause issues with TypeScript's type inference for `this.props` in certain build environments. Using a constructor is a more robust way to ensure the component's props and state are correctly typed.
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.

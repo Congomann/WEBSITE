@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 // FIX: Define an interface for the form state to prevent TypeScript from widening the
@@ -29,7 +28,8 @@ const AgentApplicationForm: React.FC = () => {
     });
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [apiError, setApiError] = useState<string | null>(null);
+    const [submissionError, setSubmissionError] = useState<string | null>(null);
     const [submitted, setSubmitted] = useState(false);
 
     const validateField = (name: string, value: string): string => {
@@ -78,6 +78,9 @@ const AgentApplicationForm: React.FC = () => {
                 return newErrors;
             });
         }
+        if (submissionError) {
+            setSubmissionError(null);
+        }
     };
     
     const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -112,8 +115,13 @@ const AgentApplicationForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
-        if (!validateForm()) return;
+        setApiError(null);
+        setSubmissionError(null);
+
+        if (!validateForm()) {
+            setSubmissionError('Please correct the highlighted errors below before submitting.');
+            return;
+        }
 
         setIsLoading(true);
         try {
@@ -131,7 +139,7 @@ const AgentApplicationForm: React.FC = () => {
             }
             setSubmitted(true);
         } catch (err: any) {
-            setError(err.message);
+            setApiError(err.message);
         } finally {
             setIsLoading(false);
         }
@@ -164,6 +172,12 @@ const AgentApplicationForm: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            {submissionError && (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+                    <p className="font-bold">Could Not Submit Application</p>
+                    <p>{submissionError}</p>
+                </div>
+            )}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label htmlFor="name" className={labelStyles}>Full Name</label>
@@ -241,7 +255,7 @@ const AgentApplicationForm: React.FC = () => {
                 </div>
                  {fieldErrors.message && <p className={errorTextStyles}>{fieldErrors.message}</p>}
             </div>
-            {error && <p className="text-sm text-center text-red-600 bg-red-50 p-3 rounded-md">{error}</p>}
+            {apiError && <p className="text-sm text-center text-red-600 bg-red-50 p-3 rounded-md">{apiError}</p>}
             <div>
                 <button type="submit" disabled={isLoading} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-lg font-bold text-brand-blue bg-brand-gold hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300">
                     {isLoading ? (
