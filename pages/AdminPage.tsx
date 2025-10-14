@@ -281,8 +281,9 @@ const AdminPage: React.FC = () => {
                                         <div className="mt-4 border-t pt-4 text-sm text-gray-800 space-y-2">
                                             <p><strong>Email:</strong> <a href={`mailto:${app.email}`} className="text-brand-blue hover:underline">{app.email}</a></p>
                                             <p><strong>Phone:</strong> <a href={`tel:${app.phone}`} className="text-brand-blue hover:underline">{app.phone}</a></p>
+                                            <p><strong>Location:</strong> {app.city}, {app.state}</p>
+                                            <p><strong>License No:</strong> {app.licenseNo}</p>
                                             <p><strong>Experience:</strong> {app.experience} years</p>
-                                            <p><strong>Licenses:</strong> {app.licenses}</p>
                                             {app.linkedin && <p><strong>LinkedIn:</strong> <a href={app.linkedin} target="_blank" rel="noopener noreferrer" className="text-brand-blue hover:underline">View Profile</a></p>}
                                             {app.message && <div className="mt-2"><p><strong>Message:</strong></p><p className="whitespace-pre-wrap bg-white p-2 border rounded">{app.message}</p></div>}
                                         </div>

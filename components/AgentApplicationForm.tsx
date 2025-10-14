@@ -7,7 +7,9 @@ interface AgentFormData {
     name: string;
     email: string;
     phone: string;
-    licenses: string;
+    licenseNo: string;
+    city: string;
+    state: string;
     experience: string;
     linkedin: string;
     message: string;
@@ -18,7 +20,9 @@ const AgentApplicationForm: React.FC = () => {
         name: '',
         email: '',
         phone: '',
-        licenses: '',
+        licenseNo: '',
+        city: '',
+        state: '',
         experience: '',
         linkedin: '',
         message: '',
@@ -42,17 +46,23 @@ const AgentApplicationForm: React.FC = () => {
                     return 'Please enter a valid 10-digit phone number.';
                 }
                 return '';
-            case 'licenses':
-                return value.trim() ? '' : 'Please list your current licenses.';
+            case 'licenseNo':
+                return value.trim() ? '' : 'License number is required.';
+            case 'city':
+                return value.trim() ? '' : 'City is required.';
+            case 'state':
+                return value.trim() ? '' : 'State is required.';
             case 'experience':
                 if (!value.trim()) return 'Years of experience is required.';
                 if (isNaN(Number(value)) || Number(value) < 0) return 'Please enter a valid number.';
                 return '';
             case 'linkedin':
-                if (value.trim() && !/^https?:\/\/(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/.test(value)) {
+                if (value.trim() && !/^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9-]+\/?$/.test(value)) {
                     return 'Please enter a valid LinkedIn profile URL.';
                 }
                 return '';
+            case 'message':
+                return value.trim() ? '' : 'A message is required.';
             default:
                 return '';
         }
@@ -77,7 +87,7 @@ const AgentApplicationForm: React.FC = () => {
     };
 
     const validateForm = (): boolean => {
-        const requiredFields: (keyof AgentFormData)[] = ['name', 'email', 'phone', 'licenses', 'experience'];
+        const requiredFields: (keyof AgentFormData)[] = ['name', 'email', 'phone', 'licenseNo', 'city', 'state', 'experience', 'message'];
         const newErrors: { [key: string]: string } = {};
         let isValid = true;
         
@@ -90,9 +100,9 @@ const AgentApplicationForm: React.FC = () => {
         });
 
         // Also validate optional fields if they have content
-        const error = validateField('linkedin', formData.linkedin);
-         if (error) {
-            newErrors['linkedin'] = error;
+        const linkedinError = validateField('linkedin', formData.linkedin);
+         if (linkedinError) {
+            newErrors['linkedin'] = linkedinError;
             isValid = false;
         }
 
@@ -182,21 +192,39 @@ const AgentApplicationForm: React.FC = () => {
                     {fieldErrors.phone && <p className={errorTextStyles}>{fieldErrors.phone}</p>}
                 </div>
                 <div>
-                    <label htmlFor="experience" className={labelStyles}>Years of Experience</label>
+                    <label htmlFor="licenseNo" className={labelStyles}>License Number</label>
                     <div className="relative">
-                        <input type="number" name="experience" id="experience" value={formData.experience} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.experience ? errorInputStyles : 'border-gray-300'}`} />
-                        {fieldErrors.experience && <ErrorIcon />}
+                        <input type="text" name="licenseNo" id="licenseNo" value={formData.licenseNo} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.licenseNo ? errorInputStyles : 'border-gray-300'}`} />
+                        {fieldErrors.licenseNo && <ErrorIcon />}
                     </div>
-                    {fieldErrors.experience && <p className={errorTextStyles}>{fieldErrors.experience}</p>}
+                    {fieldErrors.licenseNo && <p className={errorTextStyles}>{fieldErrors.licenseNo}</p>}
+                </div>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div>
+                    <label htmlFor="city" className={labelStyles}>City</label>
+                    <div className="relative">
+                        <input type="text" name="city" id="city" value={formData.city} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.city ? errorInputStyles : 'border-gray-300'}`} />
+                        {fieldErrors.city && <ErrorIcon />}
+                    </div>
+                    {fieldErrors.city && <p className={errorTextStyles}>{fieldErrors.city}</p>}
+                </div>
+                 <div>
+                    <label htmlFor="state" className={labelStyles}>State</label>
+                    <div className="relative">
+                        <input type="text" name="state" id="state" value={formData.state} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.state ? errorInputStyles : 'border-gray-300'}`} />
+                        {fieldErrors.state && <ErrorIcon />}
+                    </div>
+                    {fieldErrors.state && <p className={errorTextStyles}>{fieldErrors.state}</p>}
                 </div>
              </div>
              <div>
-                <label htmlFor="licenses" className={labelStyles}>Current State Licenses</label>
+                <label htmlFor="experience" className={labelStyles}>How long have you been an agent? (Years)</label>
                 <div className="relative">
-                    <input type="text" name="licenses" id="licenses" value={formData.licenses} onChange={handleChange} onBlur={handleBlur} required placeholder="e.g., Iowa Life & Health, Pennsylvania P&C" className={`${inputStyles} ${fieldErrors.licenses ? errorInputStyles : 'border-gray-300'}`} />
-                    {fieldErrors.licenses && <ErrorIcon />}
+                    <input type="number" name="experience" id="experience" value={formData.experience} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.experience ? errorInputStyles : 'border-gray-300'}`} />
+                    {fieldErrors.experience && <ErrorIcon />}
                 </div>
-                {fieldErrors.licenses && <p className={errorTextStyles}>{fieldErrors.licenses}</p>}
+                {fieldErrors.experience && <p className={errorTextStyles}>{fieldErrors.experience}</p>}
             </div>
              <div>
                 <label htmlFor="linkedin" className={labelStyles}>LinkedIn Profile URL (Optional)</label>
@@ -207,8 +235,11 @@ const AgentApplicationForm: React.FC = () => {
                 {fieldErrors.linkedin && <p className={errorTextStyles}>{fieldErrors.linkedin}</p>}
             </div>
              <div>
-                <label htmlFor="message" className={labelStyles}>Cover Letter / Message (Optional)</label>
-                <textarea name="message" id="message" rows={5} value={formData.message} onChange={handleChange} placeholder="Tell us why you'd be a great fit for our team. You can also paste your resume here." className={`${inputStyles} border-gray-300`}></textarea>
+                <label htmlFor="message" className={labelStyles}>Message (Required)</label>
+                <div className="relative">
+                    <textarea name="message" id="message" rows={5} value={formData.message} onChange={handleChange} onBlur={handleBlur} required placeholder="Tell us why you'd be a great fit for our team. You can also paste your resume here." className={`${inputStyles} ${fieldErrors.message ? errorInputStyles : 'border-gray-300'}`}></textarea>
+                </div>
+                 {fieldErrors.message && <p className={errorTextStyles}>{fieldErrors.message}</p>}
             </div>
             {error && <p className="text-sm text-center text-red-600 bg-red-50 p-3 rounded-md">{error}</p>}
             <div>

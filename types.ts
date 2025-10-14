@@ -61,9 +61,11 @@ export interface AgentApplication {
   name: string;
   email: string;
   phone: string;
-  licenses: string;
+  licenseNo: string;
+  city: string;
+  state: string;
   experience: number;
   linkedin?: string;
-  message?: string;
+  message: string;
   submittedAt: string;
 }
