@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product, AgentApplication } from '../types';
 import Accordion from '../components/Accordion';
@@ -71,8 +72,9 @@ const AdminPage: React.FC = () => {
     };
 
     // --- API Handlers ---
-    const handleDeleteItem = async (type: 'advisors' | 'videos' | 'documents' | 'products' | 'applications', id: any) => {
-        if (!window.confirm('Are you sure you want to delete this item?')) return;
+    const handleDeleteItem = async (type: 'advisors' | 'videos' | 'documents' | 'products' | 'applications', id: any, name?: string) => {
+        const itemName = name || 'this item';
+        if (!window.confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) return;
         
         let url = '';
         switch (type) {
@@ -355,7 +357,7 @@ const AdminPage: React.FC = () => {
                                                     <p className="font-bold text-lg text-brand-blue">{app.name}</p>
                                                     <p className="text-sm text-gray-600">Submitted: {new Date(app.submittedAt).toLocaleString()}</p>
                                                 </div>
-                                                <button onClick={() => handleDeleteItem('applications', app.id)} className="text-red-500 hover:text-red-700 font-semibold flex-shrink-0 ml-4">Delete</button>
+                                                <button onClick={() => handleDeleteItem('applications', app.id, app.name)} className="text-red-500 hover:text-red-700 font-semibold flex-shrink-0 ml-4">Delete</button>
                                             </div>
                                             <div className="mt-4 border-t pt-4 text-sm text-gray-800 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
                                                 <div className={appDetailItem}><svg className={iconWrapper} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg><span className={appDetailLabel}>Email:</span><a href={`mailto:${app.email}`} className="text-brand-blue hover:underline truncate">{app.email}</a></div>
@@ -381,7 +383,7 @@ const AdminPage: React.FC = () => {
                                     <div><p className="font-bold text-lg">{prod.name}</p><p className="text-sm text-gray-600">${prod.price.toFixed(2)}</p></div>
                                     <div className="flex gap-4">
                                         <button onClick={() => handleEditProduct(prod)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button>
-                                        <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                        <button onClick={() => handleDeleteItem('products', prod.id, prod.name)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
                                     </div>
                                 </div>
                             ))}
@@ -404,7 +406,7 @@ const AdminPage: React.FC = () => {
                             {advisors.map(adv => (
                                 <div key={adv.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                     <div><p className="font-bold text-lg">{adv.name}</p><p className="text-sm text-gray-600">{adv.title}</p></div>
-                                    <div className="flex gap-4"><button onClick={() => handleEditAdvisor(adv)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('advisors', adv.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
+                                    <div className="flex gap-4"><button onClick={() => handleEditAdvisor(adv)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('advisors', adv.id, adv.name)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
                                 </div>
                             ))}
                         </div>
@@ -428,7 +430,7 @@ const AdminPage: React.FC = () => {
                             {videos.map(vid => (
                                  <div key={vid.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                      <div><p className="font-bold text-lg">{vid.title}</p><p className="text-sm text-gray-600 capitalize">Type: {vid.type}</p></div>
-                                     <div className="flex gap-4"><button onClick={() => handleEditVideo(vid)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('videos', vid.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
+                                     <div className="flex gap-4"><button onClick={() => handleEditVideo(vid)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('videos', vid.id, vid.title)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
                                  </div>
                             ))}
                         </div>
@@ -453,7 +455,7 @@ const AdminPage: React.FC = () => {
                             {documents.map(doc => (
                                 <div key={doc.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                     <div><p className="font-bold text-lg">{doc.title}</p><p className="text-sm text-gray-600">{doc.filePath}</p></div>
-                                    <div className="flex gap-4"><button onClick={() => handleEditDocument(doc)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('documents', doc.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
+                                    <div className="flex gap-4"><button onClick={() => handleEditDocument(doc)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button><button onClick={() => handleDeleteItem('documents', doc.id, doc.title)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button></div>
                                 </div>
                             ))}
                         </div>
