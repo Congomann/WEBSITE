@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import type { Product } from '../types';
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product, AgentApplication } from '../types';
 import Accordion from '../components/Accordion';
