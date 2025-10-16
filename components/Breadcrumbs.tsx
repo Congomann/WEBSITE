@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { advisors } from '../data'; // For advisor names
-import { core_services } from '../data'; // For service names
+import { useData } from '../contexts/DataContext';
 
 // A map for friendly names of static routes
 const breadcrumbNameMap: { [key: string]: string } = {
@@ -16,11 +15,13 @@ const breadcrumbNameMap: { [key: string]: string } = {
     'contact': 'Contact Us',
     'admin': 'Admin',
     'privacy-policy': 'Privacy Policy',
-    'services': 'Services'
+    'services': 'Services',
+    'join-our-team': 'Join Our Team'
 };
 
 const Breadcrumbs: React.FC = () => {
     const location = useLocation();
+    const { advisors, services: core_services } = useData();
     const pathnames = location.pathname.split('/').filter(x => x);
 
     // Don't show on homepage

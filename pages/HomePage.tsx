@@ -1,11 +1,13 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
 import QuoteForm from '../components/QuoteForm';
 import type { Service } from '../types';
 import SEO from '../components/SEO';
-import { core_services } from '../data';
 import PartnerLogos from '../components/PartnerLogos';
+import { useData } from '../contexts/DataContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // Icons need to be defined in the component since they are JSX, not simple data.
 const LifeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -39,7 +41,9 @@ const WHY_CHOOSE_US = [
 ];
 
 const HomePage: React.FC = () => {
-    const servicesWithIcons: Service[] = core_services.map(service => ({
+    const { services, loading } = useData();
+
+    const servicesWithIcons: Service[] = services.map(service => ({
         ...service,
         icon: iconMap[service.name] || <LifeIcon /> // Default icon
     }));
@@ -92,15 +96,17 @@ const HomePage: React.FC = () => {
             <section className="py-20 bg-brand-light">
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Core Services</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {servicesWithIcons.map((service, index) => (
-                            <ServiceCard 
-                                key={service.name} 
-                                service={service} 
-                                animationDelay={`${index * 150}ms`} 
-                            />
-                        ))}
-                    </div>
+                    {loading ? <div className="flex justify-center"><LoadingSpinner /></div> : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {servicesWithIcons.map((service, index) => (
+                                <ServiceCard 
+                                    key={service.name} 
+                                    service={service} 
+                                    animationDelay={`${index * 150}ms`} 
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 

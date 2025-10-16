@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { core_services, advisors, video_resources, document_resources } from '../data';
+// FIX: Removed import from static data file and replaced with useData hook to fetch live data.
+import { useData } from '../contexts/DataContext';
 
 interface SearchResult {
     type: 'Page' | 'Service' | 'Advisor' | 'Resource';
@@ -19,6 +19,8 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const searchInputRef = useRef<HTMLInputElement>(null);
+    // FIX: Get data from context.
+    const { services, advisors, videos, documents } = useData();
 
     // Focus input when modal opens
     useEffect(() => {
@@ -56,7 +58,8 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) => {
             });
 
             // 2. Search Services
-            core_services.forEach(service => {
+            // FIX: Use 'services' from context instead of static 'core_services'.
+            services.forEach(service => {
                 if (service.name.toLowerCase().includes(lowerCaseQuery) || service.description.toLowerCase().includes(lowerCaseQuery)) {
                     allResults.push({ type: 'Service', title: service.name, path: service.path, context: service.description });
                 }
@@ -71,7 +74,8 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) => {
             });
 
             // 4. Search Resources
-            [...video_resources, ...document_resources].forEach(resource => {
+            // FIX: Use 'videos' and 'documents' from context instead of static resources.
+            [...videos, ...documents].forEach(resource => {
                 const searchableText = `${resource.title} ${resource.description}`.toLowerCase();
                 if (searchableText.includes(lowerCaseQuery)) {
                     allResults.push({
@@ -89,7 +93,8 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) => {
         return () => {
             clearTimeout(handler);
         };
-    }, [query]);
+    // FIX: Added context data to dependency array to ensure search re-runs when data is loaded.
+    }, [query, services, advisors, videos, documents]);
     
     const handleResultClick = () => {
         setQuery('');

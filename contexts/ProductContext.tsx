@@ -1,11 +1,13 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import type { Product } from '../types';
-import { products as initialProducts } from '../data';
 
 interface ProductContextType {
     products: Product[];
-    addProduct: (product: Omit<Product, 'id'>) => void;
-    deleteProduct: (productId: number) => void;
+    addProduct: (product: Omit<Product, 'id' | 'price'> & { price: number }) => Promise<void>;
+    deleteProduct: (productId: number) => Promise<void>;
+    loading: boolean;
+    error: string | null;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -23,40 +25,64 @@ interface ProductProviderProps {
 }
 
 export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
-    const [products, setProducts] = useState<Product[]>(() => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchProducts = useCallback(async () => {
+        setLoading(true);
+        setError(null);
         try {
-            const localData = localStorage.getItem('nhf-products');
-            // If there's data in localStorage, use it. Otherwise, seed with initial data.
-            return localData ? JSON.parse(localData) : initialProducts;
-        } catch (error) {
-            console.error("Could not parse products data from localStorage", error);
-            return initialProducts;
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error('Failed to fetch products');
+            const data = await response.json();
+            setProducts(data);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-    });
-
-    useEffect(() => {
-        localStorage.setItem('nhf-products', JSON.stringify(products));
-    }, [products]);
-
-    const addProduct = useCallback((product: Omit<Product, 'id'>) => {
-        setProducts(prevProducts => {
-            const newProduct = {
-                ...product,
-                id: Date.now(), // Simple unique ID generation
-            };
-            return [...prevProducts, newProduct];
-        });
     }, []);
 
-    const deleteProduct = useCallback((productId: number) => {
-        setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    const addProduct = useCallback(async (product: Omit<Product, 'id' | 'price'> & { price: number }) => {
+        try {
+            const response = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product),
+            });
+            if (!response.ok) throw new Error('Failed to add product');
+            const newProduct = await response.json();
+            setProducts(prev => [...prev, newProduct]);
+        } catch (err: any) {
+            console.error(err);
+            // Optionally set an error state to show in the UI
+        }
+    }, []);
+
+    const deleteProduct = useCallback(async (productId: number) => {
+        try {
+            const response = await fetch(`/api/products/${productId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) throw new Error('Failed to delete product');
+            setProducts(prev => prev.filter(p => p.id !== productId));
+        } catch (err: any) {
+            console.error(err);
+        }
     }, []);
     
     const value = useMemo(() => ({
         products,
         addProduct,
-        deleteProduct
-    }), [products, addProduct, deleteProduct]);
+        deleteProduct,
+        loading,
+        error,
+    }), [products, addProduct, deleteProduct, loading, error]);
 
     return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
 };

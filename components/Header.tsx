@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Service } from '../types';
 import Logo from './Logo';
-import { core_services } from '../data';
 import { useCart } from '../contexts/CartContext';
 import GlobalSearch from './GlobalSearch';
+import { useData } from '../contexts/DataContext';
 
 const ShoppingCartIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -25,7 +25,7 @@ const Header: React.FC = () => {
     const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
     const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const services: Service[] = core_services;
+    const { services } = useData(); // Fetch services from context
     const { cartCount } = useCart();
     
     const location = useLocation();

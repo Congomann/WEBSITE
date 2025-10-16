@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Service } from '../types';
-import { core_services } from '../data';
+import { useData } from '../contexts/DataContext';
 
 interface QuoteFormProps {
     advisorName?: string | null;
@@ -30,6 +31,7 @@ const ConditionalField: React.FC<{ children: React.ReactNode }> = ({ children })
 
 
 const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
+    const { services } = useData();
     const [formData, setFormData] = useState<FormDataState>({
         name: '',
         email: '',
@@ -42,7 +44,6 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
         numEmployees: '',
         message: '',
     });
-    const services: Service[] = core_services;
     const [submitted, setSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

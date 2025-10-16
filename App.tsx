@@ -15,6 +15,7 @@ import Breadcrumbs from './components/Breadcrumbs';
 // Context Providers
 import { CartProvider } from './contexts/CartContext';
 import { ProductProvider } from './contexts/ProductContext';
+import { DataProvider } from './contexts/DataContext';
 
 // Lazy-loaded Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -43,46 +44,48 @@ const GroupBenefitsPage = lazy(() => import('./pages/services/GroupBenefitsPage'
 const App: React.FC = () => {
   return (
     <HashRouter>
-      <ProductProvider>
-        <CartProvider>
-          <ScrollToTop />
-          <AnalyticsTracker />
-          <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
-            <Header />
-            <CartToast />
-            <main className="flex-grow">
-              <Breadcrumbs />
-              <ErrorBoundary>
-                <Suspense fallback={<LoadingSpinner />}>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/advisors" element={<AdvisorsPage />} />
-                    <Route path="/advisors/:advisorId" element={<AdvisorProfilePage />} />
-                    <Route path="/resources" element={<ResourcesPage />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/order-success" element={<OrderSuccessPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/admin" element={<AdminPage />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                    <Route path="/join-our-team" element={<JoinOurTeamPage />} />
-                    <Route path="/services/life" element={<LifeInsurancePage />} />
-                    <Route path="/services/auto" element={<AutoInsurancePage />} />
-                    <Route path="/services/property" element={<PropertyInsurancePage />} />
-                    <Route path="/services/real-estate" element={<RealEstatePage />} />
-                    <Route path="/services/health" element={<HealthInsurancePage />} />
-                    <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                  </Routes>
-                </Suspense>
-              </ErrorBoundary>
-            </main>
-            <Footer />
-          </div>
-        </CartProvider>
-      </ProductProvider>
+      <DataProvider>
+        <ProductProvider>
+          <CartProvider>
+            <ScrollToTop />
+            <AnalyticsTracker />
+            <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
+              <Header />
+              <CartToast />
+              <main className="flex-grow">
+                <Breadcrumbs />
+                <ErrorBoundary>
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/advisors" element={<AdvisorsPage />} />
+                      <Route path="/advisors/:advisorId" element={<AdvisorProfilePage />} />
+                      <Route path="/resources" element={<ResourcesPage />} />
+                      <Route path="/products" element={<ProductsPage />} />
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/order-success" element={<OrderSuccessPage />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/admin" element={<AdminPage />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                      <Route path="/join-our-team" element={<JoinOurTeamPage />} />
+                      <Route path="/services/life" element={<LifeInsurancePage />} />
+                      <Route path="/services/auto" element={<AutoInsurancePage />} />
+                      <Route path="/services/property" element={<PropertyInsurancePage />} />
+                      <Route path="/services/real-estate" element={<RealEstatePage />} />
+                      <Route path="/services/health" element={<HealthInsurancePage />} />
+                      <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
+                      <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+                  </Suspense>
+                </ErrorBoundary>
+              </main>
+              <Footer />
+            </div>
+          </CartProvider>
+        </ProductProvider>
+      </DataProvider>
     </HashRouter>
   );
 };

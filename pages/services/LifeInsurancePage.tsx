@@ -2,10 +2,11 @@
 import React from 'react';
 import ServicePageLayout from './ServicePageLayout';
 import type { ServiceDetail } from '../../types';
-import { service_details } from '../../data';
+import { useData } from '../../contexts/DataContext';
 
 const LifeInsurancePage: React.FC = () => {
-    const details: ServiceDetail[] = service_details.life || [];
+    const { serviceDetails } = useData();
+    const details: ServiceDetail[] = serviceDetails.life || [];
 
     const structuredData = {
         "@context": "https://schema.org",

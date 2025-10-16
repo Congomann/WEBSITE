@@ -1,16 +1,24 @@
+
 import React, { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import SEO from '../components/SEO';
-import { advisors } from '../data';
 import BookingModal from '../components/BookingModal';
-
+import { useData } from '../contexts/DataContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdvisorProfilePage: React.FC = () => {
     const { advisorId } = useParams<{ advisorId: string }>();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { advisors, loading } = useData();
+    
     const advisor = advisors.find(a => a.id === parseInt(advisorId || ''));
 
+    if (loading) {
+        return <LoadingSpinner />;
+    }
+
     if (!advisor) {
+        // If not loading and no advisor found, redirect to 404
         return <Navigate to="/404" replace />;
     }
 
@@ -22,14 +30,11 @@ const AdvisorProfilePage: React.FC = () => {
                 keywords={`financial advisor, insurance agent, ${advisor.name}, ${advisor.specialties.join(', ')}, New Holland Financial Group, ${advisor.languages?.join(', ')}`}
             />
             
-            {advisor && (
-              <BookingModal 
-                  isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
-                  advisor={advisor}
-              />
-            )}
-
+            <BookingModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                advisor={advisor}
+            />
 
             <section className="bg-brand-blue text-white py-12">
                 <div className="container mx-auto px-6">
