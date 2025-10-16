@@ -5,6 +5,7 @@ import type { Product } from '../types';
 interface ProductContextType {
     products: Product[];
     addProduct: (product: Omit<Product, 'id' | 'price'> & { price: number }) => Promise<void>;
+    updateProduct: (product: Product) => Promise<void>;
     deleteProduct: (productId: number) => Promise<void>;
     loading: boolean;
     error: string | null;
@@ -60,7 +61,23 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
             setProducts(prev => [...prev, newProduct]);
         } catch (err: any) {
             console.error(err);
-            // Optionally set an error state to show in the UI
+            setError(err.message);
+        }
+    }, []);
+    
+    const updateProduct = useCallback(async (product: Product) => {
+        try {
+            const response = await fetch(`/api/products/${product.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product),
+            });
+            if (!response.ok) throw new Error('Failed to update product');
+            const updatedProduct = await response.json();
+            setProducts(prev => prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
+        } catch (err: any) {
+            console.error("Error updating product:", err);
+            setError(err.message);
         }
     }, []);
 
@@ -73,16 +90,18 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
             setProducts(prev => prev.filter(p => p.id !== productId));
         } catch (err: any) {
             console.error(err);
+            setError(err.message);
         }
     }, []);
     
     const value = useMemo(() => ({
         products,
         addProduct,
+        updateProduct,
         deleteProduct,
         loading,
         error,
-    }), [products, addProduct, deleteProduct, loading, error]);
+    }), [products, addProduct, updateProduct, deleteProduct, loading, error]);
 
     return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
 };

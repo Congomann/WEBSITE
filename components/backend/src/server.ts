@@ -96,12 +96,22 @@ app.post('/api/create-payment-intent', async (req, res) => {
         if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
             return res.status(400).json({ message: 'Invalid cart items provided.' });
         }
-        const amount = cartItems.reduce((total, item: any) => {
-            if (typeof item.price !== 'number' || typeof item.quantity !== 'number' || item.price <= 0 || item.quantity <= 0) {
-                throw new Error(`Invalid item in cart: ${item.name}`);
+
+        const db = await readDb();
+        const serverProducts = db.products;
+        
+        let amount = 0;
+        for (const cartItem of cartItems) {
+            const serverProduct = serverProducts.find((p: any) => p.id === cartItem.id);
+            if (!serverProduct) {
+                return res.status(400).json({ message: `Product with ID ${cartItem.id} not found.` });
             }
-            return total + item.price * item.quantity;
-        }, 0);
+            if (typeof cartItem.quantity !== 'number' || cartItem.quantity <= 0) {
+                 return res.status(400).json({ message: `Invalid quantity for product ${cartItem.name}` });
+            }
+            amount += serverProduct.price * cartItem.quantity;
+        }
+
         const amountInCents = Math.round(amount * 100);
         if (amountInCents <= 0) {
             return res.status(400).json({ message: 'Invalid cart total.' });

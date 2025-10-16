@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 const AdminPage: React.FC = () => {
     // Data from contexts
-    const { products, addProduct, deleteProduct, loading: productsLoading } = useProducts();
+    const { products, addProduct, updateProduct, deleteProduct, loading: productsLoading } = useProducts();
     const { advisors, videos, documents, refetchData, loading: dataLoading } = useData();
     
     // Local state for this component
@@ -49,6 +49,7 @@ const AdminPage: React.FC = () => {
     const [newDocument, setNewDocument] = useState({ title: '', description: '', filePath: '' });
     const [editingDocument, setEditingDocument] = useState<DocumentResource | null>(null);
     const [newProduct, setNewProduct] = useState({ name: '', price: '', imageUrl: '', description: '' });
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [productFormErrors, setProductFormErrors] = useState({ price: '', imageUrl: '' });
     const [documentFormError, setDocumentFormError] = useState('');
 
@@ -251,7 +252,7 @@ const AdminPage: React.FC = () => {
     };
     
     // --- Product Handlers ---
-    const handleAddProduct = async (e: React.FormEvent) => {
+    const handleProductFormSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const errors = { price: '', imageUrl: '' };
         let isValid = true;
@@ -268,16 +269,41 @@ const AdminPage: React.FC = () => {
         setProductFormErrors(errors);
         if (!isValid) return;
 
-        await addProduct({ ...newProduct, price });
-        setNewProduct({ name: '', price: '', imageUrl: '', description: '' });
-        setShowProductForm(false);
+        const productData = {
+            name: newProduct.name,
+            price: price,
+            imageUrl: newProduct.imageUrl,
+            description: newProduct.description,
+        };
+
+        if (editingProduct) {
+            await updateProduct({ ...productData, id: editingProduct.id });
+        } else {
+            await addProduct(productData);
+        }
+        handleCancelProductForm();
     };
+
+    const handleEditProduct = (product: Product) => {
+        setEditingProduct(product);
+        setNewProduct({
+            name: product.name,
+            price: String(product.price),
+            imageUrl: product.imageUrl,
+            description: product.description,
+        });
+        setShowProductForm(true);
+        setProductFormErrors({ price: '', imageUrl: '' });
+    };
+
     const handleShowProductForm = () => {
+        setEditingProduct(null);
         setShowProductForm(true);
         setProductFormErrors({ price: '', imageUrl: '' });
     };
     const handleCancelProductForm = () => {
         setShowProductForm(false);
+        setEditingProduct(null);
         setNewProduct({ name: '', price: '', imageUrl: '', description: '' });
         setProductFormErrors({ price: '', imageUrl: '' });
     };
@@ -352,20 +378,23 @@ const AdminPage: React.FC = () => {
                     <Accordion title="Manage Products" isOpen={openSection === 'manage-products'} onToggle={() => toggleSection('manage-products')}>
                         <div className="space-y-4">
                             {products.map(prod => (
-                                <div key={prod.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center">
+                                <div key={prod.id} className="bg-gray-50 p-4 rounded-lg shadow-sm flex justify-between items-center flex-wrap gap-2">
                                     <div><p className="font-bold text-lg">{prod.name}</p><p className="text-sm text-gray-600">${prod.price.toFixed(2)}</p></div>
-                                    <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    <div className="flex gap-4">
+                                        <button onClick={() => handleEditProduct(prod)} className="text-brand-blue hover:text-blue-700 font-semibold">Edit</button>
+                                        <button onClick={() => handleDeleteItem('products', prod.id)} className="text-red-500 hover:text-red-700 font-semibold">Delete</button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                         {showProductForm ? (
-                            <form onSubmit={handleAddProduct} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4" noValidate>
-                                <h4 className="text-lg font-bold text-brand-blue">Add New Product</h4>
+                            <form onSubmit={handleProductFormSubmit} className="mt-6 p-4 bg-gray-100 rounded-lg shadow-inner space-y-4" noValidate>
+                                <h4 className="text-lg font-bold text-brand-blue">{editingProduct ? 'Edit Product' : 'Add New Product'}</h4>
                                 <div><label htmlFor="prod-name" className={formLabelClass}>Product Name</label><input type="text" name="name" id="prod-name" required value={newProduct.name} onChange={e => handleInputChange(setNewProduct, e)} className={formInputClass} placeholder="e.g., Financial Peace Mug" /></div>
                                 <div><label htmlFor="prod-price" className={formLabelClass}>Price</label><input type="number" name="price" id="prod-price" required step="0.01" value={newProduct.price} onChange={e => handleInputChange(setNewProduct, e)} className={`${formInputClass} ${productFormErrors.price ? 'border-red-500' : ''}`} placeholder="e.g., 15.99" />{productFormErrors.price && <p className="mt-1 text-sm text-red-600">{productFormErrors.price}</p>}</div>
                                 <div><label htmlFor="prod-imageUrl" className={formLabelClass}>Image URL</label><input type="text" name="imageUrl" id="prod-imageUrl" required value={newProduct.imageUrl} onChange={e => handleInputChange(setNewProduct, e)} className={`${formInputClass} ${productFormErrors.imageUrl ? 'border-red-500' : ''}`} placeholder="e.g., https://example.com/image.png" />{productFormErrors.imageUrl && <p className="mt-1 text-sm text-red-600">{productFormErrors.imageUrl}</p>}</div>
                                 <div><label htmlFor="prod-description" className={formLabelClass}>Description</label><textarea name="description" id="prod-description" required rows={3} value={newProduct.description} onChange={e => handleInputChange(setNewProduct, e)} className={formInputClass} placeholder="e.g., A sturdy ceramic mug..."></textarea></div>
-                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">Save Product</button><button type="button" onClick={handleCancelProductForm} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
+                                <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90">{editingProduct ? 'Save Changes' : 'Save Product'}</button><button type="button" onClick={handleCancelProductForm} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-400">Cancel</button></div>
                             </form>
                         ) : <button onClick={handleShowProductForm} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400">Add New Product</button>}
                     </Accordion>
