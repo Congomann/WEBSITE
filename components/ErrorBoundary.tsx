@@ -10,14 +10,9 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: Reverted to using a constructor for state initialization. The class field
-  // syntax (`state = ...`) can sometimes cause issues with type inheritance in specific
-  // build environments, leading to errors like `props` being unrecognized. The
-  // constructor is a more robust and universally compatible approach.
-  constructor(props: Props) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  // FIX: Replaced constructor with class field syntax for state initialization.
+  // This is a more modern and concise approach that resolves issues with `this` context.
+  state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
