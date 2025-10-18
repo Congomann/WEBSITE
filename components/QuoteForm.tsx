@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Service } from '../types';
 import { useData } from '../contexts/DataContext';
@@ -190,7 +191,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
         );
     }
     
-    const darkInputStyles = "mt-1 block w-full px-4 py-3 border rounded-md shadow-sm bg-brand-blue text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-brand-gold";
+    const darkInputStyles = "mt-1 block w-full px-4 py-3 border rounded-md shadow-sm bg-brand-blue text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-blue focus:ring-brand-gold";
     const lightSelectStyles = "mt-1 block w-full px-4 py-3 border rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white";
     const labelStyles = "block text-sm font-medium text-brand-blue";
 

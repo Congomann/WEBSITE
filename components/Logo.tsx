@@ -38,14 +38,26 @@ const Logo: React.FC<LogoProps> = ({ className = '', variant = 'light' }) => {
         </svg>
       </div>
 
-      {/* Text with fade-in animation */}
-      <div className="opacity-0 animate-fade-in-down" style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}>
-        <span className={`block text-xl font-bold leading-tight transition-colors duration-300 ${textPrimaryColor}`}>
-          New Holland
-        </span>
-        <span className={`block text-[10px] font-medium tracking-[0.2em] uppercase transition-colors duration-300 ${textSecondaryColor}`}>
-          Financial Group
-        </span>
+      {/* Text with hover animation */}
+      <div className="relative">
+        {/* Static text, visible by default, hidden on hover */}
+        <div className="transition-opacity duration-200 group-hover:opacity-0">
+          <span className={`block text-xl font-bold leading-tight ${textPrimaryColor}`}>
+            New Holland
+          </span>
+          <span className={`block text-[10px] font-medium tracking-[0.2em] uppercase ${textSecondaryColor}`}>
+            Financial Group
+          </span>
+        </div>
+        {/* Animated text, hidden by default, visible and animates on hover */}
+        <div className="absolute top-0 left-0 opacity-0 group-hover:animate-fade-in-down pointer-events-none">
+          <span className={`block text-xl font-bold leading-tight ${textPrimaryColor}`}>
+            New Holland
+          </span>
+          <span className={`block text-[10px] font-medium tracking-[0.2em] uppercase ${textSecondaryColor}`}>
+            Financial Group
+          </span>
+        </div>
       </div>
     </div>
   );
