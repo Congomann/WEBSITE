@@ -1,10 +1,9 @@
-
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Routes, Route, Link, Outlet, Navigate, NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth, useData, useTheme } from './contexts/DataContext';
 import Logo from './components/Logo';
 // FIX: Aliased the User icon component to UserIcon to avoid name collision with the User type.
-import { LayoutDashboard, Users, User as UserIcon, DollarSign, LogOut, Sun, Moon, Search, ChevronLeft, Mail, Phone, CheckSquare, Plus, Trash2, Edit, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Users, User as UserIcon, DollarSign, LogOut, Sun, Moon, Search, ChevronLeft, Mail, Phone, CheckSquare, Plus, Trash2, Edit, AlertTriangle, Rss } from 'lucide-react';
 // FIX: Imported the User type to be used in component props.
 import type { Lead, Client, Task, User } from './types';
 
@@ -33,6 +32,9 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import AdminPage from './pages/AdminPage';
 import NotFoundPage from './pages/NotFoundPage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+
 
 // Service Page Components
 import LifeInsurancePage from './pages/services/LifeInsurancePage';
@@ -670,6 +672,8 @@ const PublicSite = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms-of-service" element={<TermsOfServicePage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           
           <Route path="/services/life" element={<LifeInsurancePage />} />
           <Route path="/services/auto" element={<AutoInsurancePage />} />

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
@@ -17,12 +16,16 @@ const Footer: React.FC = () => {
     const TwitterIcon = () => (
         <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.223.085 4.924 4.924 0 004.6 3.419A9.9 9.9 0 010 19.54a13.94 13.94 0 007.548 2.21c9.058 0 14.01-7.502 14.01-14.013 0-.213-.005-.426-.015-.637a9.935 9.935 0 002.433-2.52z"></path></svg>
     );
+    const RssIcon = () => (
+        <svg fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5"><path d="M4 4a2 2 0 00-2 2v2a14 14 0 0114 14h2a2 2 0 002-2v-2A14 14 0 004 4zM4 11a1 1 0 00-1 1v2a7 7 0 017 7h2a1 1 0 001-1v-2a7 7 0 00-7-7H4zm0 6a1 1 0 00-1 1v2a2 2 0 002 2h2a1 1 0 001-1v-2a2 2 0 00-2-2H4z"></path></svg>
+    );
 
     const socialLinks = [
         { name: 'LinkedIn', icon: <LinkedInIcon />, url: 'https://linkedin.com/company/newhollandfinancial' },
         { name: 'Facebook', icon: <FacebookIcon />, url: 'https://facebook.com/newhollandfinancial' },
         { name: 'Instagram', icon: <InstagramIcon />, url: 'https://instagram.com/newhollandfinancial' },
         { name: 'Twitter', icon: <TwitterIcon />, url: 'https://twitter.com/Newhollandfg' },
+        { name: 'RSS Feed', icon: <RssIcon />, url: '/sitemap.xml' },
     ];
 
     const linkClasses = "text-gray-300 hover:text-white transition-colors duration-200";
@@ -61,6 +64,7 @@ const Footer: React.FC = () => {
                         <h4 className={headingClasses}>Navigation</h4>
                         <ul className="space-y-3">
                             <li><Link to="/" className={linkClasses}>Home</Link></li>
+                             <li><Link to="/blog" className={linkClasses}>Blog</Link></li>
                             <li><Link to="/products" className={linkClasses}>Shop Insurance</Link></li>
                             <li><Link to="/advisors" className={linkClasses}>Find an Advisor</Link></li>
                             <li><Link to="/resources" className={linkClasses}>Resources</Link></li>

@@ -77,6 +77,22 @@ export interface ServiceDetail {
   benefits?: string[];
 }
 
+export interface BlogPost {
+    slug: string;
+    title: string;
+    description: string;
+    author: string;
+    authorTitle: string;
+    authorImageUrl: string;
+    date: string; // ISO String
+    readTime: number; // in minutes
+    category: string;
+    tags: string[];
+    imageUrl: string;
+    content: string; // Markdown or HTML
+    relatedServices?: { name: string; path: string }[];
+}
+
 
 export type Role = 'Admin' | 'Sub-Admin' | 'Manager' | 'Agent';
 

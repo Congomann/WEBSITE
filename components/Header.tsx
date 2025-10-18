@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Service } from '../types';
@@ -105,6 +104,7 @@ const Header: React.FC = () => {
                             </div>
                         )}
                     </div>
+                    <NavLink to="/blog" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Blog</NavLink>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
                     <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
                     <NavLink to="/join-our-team" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Join Our Team</NavLink>
@@ -175,6 +175,7 @@ const Header: React.FC = () => {
                             </div>
                          )}
                     </div>
+                    <NavLink to="/blog" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Blog</NavLink>
                     <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
                     <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
                     <NavLink to="/join-our-team" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Join Our Team</NavLink>

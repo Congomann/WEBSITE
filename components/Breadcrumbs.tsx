@@ -1,7 +1,8 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
+import { blogPosts } from '../data';
+
 
 // A map for friendly names of static routes
 const breadcrumbNameMap: { [key: string]: string } = {
@@ -17,7 +18,8 @@ const breadcrumbNameMap: { [key: string]: string } = {
     'privacy-policy': 'Privacy Policy',
     'terms-of-service': 'Terms of Service',
     'services': 'Services',
-    'join-our-team': 'Join Our Team'
+    'join-our-team': 'Join Our Team',
+    'blog': 'Blog'
 };
 
 const Breadcrumbs: React.FC = () => {
@@ -42,6 +44,12 @@ const Breadcrumbs: React.FC = () => {
         if (segments[index - 1] === 'services') {
              const service = core_services.find(s => s.path === `/services/${segment}`);
              return service ? service.name : segment;
+        }
+
+        // Check for blog post page: /blog/:slug
+        if (segments[index - 1] === 'blog') {
+            const post = blogPosts.find(p => p.slug === segment);
+            return post ? post.title : segment;
         }
 
         return breadcrumbNameMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');

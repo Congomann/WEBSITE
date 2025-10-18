@@ -1,4 +1,7 @@
+
 import React from 'react';
+// FIX: Import the BlogPost type to be used for the new blogPosts data array.
+import type { BlogPost } from './types';
 
 const AIGLogo = () => (
     React.createElement('svg', {
@@ -616,3 +619,81 @@ export const tasks = [
       }
     }
   ];
+// FIX: Add and export blogPosts data to resolve import errors in other components.
+export const blogPosts: BlogPost[] = [
+    {
+        slug: 'understanding-term-life-insurance',
+        title: 'Understanding Term Life Insurance: A Beginner\'s Guide',
+        description: 'Term life insurance is a popular choice for many families. This guide breaks down what it is, how it works, and who it\'s best for.',
+        author: 'Jessica Miller',
+        authorTitle: 'Senior Life & Health Advisor',
+        authorImageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop',
+        date: '2024-06-15T10:00:00Z',
+        readTime: 5,
+        category: 'Life Insurance',
+        tags: ['Term Life', 'Financial Planning', 'Family Protection'],
+        imageUrl: 'https://images.unsplash.com/photo-1560520031-3a17f672c4c2?q=80&w=1200&auto=format&fit=crop',
+        content: `
+            <h2>What is Term Life Insurance?</h2>
+            <p>Term life insurance is a type of life insurance policy that provides coverage for a specific period or "term." If the insured person passes away during this term, a death benefit is paid out to the beneficiaries. It's often considered the simplest and most affordable type of life insurance.</p>
+            <h3>Key Features:</h3>
+            <ul>
+                <li><strong>Fixed Premiums:</strong> Your payments typically remain the same for the entire term.</li>
+                <li><strong>Specific Term Lengths:</strong> Common terms are 10, 20, or 30 years.</li>
+                <li><strong>No Cash Value:</strong> Unlike whole life insurance, it does not have a savings component. Its sole purpose is to provide a death benefit.</li>
+            </ul>
+            <h2>Who is it for?</h2>
+            <p>Term life is ideal for individuals who need coverage for a specific period, such as until their children are grown, or their mortgage is paid off. It's a great way to ensure your loved ones are financially protected during your highest-earning years.</p>
+        `,
+        relatedServices: [{ name: 'Life Insurance', path: '/services/life' }]
+    },
+    {
+        slug: '5-tips-for-lowering-your-auto-insurance-premium',
+        title: '5 Tips for Lowering Your Auto Insurance Premium',
+        description: 'Looking to save money on car insurance? Here are five practical tips that could help you reduce your premium without sacrificing coverage.',
+        author: 'Brian Carter',
+        authorTitle: 'Property & Commercial Specialist',
+        authorImageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop',
+        date: '2024-06-10T14:30:00Z',
+        readTime: 4,
+        category: 'Auto Insurance',
+        tags: ['Auto Insurance', 'Saving Money', 'Tips'],
+        imageUrl: 'https://images.unsplash.com/photo-1517524206127-48bbd363f357?q=80&w=1200&auto=format&fit=crop',
+        content: `
+            <h2>Saving on Car Insurance</h2>
+            <p>Everyone wants to save money on car insurance. Here are a few ways to potentially lower your rates:</p>
+            <ol>
+                <li><strong>Shop Around:</strong> Don't settle for the first quote you get. Comparing rates from different carriers is the single best way to find a better deal.</li>
+                <li><strong>Increase Your Deductible:</strong> A higher deductible usually means a lower premium. Just make sure you can afford to pay it out-of-pocket if you need to file a claim.</li>
+                <li><strong>Look for Discounts:</strong> Many insurers offer discounts for things like a good driving record, low mileage, bundling policies (e.g., auto and home), or having safety features in your car.</li>
+                <li><strong>Maintain a Good Credit Score:</strong> In many states, your credit score can impact your insurance rates. A better score can lead to lower premiums.</li>
+                <li><strong>Review Your Coverage Annually:</strong> Your needs change over time. An older car might not need collision or comprehensive coverage, which could save you a significant amount.</li>
+            </ol>
+        `,
+        relatedServices: [{ name: 'Auto & Commercial', path: '/services/auto' }]
+    },
+    {
+        slug: 'navigating-the-real-estate-market',
+        title: 'Navigating Today\'s Real Estate Market as a First-Time Buyer',
+        description: 'Buying your first home can be daunting. This article provides key insights and advice for first-time homebuyers to navigate the current real estate landscape successfully.',
+        author: 'Samantha Chen',
+        authorTitle: 'Family & Auto Protection Advisor',
+        authorImageUrl: 'https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop',
+        date: '2024-05-28T09:00:00Z',
+        readTime: 6,
+        category: 'Real Estate',
+        tags: ['Home Buying', 'Real Estate', 'Financial Planning'],
+        imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1200&auto=format&fit=crop',
+        content: `
+            <h2>Tips for First-Time Homebuyers</h2>
+            <p>The real estate market can be competitive, but with the right strategy, you can successfully purchase your first home.</p>
+            <h3>Get Pre-Approved, Not Just Pre-Qualified</h3>
+            <p>A pre-approval from a lender shows sellers that you're a serious buyer with the financial backing to make a purchase. It carries more weight than a pre-qualification.</p>
+            <h3>Know Your Budget</h3>
+            <p>Understand all the costs involved: down payment, closing costs, property taxes, homeowners insurance, and potential mortgage insurance (PMI). Don't just focus on the sale price.</p>
+            <h3>Be Flexible</h3>
+            <p>In a tight market, you may need to be flexible on your wish list. Prioritize your "must-haves" versus your "nice-to-haves." Sometimes, the perfect house is one you can grow into and customize over time.</p>
+        `,
+        relatedServices: [{ name: 'Real Estate', path: '/services/real-estate' }, { name: 'Property Insurance', path: '/services/property' }]
+    }
+];
