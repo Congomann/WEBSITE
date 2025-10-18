@@ -31,9 +31,9 @@ const AdvisorsPage: React.FC = () => {
     return (
         <div className="bg-brand-light">
             <SEO
-                title="Our Advisors"
-                description="Meet the expert financial advisors at New Holland Financial Group. Our licensed professionals are dedicated to helping you build long-term financial security."
-                keywords="financial advisors, insurance agents, meet the team, expert advisors"
+                title="Our Expert Advisors | New Holland Financial Group | Des Moines, IA"
+                description="Meet the team of expert financial advisors and insurance agents at New Holland Financial Group in Des Moines, IA. Find a licensed professional to help you build long-term financial security."
+                keywords="financial advisors Des Moines, insurance agents Iowa, meet the team, licensed financial professionals, New Holland Financial advisors"
             />
             <section className="bg-brand-blue text-white py-20">
                 <div className="container mx-auto px-6 text-center">

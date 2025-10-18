@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product, AgentApplication } from '../types';
 import Accordion from '../components/Accordion';
@@ -7,6 +6,15 @@ import { useData } from '../contexts/DataContext';
 import { useProducts } from '../contexts/ProductContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+// LocalStorage helpers
+const getFromStorage = (key: string) => {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+};
+
+const saveToStorage = (key: string, data: any) => {
+    localStorage.setItem(key, JSON.stringify(data));
+};
 
 const AdminPage: React.FC = () => {
     // Data from contexts
@@ -22,12 +30,11 @@ const AdminPage: React.FC = () => {
         const fetchApplications = async () => {
             setAppsLoading(true);
             try {
-                const response = await fetch('/api/agent-applications');
-                if (!response.ok) throw new Error('Failed to fetch applications');
-                const data = await response.json();
+                // Replaced fetch with localStorage
+                const data = getFromStorage('nhf-agent_applications');
                 setApplications(data);
             } catch (error) {
-                console.error("Error fetching agent applications:", error);
+                console.error("Error fetching agent applications from localStorage:", error);
             } finally {
                 setAppsLoading(false);
             }
@@ -76,20 +83,24 @@ const AdminPage: React.FC = () => {
         const itemName = name || 'this item';
         if (!window.confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) return;
         
-        let url = '';
-        switch (type) {
-            case 'advisors': url = `/api/advisors/${id}`; break;
-            case 'videos': url = `/api/resources/videos/${id}`; break;
-            case 'documents': url = `/api/resources/documents/${id}`; break;
-            case 'applications': url = `/api/agent-applications/${id}`; break;
-            case 'products':
-                await deleteProduct(id);
-                return; // Product context handles its own state
+        if (type === 'products') {
+            await deleteProduct(id);
+            return; // Product context handles its own state
         }
         
         try {
-            const response = await fetch(url, { method: 'DELETE' });
-            if (!response.ok) throw new Error(`Failed to delete ${type}`);
+            const keyMap = {
+                advisors: 'nhf-advisors',
+                videos: 'nhf-video_resources',
+                documents: 'nhf-document_resources',
+                applications: 'nhf-agent_applications',
+            };
+            const storageKey = keyMap[type as keyof typeof keyMap];
+            if (storageKey) {
+                const data = getFromStorage(storageKey);
+                const newData = data.filter((item: any) => item.id != id);
+                saveToStorage(storageKey, newData);
+            }
             
             if (type === 'applications') {
                 setApplications(prev => prev.filter(a => a.id !== id));
@@ -120,16 +131,17 @@ const AdminPage: React.FC = () => {
             languages: newAdvisor.languages.split(',').map(s => s.trim()).filter(Boolean),
         };
 
-        const url = editingAdvisor ? `/api/advisors/${editingAdvisor.id}` : '/api/advisors';
-        const method = editingAdvisor ? 'PUT' : 'POST';
-
         try {
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(advisorData),
-            });
-            if (!response.ok) throw new Error('Failed to save advisor');
+            const storageKey = 'nhf-advisors';
+            const advisors = getFromStorage(storageKey);
+            if (editingAdvisor) {
+                const updatedAdvisors = advisors.map((adv: Advisor) => adv.id === editingAdvisor.id ? { ...advisorData, id: adv.id } : adv);
+                saveToStorage(storageKey, updatedAdvisors);
+            } else {
+                const newId = advisors.length > 0 ? Math.max(...advisors.map((a: any) => a.id)) + 1 : 1;
+                advisors.push({ ...advisorData, id: newId });
+                saveToStorage(storageKey, advisors);
+            }
             await refetchData();
             handleAdvisorFormCancel();
         } catch (error) {
@@ -174,16 +186,17 @@ const AdminPage: React.FC = () => {
         }
         
         const videoData = { title: newVideo.title, description: newVideo.description, type: newVideo.type, source };
-        const url = editingVideo ? `/api/resources/videos/${editingVideo.id}` : '/api/resources/videos';
-        const method = editingVideo ? 'PUT' : 'POST';
-
+        
         try {
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(videoData),
-            });
-            if (!response.ok) throw new Error('Failed to save video');
+            const storageKey = 'nhf-video_resources';
+            const videos = getFromStorage(storageKey);
+            if (editingVideo) {
+                const updatedVideos = videos.map((vid: VideoResource) => vid.id === editingVideo.id ? { ...videoData, id: vid.id } : vid);
+                saveToStorage(storageKey, updatedVideos);
+            } else {
+                videos.push({ ...videoData, id: `vid-${Date.now()}` });
+                saveToStorage(storageKey, videos);
+            }
             await refetchData();
             handleVideoFormCancel();
         } catch (error) {
@@ -217,16 +230,16 @@ const AdminPage: React.FC = () => {
             return;
         }
         
-        const url = editingDocument ? `/api/resources/documents/${editingDocument.id}` : '/api/resources/documents';
-        const method = editingDocument ? 'PUT' : 'POST';
-
         try {
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newDocument),
-            });
-            if (!response.ok) throw new Error('Failed to save document');
+            const storageKey = 'nhf-document_resources';
+            const documents = getFromStorage(storageKey);
+            if (editingDocument) {
+                const updatedDocs = documents.map((doc: DocumentResource) => doc.id === editingDocument.id ? { ...newDocument, id: doc.id } : doc);
+                saveToStorage(storageKey, updatedDocs);
+            } else {
+                documents.push({ ...newDocument, id: `doc-${Date.now()}` });
+                saveToStorage(storageKey, documents);
+            }
             await refetchData();
             handleDocumentFormCancel();
         } catch (error) {

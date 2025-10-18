@@ -23,7 +23,7 @@ const HealthInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Health Insurance"
+            title="Health Insurance Plans in Des Moines, IA | Individual & Family"
             subtitle="Access to quality healthcare for you and your family."
             seoDescription="Find the right health insurance plan in Des Moines, IA with New Holland Financial Group. We offer affordable individual, family, and dental insurance options, helping you navigate the marketplace and access top healthcare networks across Iowa."
             seoKeywords="health insurance Des Moines, individual health plans Iowa, family medical insurance, dental insurance quote, healthcare marketplace, open enrollment, New Holland Financial"

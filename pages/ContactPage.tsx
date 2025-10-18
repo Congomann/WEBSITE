@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import QuoteForm from '../components/QuoteForm';
@@ -11,9 +12,9 @@ const ContactPage: React.FC = () => {
     return (
         <div className="bg-white py-20">
             <SEO
-                title="Contact Us"
-                description="Get a free insurance quote or contact New Holland Financial Group. Our expert advisors in Des Moines, IA are ready to help with your insurance needs."
-                keywords="contact insurance agency, get a quote, insurance quote, free quote, financial advisor contact"
+                title="Contact Us for a Free Insurance Quote | Des Moines, IA"
+                description="Reach out to New Holland Financial Group in Des Moines, IA. Contact us for a free insurance quote, speak with an advisor, or ask a question. We're here to help."
+                keywords="contact New Holland Financial, get insurance quote Des Moines, free insurance consultation, financial advisor contact Iowa"
             />
             <div className="container mx-auto px-6">
                 <div className="mb-8">

@@ -23,7 +23,7 @@ const AutoInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Auto & Commercial Insurance"
+            title="Affordable Auto Insurance in Des Moines, IA | Get a Free Quote"
             subtitle="Reliable coverage for your personal, classic, and commercial vehicles."
             seoDescription="Get a free quote for affordable car insurance in Des Moines, IA with New Holland Financial Group. We offer competitive rates for personal auto, classic car, and commercial vehicle insurance in Iowa City, Cedar Rapids, and beyond. Drive protected today."
             seoKeywords="auto insurance Des Moines, car insurance quote Iowa, commercial vehicle insurance, classic car insurance, Iowa auto insurance rates, New Holland Financial, vehicle protection"

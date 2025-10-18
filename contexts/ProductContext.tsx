@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Product } from '../types';
+// FIX: Changed import to be a non-type-only import to resolve usage as a value.
+import { Product } from '../types';
+import { products as initialProducts } from '../data';
 
 interface ProductContextType {
     products: Product[];
@@ -24,6 +26,8 @@ interface ProductProviderProps {
     children: ReactNode;
 }
 
+const STORAGE_KEY = 'nhf-products';
+
 export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,12 +37,18 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('/api/products');
-            if (!response.ok) throw new Error('Failed to fetch products');
-            const data = await response.json();
-            setProducts(data);
+            // Simulate async fetch
+            await new Promise(res => setTimeout(res, 100));
+            const storedProducts = localStorage.getItem(STORAGE_KEY);
+            if (storedProducts) {
+                setProducts(JSON.parse(storedProducts));
+            } else {
+                setProducts(initialProducts);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(initialProducts));
+            }
         } catch (err: any) {
-            setError(err.message);
+            setError('Failed to load products from storage.');
+            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -50,46 +60,44 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
 
     const addProduct = useCallback(async (product: Omit<Product, 'id' | 'price'> & { price: number }) => {
         try {
-            const response = await fetch('/api/products', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(product),
+            const newProduct = { 
+                ...product, 
+                id: Date.now() // Simple unique ID for demo
+            };
+            setProducts(prev => {
+                const newProducts = [...prev, newProduct];
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
+                return newProducts;
             });
-            if (!response.ok) throw new Error('Failed to add product');
-            const newProduct = await response.json();
-            setProducts(prev => [...prev, newProduct]);
         } catch (err: any) {
             console.error(err);
-            setError(err.message);
+            setError('Failed to add product.');
         }
     }, []);
     
     const updateProduct = useCallback(async (product: Product) => {
         try {
-            const response = await fetch(`/api/products/${product.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(product),
+            setProducts(prev => {
+                const newProducts = prev.map(p => (p.id === product.id ? product : p));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
+                return newProducts;
             });
-            if (!response.ok) throw new Error('Failed to update product');
-            const updatedProduct = await response.json();
-            setProducts(prev => prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p)));
         } catch (err: any) {
             console.error("Error updating product:", err);
-            setError(err.message);
+            setError('Failed to update product.');
         }
     }, []);
 
     const deleteProduct = useCallback(async (productId: number) => {
         try {
-            const response = await fetch(`/api/products/${productId}`, {
-                method: 'DELETE',
+            setProducts(prev => {
+                const newProducts = prev.filter(p => p.id !== productId);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
+                return newProducts;
             });
-            if (!response.ok) throw new Error('Failed to delete product');
-            setProducts(prev => prev.filter(p => p.id !== productId));
         } catch (err: any) {
             console.error(err);
-            setError(err.message);
+            setError('Failed to delete product.');
         }
     }, []);
     

@@ -6,6 +6,7 @@ import Logo from './Logo';
 import { useCart } from '../contexts/CartContext';
 import GlobalSearch from './GlobalSearch';
 import { useData } from '../contexts/DataContext';
+import { useAuth } from '../contexts/DataContext';
 
 const ShoppingCartIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -25,8 +26,9 @@ const Header: React.FC = () => {
     const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
     const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const { services } = useData(); // Fetch services from context
+    const { services } = useData();
     const { cartCount } = useCart();
+    const { currentUser } = useAuth();
     
     const location = useLocation();
     const desktopServicesRef = useRef<HTMLDivElement>(null);
@@ -56,6 +58,10 @@ const Header: React.FC = () => {
     const handleDesktopServicesKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Escape') setIsDesktopServicesOpen(false);
     };
+
+    const crmLink = currentUser 
+        ? <Link to="/crm/dashboard" className="text-white hover:text-brand-gold transition-colors">CRM Dashboard</Link>
+        : <Link to="/crm/login" className="text-white hover:text-brand-gold transition-colors">CRM Login</Link>;
 
     return (
         <header className="bg-brand-blue shadow-lg sticky top-0 z-50">
@@ -105,6 +111,8 @@ const Header: React.FC = () => {
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
                 </nav>
                  <div className="hidden lg:flex items-center space-x-4">
+                    {crmLink}
+                    <span className="text-gray-500">|</span>
                     <Link to="/contact" className="inline-block bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-blue focus-visible:ring-yellow-400">
                         Get a Free Quote
                     </Link>
@@ -171,6 +179,8 @@ const Header: React.FC = () => {
                     <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
                     <NavLink to="/join-our-team" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Join Our Team</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact Us</NavLink>
+                    <div className="border-t border-white/20 my-4"></div>
+                     <div className="px-4 py-2 text-white hover:text-brand-gold">{crmLink}</div>
                     <div className="mt-4 px-4 flex items-center justify-between gap-4">
                         <Link to="/contact" className="flex-grow text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors duration-300">
                             Get a Free Quote

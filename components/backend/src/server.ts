@@ -9,11 +9,16 @@ import Stripe from 'stripe';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Define __dirname for ES Modules to ensure robust path resolution.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DB_PATH = path.join(__dirname, '..', 'db.json');
+// Construct an absolute path to db.json. This version assumes the db.json file
+// is located in the same directory as the compiled server.js, which can be
+// a more robust path in complex build environments.
+const DB_PATH = path.join(__dirname, 'db.json');
 const STATIC_PATH = path.join(__dirname, '..', '..', '..');
+
 
 const stripe = new Stripe('sk_test_51SGWYuAyRjRzCXot6TLt1NcVnZXiknLKaT2t2ZJvXC3Rq9rZCaQKDtzKBQ5aspDlxoFDZfjou2to8mAhjWWTxvEI00dSlrfjgc', {
   apiVersion: '2024-06-20',
@@ -81,6 +86,10 @@ app.get('/api/all-data', async (req, res) => {
             advisors: db.advisors,
             video_resources: db.video_resources,
             document_resources: db.document_resources,
+            commissions: db.commissions,
+            leads: db.leads,
+            clients: db.clients,
+            tasks: db.tasks,
         });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
@@ -281,6 +290,38 @@ app.delete('/api/agent-applications/:id', async (req, res) => {
     await writeDb(db);
     res.status(204).send();
 });
+
+// TASKS - GET, POST, PUT, DELETE
+app.get('/api/tasks', async (req, res) => {
+    const db = await readDb();
+    res.json(db.tasks || []);
+});
+app.post('/api/tasks', async (req, res) => {
+    const newTaskData = req.body;
+    const db = await readDb();
+    const taskToAdd = { ...newTaskData, id: `T-${randomUUID()}` };
+    db.tasks.push(taskToAdd);
+    await writeDb(db);
+    res.status(201).json(taskToAdd);
+});
+app.put('/api/tasks/:id', async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+    const db = await readDb();
+    const index = db.tasks.findIndex((t: any) => t.id === id);
+    if (index === -1) return res.status(404).json({ message: 'Task not found' });
+    db.tasks[index] = { ...db.tasks[index], ...updatedData };
+    await writeDb(db);
+    res.json(db.tasks[index]);
+});
+app.delete('/api/tasks/:id', async (req, res) => {
+    const { id } = req.params;
+    const db = await readDb();
+    db.tasks = db.tasks.filter((t: any) => t.id !== id);
+    await writeDb(db);
+    res.status(204).send();
+});
+
 
 // --- Static File Serving ---
 app.use(express.static(STATIC_PATH));

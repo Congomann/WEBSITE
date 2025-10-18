@@ -51,9 +51,9 @@ const HomePage: React.FC = () => {
     return (
         <div>
             <SEO
-                title="Insurance in Des Moines, IA | Protecting Your Life, Family & Future"
-                description="New Holland Financial Group in Des Moines, IA, offers tailored insurance solutions for life, auto, home, and business to protect what matters most. Get your free quote today."
-                keywords="New Holland Financial, insurance, life insurance, auto insurance, home insurance, group benefits, Des Moines insurance"
+                title="New Holland Financial Group | Top Insurance Agents in Des Moines, IA"
+                description="Secure your future with New Holland Financial Group, Des Moines' trusted insurance agency. We offer personalized life, auto, home, and business insurance. Get a free, no-obligation quote today and protect what matters most."
+                keywords="insurance Des Moines IA, New Holland Financial Group, life insurance Iowa, auto insurance Des Moines, home insurance, business insurance quote, top insurance agents"
             />
             {/* Hero Section */}
             <section

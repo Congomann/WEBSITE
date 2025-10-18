@@ -30,9 +30,9 @@ const JoinOurTeamPage: React.FC = () => {
     return (
         <div className="bg-white">
             <SEO
-                title="Join Our Team"
-                description="Start or grow your career as an insurance agent with New Holland Financial Group. We offer competitive compensation, top carriers, and unparalleled support."
-                keywords="insurance agent careers, join insurance agency, insurance jobs Des Moines, become an insurance agent"
+                title="Insurance Agent Careers in Des Moines, IA | Join Our Team"
+                description="Looking for an insurance agent career in Des Moines, IA? Join the team at New Holland Financial Group. We offer competitive compensation, top carriers, and unparalleled support."
+                keywords="insurance agent careers Des Moines, join insurance agency Iowa, insurance jobs Des Moines, become an insurance agent, financial advisor jobs"
             />
             {/* Hero Section */}
             <section

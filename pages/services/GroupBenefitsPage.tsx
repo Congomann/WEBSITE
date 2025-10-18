@@ -23,7 +23,7 @@ const GroupBenefitsPage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Group Benefits"
+            title="Group & Employee Benefits in Des Moines, IA | New Holland Financial"
             subtitle="Attract and retain top talent with comprehensive employee benefit packages."
             seoDescription="Enhance your business with competitive group benefits packages from New Holland Financial Group in Des Moines, IA. We design employee benefits programs including group health, disability, and income protection to help you attract and retain top talent."
             seoKeywords="group benefits Des Moines, employee benefits packages Iowa, small business insurance, group health insurance, corporate benefits, employee retention, New Holland Financial"

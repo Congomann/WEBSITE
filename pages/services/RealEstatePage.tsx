@@ -17,7 +17,7 @@ const RealEstatePage: React.FC = () => {
             "addressLocality": "Des Moines",
             "addressRegion": "IA"
         },
-        "telephone": "(717) 847-9638",
+        "telephone": "(515) 555-0123",
         "description": "Expert real estate services for buying, selling, and investing in residential and commercial properties in the Des Moines area and across Iowa.",
         "areaServed": {
             "@type": "State",
@@ -27,7 +27,7 @@ const RealEstatePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Real Estate Services"
+            title="Real Estate Agents in Des Moines, IA | Homes for Sale"
             subtitle="Expert guidance for buying, selling, and investing in property."
             seoDescription="Explore houses for sale in Des Moines, IA with New Holland Financial Group's expert real estate services. Whether you're buying your dream home, selling property, or investing, our licensed agents provide unparalleled guidance across Iowa."
             seoKeywords="real estate Des Moines, homes for sale Iowa, buy a house, sell my home, real estate investment, commercial property, New Holland Financial real estate"

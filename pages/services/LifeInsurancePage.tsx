@@ -20,7 +20,7 @@ const LifeInsurancePage: React.FC = () => {
                 "addressLocality": "Des Moines",
                 "addressRegion": "IA"
             },
-            "telephone": "(717) 847-9638"
+            "telephone": "(515) 555-0123"
         },
         "areaServed": {
             "@type": "State",
@@ -32,7 +32,7 @@ const LifeInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Life Insurance"
+            title="Life Insurance Quotes in Des Moines, IA | New Holland Financial Group"
             subtitle="Secure your family's financial future and create a lasting legacy."
             seoDescription="Protect your legacy with comprehensive life insurance from New Holland Financial Group in Des Moines, IA. Our expert advisors provide personalized whole life, term life, IUL, and final expense policies to secure your family's financial future across Iowa, including Iowa City and Cedar Rapids."
             seoKeywords="life insurance Des Moines, whole life insurance Iowa, term life insurance policy, final expense planning, IUL Iowa, retirement annuities, financial security, New Holland Financial Group"

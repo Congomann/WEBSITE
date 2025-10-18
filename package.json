@@ -1,5 +1,5 @@
 {
-  "name": "new-holland-financial-group",
+  "name": "new-holland-financial-crm",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,15 +12,19 @@
     "react-router-dom": "^7.9.3",
     "react-dom": "^19.2.0",
     "react": "^19.2.0",
-    "crypto": "^1.0.1",
-    "url": "^0.11.4",
+    "framer-motion": "11.2.12",
+    "lucide-react": "0.395.0",
+    "recharts": "2.12.7",
+    "firebase": "^12.4.0",
     "fs": "^0.0.1-security",
     "express": "^5.1.0",
     "cors": "^2.8.5",
+    "url": "^0.11.4",
+    "@stripe/stripe-js": "^8.1.0",
     "path": "^0.12.7",
-    "@stripe/stripe-js": "3.7.0",
-    "@stripe/react-stripe-js": "2.7.3",
-    "stripe": "^19.1.0"
+    "stripe": "^19.1.0",
+    "@stripe/react-stripe-js": "^5.2.0",
+    "crypto": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

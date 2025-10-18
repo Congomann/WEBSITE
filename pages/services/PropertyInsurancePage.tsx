@@ -23,7 +23,7 @@ const PropertyInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Property Insurance"
+            title="Homeowners Insurance Des Moines, IA | Property & Renters Coverage"
             subtitle="Protect your home and personal belongings from the unexpected."
             seoDescription="Safeguard your home with premier property insurance from New Holland Financial Group in Des Moines, IA. We provide comprehensive homeowners and renters insurance, including coverage for theft, flood, and fire. Get a personalized quote for your Iowa property."
             seoKeywords="homeowners insurance Des Moines, property insurance Iowa, renters insurance quote, home insurance agency, flood insurance, fire protection, New Holland Financial"

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
@@ -30,8 +31,9 @@ const CartPage: React.FC = () => {
     return (
         <div className="bg-white py-20">
             <SEO
-                title="Shopping Cart"
-                description="Review and manage items in your shopping cart."
+                title="Your Shopping Cart"
+                description="Review and manage items in your shopping cart at New Holland Financial Group."
+                noIndex={true}
             />
             <div className="container mx-auto px-6">
                 <h1 className="text-4xl font-extrabold text-brand-blue mb-8 text-center">Your Shopping Cart</h1>

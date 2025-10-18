@@ -17,20 +17,11 @@ const CheckoutPage: React.FC = () => {
 
     useEffect(() => {
         if (cartItems.length > 0) {
-            // Create PaymentIntent as soon as the page loads with cart items
-            fetch('/api/create-payment-intent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartItems }),
-            })
-            .then((res) => {
-                if (!res.ok) {
-                    return res.json().then(data => { throw new Error(data.message || 'Failed to initialize payment') });
-                }
-                return res.json();
-            })
-            .then((data) => setClientSecret(data.clientSecret))
-            .catch((err: any) => setError(err.message));
+            // In a real app, this would fetch from a backend.
+            // For this static demo, we'll simulate the client secret being ready
+            // to allow the Stripe Elements form to render.
+            // The actual payment submission is simulated in CheckoutForm.tsx.
+            setClientSecret('pi_dummy_secret_for_ui');
         }
     }, [cartItems]);
 
@@ -66,7 +57,11 @@ const CheckoutPage: React.FC = () => {
 
     return (
         <div className="bg-white py-20">
-            <SEO title="Checkout" description="Complete your purchase securely." />
+            <SEO 
+                title="Secure Checkout" 
+                description="Complete your purchase securely with New Holland Financial Group." 
+                noIndex={true} 
+            />
             <div className="container mx-auto px-6">
                 <h1 className="text-4xl font-extrabold text-brand-blue mb-8 text-center">Checkout</h1>
                 <div className="grid lg:grid-cols-5 gap-12">

@@ -3,66 +3,101 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Holland Financial Group</title>
+  <title>New Holland Financial CRM</title>
   
-  <!-- SEO & Social Sharing -->
-  <meta name="description" content="Protecting what matters most. Your life, your family, your future. Offering tailored insurance solutions for life, auto, home, and business." />
-  <link rel="canonical" href="https://newhollandfinancial.com/" />
-  <link rel="icon" href="data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='44' height='44' rx='9' fill='black'/%3e%3cpath d='M12 33V22.7647L22 14L32 22.7647V33H12Z' fill='%23B8B8B8'/%3e%3ccircle cx='22' cy='23' r='3.5' fill='white'/%3e%3c/svg%3e" type="image/svg+xml">
+  <meta name="description" content="A modern, responsive Insurance CRM for New Holland Financial to manage leads, clients, and agent performance." />
+  <link rel="icon" href="data:image/svg+xml,%3csvg width='32' height='32' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='44' height='44' rx='9' fill='%234338CA'/%3e%3cpath d='M12 33V22.7647L22 14L32 22.7647V33H12Z' fill='%23A5B4FC'/%3e%3ccircle cx='22' cy='23' r='3.5' fill='white'/%3e%3c/svg%3e" type="image/svg+xml">
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://newhollandfinancial.com/" />
-  <meta property="og:title" content="New Holland Financial Group | Protecting What Matters Most" />
-  <meta property="og:description" content="Offering tailored insurance solutions for life, auto, home, and business to secure your financial peace of mind." />
-  <meta property="og:image" content="https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=1200&auto=format&fit=crop" />
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://newhollandfinancial.com/" />
-  <meta property="twitter:title" content="New Holland Financial Group | Protecting What Matters Most" />
-  <meta property="twitter:description" content="Offering tailored insurance solutions for life, auto, home, and business to secure your financial peace of mind." />
-  <meta property="twitter:image" content="https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=1200&auto=format&fit=crop" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
           colors: {
             'brand-blue': '#0D2C54',
-            'brand-gold': '#F7C548',
-            'brand-light': '#F1F4F8',
+            'brand-gold': '#F2B705',
+            'brand-light': '#F8F9FA',
+            'primary': {
+              '50': '#eff6ff',
+              '100': '#dbeafe',
+              '200': '#bfdbfe',
+              '300': '#93c5fd',
+              '400': '#60a5fa',
+              '500': '#3b82f6',
+              '600': '#2563eb',
+              '700': '#1d4ed8',
+              '800': '#1e40af',
+              '900': '#1e3a8a',
+              '950': '#172554',
+            },
+             'violet': {
+              '50': '#f5f3ff',
+              '100': '#ede9fe',
+              '200': '#ddd6fe',
+              '300': '#c4b5fd',
+              '400': '#a78bfa',
+              '500': '#8b5cf6',
+              '600': '#7c3aed',
+              '700': '#6d28d9',
+              '800': '#5b21b6',
+              '900': '#4c1d95',
+              '950': '#2e1065',
+            }
           },
           animation: {
-            'fade-in-down': 'fadeInDown 0.8s ease-out forwards',
-            'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-            'fade-in': 'fadeIn 0.8s ease-out forwards',
-            'marquee': 'marquee 60s linear infinite',
+            'fade-in': 'fadeIn 0.5s ease-out forwards',
+            'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+            'fade-in-down': 'fadeInDown 0.3s ease-out forwards',
+            'marquee': 'marquee 40s linear infinite',
           },
           keyframes: {
-            fadeInDown: {
-              '0%': { opacity: 0, transform: 'translateY(-20px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' },
-            },
-            fadeInUp: {
-              '0%': { opacity: 0, transform: 'translateY(20px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' },
-            },
             fadeIn: {
               '0%': { opacity: 0 },
               '100%': { opacity: 1 },
             },
+            fadeInUp: {
+              '0%': { opacity: 0, transform: 'translateY(10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
+            fadeInDown: {
+              '0%': { opacity: 0, transform: 'translateY(-10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            },
             marquee: {
-              '0%': { transform: 'translateX(0%)' },
-              '100%': { transform: 'translateX(-100%)' },
+                '0%': { transform: 'translateX(0%)' },
+                '100%': { transform: 'translateX(-50%)' }
             }
           }
         }
       }
     }
   </script>
-<script src="https://js.stripe.com/v3/"></script>
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .glassmorphism {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .dark .glassmorphism {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  /* Ensure the marquee animation doesn't have breaks */
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+</style>
 <script type="importmap">
 {
   "imports": {
@@ -70,29 +105,29 @@
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "crypto": "https://aistudiocdn.com/crypto@^1.0.1",
-    "url": "https://aistudiocdn.com/url@^0.11.4",
+    "framer-motion": "https://esm.sh/framer-motion@11.2.12",
+    "lucide-react": "https://esm.sh/lucide-react@0.395.0",
+    "recharts": "https://esm.sh/recharts@2.12.7",
+    "firebase/app": "https://esm.sh/firebase@10.12.2/app",
+    "firebase/auth": "https://esm.sh/firebase@10.12.2/auth",
+    "firebase/firestore": "https://esm.sh/firebase@10.12.2/firestore",
+    "firebase/storage": "https://esm.sh/firebase@10.12.2/storage",
+    "firebase/messaging": "https://esm.sh/firebase@10.12.2/messaging",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.4.0/",
     "fs/": "https://aistudiocdn.com/fs@^0.0.1-security/",
     "express": "https://aistudiocdn.com/express@^5.1.0",
     "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "url": "https://aistudiocdn.com/url@^0.11.4",
+    "@stripe/stripe-js": "https://aistudiocdn.com/@stripe/stripe-js@^8.1.0",
     "path": "https://aistudiocdn.com/path@^0.12.7",
-    "@stripe/stripe-js": "https://esm.sh/@stripe/stripe-js@3.7.0",
-    "@stripe/react-stripe-js": "https://esm.sh/@stripe/react-stripe-js@2.7.3",
-    "stripe": "https://aistudiocdn.com/stripe@^19.1.0"
+    "stripe": "https://aistudiocdn.com/stripe@^19.1.0",
+    "@stripe/react-stripe-js": "https://aistudiocdn.com/@stripe/react-stripe-js@^5.2.0",
+    "crypto": "https://aistudiocdn.com/crypto@^1.0.1"
   }
 }
 </script>
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XXXXXXXXXX');
-</script>
 </head>
-<body class="bg-brand-light">
+<body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
   <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

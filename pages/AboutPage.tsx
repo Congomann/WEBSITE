@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
 import useIntersectionObserver from '../hooks/useIntersectionObserver';
@@ -52,9 +53,9 @@ const AboutPage: React.FC = () => {
     return (
         <div className="bg-white">
             <SEO
-                title="About New Holland Financial Group | Des Moines, IA"
-                description="Learn about New Holland Financial Group in Des Moines, IA. Discover our history, mission, and our commitment to providing tailored insurance solutions with integrity."
-                keywords="about New Holland Financial, insurance agency Des Moines, company history, financial advisors Iowa"
+                title="About Our Des Moines Insurance Agency | New Holland Financial Group"
+                description="Discover the mission and values of New Holland Financial Group. Learn why we are a leading insurance agency in Des Moines, IA, dedicated to our community and clients."
+                keywords="about New Holland Financial Group, insurance agency Des Moines, our mission, financial advisors Iowa, company history"
                 structuredData={structuredData}
             />
             <div className="container mx-auto px-6 py-20">

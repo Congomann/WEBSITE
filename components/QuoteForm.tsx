@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Service } from '../types';
 import { useData } from '../contexts/DataContext';
@@ -157,25 +156,18 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
 
         setIsLoading(true);
         try {
-            // The backend is set up to receive this request at `/api/quotes`
-            const response = await fetch('/api/quotes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                // Try to get a meaningful error message from the backend
-                const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred.' }));
-                throw new Error(errorData.message || 'Failed to submit quote. Please try again.');
-            }
+            // Simulate API call and save to localStorage
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const storedQuotes = localStorage.getItem('nhf-quotes');
+            const quotes = storedQuotes ? JSON.parse(storedQuotes) : [];
+            const newQuote = { ...formData, id: Date.now(), submittedAt: new Date().toISOString() };
+            quotes.push(newQuote);
+            localStorage.setItem('nhf-quotes', JSON.stringify(quotes));
             
             console.log("Form Submitted:", formData);
             setSubmitted(true);
         } catch (err: any) {
-            setError(err.message);
+            setError("Failed to submit quote. Please try again.");
         } finally {
             setIsLoading(false);
         }

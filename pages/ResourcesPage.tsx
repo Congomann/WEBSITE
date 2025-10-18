@@ -76,9 +76,9 @@ const ResourcesPage: React.FC = () => {
     return (
         <div className="bg-brand-light">
             <SEO
-                title="Resources & Media"
-                description="Explore educational videos and helpful documents from New Holland Financial Group to learn more about insurance and financial planning."
-                keywords="insurance resources, financial planning documents, life insurance videos, annuities guide"
+                title="Insurance Resources & Media Hub | New Holland Financial Group"
+                description="Access our free resources hub. Explore educational videos and helpful documents from New Holland Financial Group to learn more about insurance and financial planning in Iowa."
+                keywords="insurance resources, financial planning documents, life insurance videos, annuities guide, insurance education Iowa"
             />
             {/* Header Section */}
             <section className="bg-brand-blue text-white py-20">

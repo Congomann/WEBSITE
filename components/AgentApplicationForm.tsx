@@ -125,21 +125,22 @@ const AgentApplicationForm: React.FC = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch('/api/agent-applications', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...formData,
-                    experience: Number(formData.experience)
-                }),
-            });
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred.' }));
-                throw new Error(errorData.message || 'Failed to submit application.');
-            }
+            // Simulate API call and save to localStorage
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const storedApps = localStorage.getItem('nhf-agent_applications');
+            const apps = storedApps ? JSON.parse(storedApps) : [];
+            const newId = apps.length > 0 ? Math.max(...apps.map((a: any) => a.id)) + 1 : 1;
+            const appToAdd = {
+                ...formData,
+                id: newId,
+                experience: Number(formData.experience),
+                submittedAt: new Date().toISOString()
+            };
+            apps.push(appToAdd);
+            localStorage.setItem('nhf-agent_applications', JSON.stringify(apps));
             setSubmitted(true);
         } catch (err: any) {
-            setApiError(err.message);
+            setApiError('Failed to submit application. Please try again later.');
         } finally {
             setIsLoading(false);
         }

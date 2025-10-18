@@ -12,39 +12,33 @@ const CheckoutForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      // Stripe.js has not yet loaded.
-      // Make sure to disable form submission until Stripe.js has loaded.
-      return;
-    }
-
     setIsLoading(true);
     setMessage(null);
 
-    // REAL IMPLEMENTATION for handling various payment methods:
-    // The `confirmPayment` call below works for all payment methods supported
-    // by the Payment Element, including credit cards, Google Pay, and Apple Pay.
-    // Stripe handles the specific flow for each method automatically.
+    // Simulate a successful payment processing for the demo
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Redirect to success page manually since we are not using stripe.confirmPayment
+    // This makes the checkout flow complete without a backend.
+    window.location.href = `${window.location.origin}/#/order-success?redirect_status=succeeded`;
+
+    // The code below would be used in a real implementation with a backend.
+    /*
+    if (!stripe || !elements) {
+      return;
+    }
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        // The `return_url` is where the user will be redirected after completing the payment.
-        // Stripe will append payment intent details to this URL, which you can use on the
-        // success page to display order details.
-        // We use the HashRouter syntax `/#/` for the path.
         return_url: `${window.location.origin}/#/order-success`,
       },
     });
-
-    // This point will only be reached if there is an immediate error during confirmation.
-    // Otherwise, the user is redirected to the `return_url`. For example, if they
-    // close the payment popup from their bank or the card is declined.
     if (error.type === "card_error" || error.type === "validation_error") {
       setMessage(error.message || "An unexpected error occurred.");
     } else {
       setMessage("An unexpected error occurred.");
     }
+    */
 
     setIsLoading(false);
   };

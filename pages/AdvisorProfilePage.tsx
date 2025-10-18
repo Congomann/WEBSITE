@@ -25,7 +25,7 @@ const AdvisorProfilePage: React.FC = () => {
     return (
         <div className="bg-white">
             <SEO
-                title={`${advisor.name} | Financial Advisor`}
+                title={`${advisor.name} | Financial Advisor in Des Moines, IA`}
                 description={`Learn more about ${advisor.name}, a ${advisor.title} at New Holland Financial Group. Specializing in ${advisor.specialties.join(', ')}. ${advisor.bio.substring(0, 120)}...`}
                 keywords={`financial advisor, insurance agent, ${advisor.name}, ${advisor.specialties.join(', ')}, New Holland Financial Group, ${advisor.languages?.join(', ')}`}
             />

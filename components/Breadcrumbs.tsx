@@ -15,6 +15,7 @@ const breadcrumbNameMap: { [key: string]: string } = {
     'contact': 'Contact Us',
     'admin': 'Admin',
     'privacy-policy': 'Privacy Policy',
+    'terms-of-service': 'Terms of Service',
     'services': 'Services',
     'join-our-team': 'Join Our Team'
 };
