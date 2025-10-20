@@ -2,11 +2,10 @@
 import React from 'react';
 import ServicePageLayout from './ServicePageLayout';
 import type { ServiceDetail } from '../../types';
-import { useData } from '../../contexts/DataContext';
+import { service_details } from '../../data';
 
 const AutoInsurancePage: React.FC = () => {
-    const { serviceDetails } = useData();
-    const details: ServiceDetail[] = serviceDetails.auto || [];
+    const details: ServiceDetail[] = service_details.auto || [];
     
     const structuredData = {
         "@context": "https://schema.org",
@@ -23,7 +22,7 @@ const AutoInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Affordable Auto Insurance in Des Moines, IA | Get a Free Quote"
+            title="Auto & Commercial Insurance"
             subtitle="Reliable coverage for your personal, classic, and commercial vehicles."
             seoDescription="Get a free quote for affordable car insurance in Des Moines, IA with New Holland Financial Group. We offer competitive rates for personal auto, classic car, and commercial vehicle insurance in Iowa City, Cedar Rapids, and beyond. Drive protected today."
             seoKeywords="auto insurance Des Moines, car insurance quote Iowa, commercial vehicle insurance, classic car insurance, Iowa auto insurance rates, New Holland Financial, vehicle protection"

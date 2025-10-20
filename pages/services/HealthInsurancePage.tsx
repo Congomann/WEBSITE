@@ -2,11 +2,10 @@
 import React from 'react';
 import ServicePageLayout from './ServicePageLayout';
 import type { ServiceDetail } from '../../types';
-import { useData } from '../../contexts/DataContext';
+import { service_details } from '../../data';
 
 const HealthInsurancePage: React.FC = () => {
-    const { serviceDetails } = useData();
-    const details: ServiceDetail[] = serviceDetails.health || [];
+    const details: ServiceDetail[] = service_details.health || [];
     
     const structuredData = {
         "@context": "https://schema.org",
@@ -23,7 +22,7 @@ const HealthInsurancePage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Health Insurance Plans in Des Moines, IA | Individual & Family"
+            title="Health Insurance"
             subtitle="Access to quality healthcare for you and your family."
             seoDescription="Find the right health insurance plan in Des Moines, IA with New Holland Financial Group. We offer affordable individual, family, and dental insurance options, helping you navigate the marketplace and access top healthcare networks across Iowa."
             seoKeywords="health insurance Des Moines, individual health plans Iowa, family medical insurance, dental insurance quote, healthcare marketplace, open enrollment, New Holland Financial"

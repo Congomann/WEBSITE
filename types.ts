@@ -1,31 +1,51 @@
-// FIX: Import 'React' to use 'React.ReactNode' type.
-import React from 'react';
+import type { ReactNode } from 'react';
 
-// FIX: Export all necessary types to be used across the application.
-export interface Service {
-  path: string;
+export enum Role {
+  Admin = 'admin',
+  Advisor = 'advisor',
+  User = 'user'
+}
+
+export interface User {
+  id: number;
   name: string;
+  email: string;
+  role: Role;
+}
+
+export interface Service {
+  name: string;
+  path: string;
   description: string;
-  icon?: React.ReactNode;
+  icon: ReactNode;
+}
+
+export interface ServiceDetail {
+    name: string;
+    description: string;
+    benefits: string[];
 }
 
 export interface Advisor {
   id: number;
-  name: string;
+  name:string;
   title: string;
   imageUrl: string;
   specialties: string[];
   bio: string;
   languages?: string[];
-  availability?: { [key: string]: string[] };
   email?: string;
+  phone?: string;
+  availability?: {
+    [dayOfWeek: string]: string[];
+  };
 }
 
 export interface VideoResource {
   id: string;
   title: string;
   description: string;
-  type: 'youtube' | 'direct';
+  type: 'youtube' | 'direct' | 'tiktok';
   source: string;
 }
 
@@ -36,139 +56,47 @@ export interface DocumentResource {
   filePath: string;
 }
 
-// FIX: Changed Product from an interface to a class to allow it to be used as a value.
-export class Product {
+export interface Product {
   id: number;
   name: string;
   price: number;
   imageUrl: string;
   description: string;
-
-  constructor(id: number, name: string, price: number, imageUrl: string, description: string) {
-    this.id = id;
-    this.name = name;
-    this.price = price;
-    this.imageUrl = imageUrl;
-    this.description = description;
-  }
 }
 
 export interface CartItem extends Product {
   quantity: number;
 }
 
-export interface AgentApplication {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  licenseNo: string;
-  city: string;
-  state: string;
-  experience: number;
-  linkedin?: string;
-  message: string;
-  submittedAt: string;
+export interface FAQItem {
+  id:string;
+  question: string;
+  answer: string;
+  category: 'General Insurance' | 'Life & Health' | 'Property & Auto' | 'Real Estate' | 'Financial Planning';
 }
 
-export interface ServiceDetail {
-  name: string;
-  description: string;
-  benefits?: string[];
-}
-
-export interface BlogPost {
-    slug: string;
-    title: string;
-    description: string;
-    author: string;
-    authorTitle: string;
-    authorImageUrl: string;
-    date: string; // ISO String
-    readTime: number; // in minutes
-    category: string;
-    tags: string[];
-    imageUrl: string;
-    content: string; // Markdown or HTML
-    relatedServices?: { name: string; path: string }[];
-}
-
-
-export type Role = 'Admin' | 'Sub-Admin' | 'Manager' | 'Agent';
-
-export interface User {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  role: Role;
-  teamId?: string;
-  fcmToken?: string;
-}
-
-export type LeadStatus = 'New' | 'Assigned' | 'In Progress' | 'Closed - Won' | 'Closed - Lost';
-
-export interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  status: LeadStatus;
-  source: string;
-  assignedAgentId?: string;
-  assignedAgentName?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Client {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  policies: string[];
-  agentId: string;
-  joinedDate: Date;
-}
-
-export interface Task {
-  id: string;
+export interface InfoResource {
   title: string;
-  dueDate: string; // ISO String
-  isCompleted: boolean;
-  assignedToId: string;
-  reminderOffset: number | null; // in minutes
-  relatedTo?: {
-    type: 'Lead' | 'Client';
-    id: string;
-    name: string;
-  };
+  description: string;
+  points: string[];
 }
 
-export interface Commission {
-    id: string;
-    policyId: string;
-    clientName: string;
-    amount: number;
-    date: Date;
-    agentId: string;
+export interface SocialLink {
+  name: string;
+  url: string;
 }
 
-export interface Message {
-    id: string;
-    senderId: string;
-    senderName: string;
-    recipientId: string; // 'all' for broadcast
-    content: string;
-    timestamp: Date;
-    isRead: boolean;
+export interface CompanyInfo {
+    phone: string;
+    email: string;
 }
 
-export interface Notification {
-    id: string;
-    userId: string;
-    message: string;
-    isRead: boolean;
-    timestamp: Date;
-    relatedId?: string; // e.g., task ID
+export interface EditableContent {
+    core_services: Omit<Service, 'icon'>[];
+    social_links_data: SocialLink[];
+    company_info: CompanyInfo;
+    video_resources: VideoResource[];
+    document_resources: DocumentResource[];
+    faq_data: FAQItem[];
+    real_estate_info_resources: InfoResource[];
 }

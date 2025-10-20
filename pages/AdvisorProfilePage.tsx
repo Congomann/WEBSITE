@@ -1,40 +1,37 @@
-
 import React, { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import BookingModal from '../components/BookingModal';
-import { useData } from '../contexts/DataContext';
-import LoadingSpinner from '../components/LoadingSpinner';
+import CallbackForm from '../components/CallbackForm';
+import { useAdvisors } from '../contexts/AdvisorContext';
+
 
 const AdvisorProfilePage: React.FC = () => {
     const { advisorId } = useParams<{ advisorId: string }>();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { advisors, loading } = useData();
-    
+    const { advisors } = useAdvisors();
     const advisor = advisors.find(a => a.id === parseInt(advisorId || ''));
 
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-
     if (!advisor) {
-        // If not loading and no advisor found, redirect to 404
         return <Navigate to="/404" replace />;
     }
 
     return (
         <div className="bg-white">
             <SEO
-                title={`${advisor.name} | Financial Advisor in Des Moines, IA`}
+                title={`${advisor.name} | Financial Advisor`}
                 description={`Learn more about ${advisor.name}, a ${advisor.title} at New Holland Financial Group. Specializing in ${advisor.specialties.join(', ')}. ${advisor.bio.substring(0, 120)}...`}
                 keywords={`financial advisor, insurance agent, ${advisor.name}, ${advisor.specialties.join(', ')}, New Holland Financial Group, ${advisor.languages?.join(', ')}`}
             />
             
-            <BookingModal 
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                advisor={advisor}
-            />
+            {advisor && (
+              <BookingModal 
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+                  advisor={advisor}
+              />
+            )}
+
 
             <section className="bg-brand-blue text-white py-12">
                 <div className="container mx-auto px-6">
@@ -89,6 +86,16 @@ const AdvisorProfilePage: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Callback Section */}
+            <section className="py-20 bg-brand-light">
+                <div className="container mx-auto px-6">
+                    <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-2xl">
+                        <h2 className="text-3xl font-bold text-center text-brand-blue mb-8">Or, Request a Quick Callback</h2>
+                        <CallbackForm advisorName={advisor.name} />
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };

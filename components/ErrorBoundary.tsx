@@ -10,10 +10,12 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
-  // FIX: Initialize state as a class property. This is a more modern and robust
-  // approach that resolves errors related to `this.state` and `this.props` not
-  // being found on the component instance.
-  state: State = { hasError: false };
+  // FIX: Switched to constructor-based state initialization to ensure `this.props` and `this.state` are correctly set up.
+  // The class property syntax for state can sometimes cause issues depending on the build configuration.
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
   static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
@@ -30,7 +32,7 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center bg-brand-light p-8">
             <div className="max-w-md">
-                <svg className="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" viewBox="0 0 24" stroke="currentColor">
+                <svg className="w-24 h-24 mx-auto text-red-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <h1 className="text-4xl font-bold text-brand-blue mb-4">Oops! A Glitch Occurred.</h1>

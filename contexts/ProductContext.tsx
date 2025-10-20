@@ -1,15 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-// FIX: Changed import to be a non-type-only import to resolve usage as a value.
-import { Product } from '../types';
+import type { Product } from '../types';
 import { products as initialProducts } from '../data';
 
 interface ProductContextType {
     products: Product[];
-    addProduct: (product: Omit<Product, 'id' | 'price'> & { price: number }) => Promise<void>;
-    updateProduct: (product: Product) => Promise<void>;
-    deleteProduct: (productId: number) => Promise<void>;
-    loading: boolean;
-    error: string | null;
+    addProduct: (product: Omit<Product, 'id'>) => void;
+    deleteProduct: (productId: number) => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -26,89 +22,41 @@ interface ProductProviderProps {
     children: ReactNode;
 }
 
-const STORAGE_KEY = 'nhf-products';
-
 export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchProducts = useCallback(async () => {
-        setLoading(true);
-        setError(null);
+    const [products, setProducts] = useState<Product[]>(() => {
         try {
-            // Simulate async fetch
-            await new Promise(res => setTimeout(res, 100));
-            const storedProducts = localStorage.getItem(STORAGE_KEY);
-            if (storedProducts) {
-                setProducts(JSON.parse(storedProducts));
-            } else {
-                setProducts(initialProducts);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(initialProducts));
-            }
-        } catch (err: any) {
-            setError('Failed to load products from storage.');
-            console.error(err);
-        } finally {
-            setLoading(false);
+            const localData = localStorage.getItem('nhf-products');
+            // If there's data in localStorage, use it. Otherwise, seed with initial data.
+            return localData ? JSON.parse(localData) : initialProducts;
+        } catch (error) {
+            console.error("Could not parse products data from localStorage", error);
+            return initialProducts;
         }
-    }, []);
+    });
 
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        localStorage.setItem('nhf-products', JSON.stringify(products));
+    }, [products]);
 
-    const addProduct = useCallback(async (product: Omit<Product, 'id' | 'price'> & { price: number }) => {
-        try {
-            const newProduct = { 
-                ...product, 
-                id: Date.now() // Simple unique ID for demo
+    const addProduct = useCallback((product: Omit<Product, 'id'>) => {
+        setProducts(prevProducts => {
+            const newProduct = {
+                ...product,
+                id: Date.now(), // Simple unique ID generation
             };
-            setProducts(prev => {
-                const newProducts = [...prev, newProduct];
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
-                return newProducts;
-            });
-        } catch (err: any) {
-            console.error(err);
-            setError('Failed to add product.');
-        }
-    }, []);
-    
-    const updateProduct = useCallback(async (product: Product) => {
-        try {
-            setProducts(prev => {
-                const newProducts = prev.map(p => (p.id === product.id ? product : p));
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
-                return newProducts;
-            });
-        } catch (err: any) {
-            console.error("Error updating product:", err);
-            setError('Failed to update product.');
-        }
+            return [...prevProducts, newProduct];
+        });
     }, []);
 
-    const deleteProduct = useCallback(async (productId: number) => {
-        try {
-            setProducts(prev => {
-                const newProducts = prev.filter(p => p.id !== productId);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(newProducts));
-                return newProducts;
-            });
-        } catch (err: any) {
-            console.error(err);
-            setError('Failed to delete product.');
-        }
+    const deleteProduct = useCallback((productId: number) => {
+        setProducts(prevProducts => prevProducts.filter(product => product.id !== productId));
     }, []);
     
     const value = useMemo(() => ({
         products,
         addProduct,
-        updateProduct,
-        deleteProduct,
-        loading,
-        error,
-    }), [products, addProduct, updateProduct, deleteProduct, loading, error]);
+        deleteProduct
+    }), [products, addProduct, deleteProduct]);
 
     return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
 };

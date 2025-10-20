@@ -2,11 +2,10 @@
 import React from 'react';
 import ServicePageLayout from './ServicePageLayout';
 import type { ServiceDetail } from '../../types';
-import { useData } from '../../contexts/DataContext';
+import { service_details } from '../../data';
 
 const GroupBenefitsPage: React.FC = () => {
-    const { serviceDetails } = useData();
-    const details: ServiceDetail[] = serviceDetails['group-benefits'] || [];
+    const details: ServiceDetail[] = service_details['group-benefits'] || [];
 
     const structuredData = {
         "@context": "https://schema.org",
@@ -23,7 +22,7 @@ const GroupBenefitsPage: React.FC = () => {
 
     return (
         <ServicePageLayout
-            title="Group & Employee Benefits in Des Moines, IA | New Holland Financial"
+            title="Group Benefits"
             subtitle="Attract and retain top talent with comprehensive employee benefit packages."
             seoDescription="Enhance your business with competitive group benefits packages from New Holland Financial Group in Des Moines, IA. We design employee benefits programs including group health, disability, and income protection to help you attract and retain top talent."
             seoKeywords="group benefits Des Moines, employee benefits packages Iowa, small business insurance, group health insurance, corporate benefits, employee retention, New Holland Financial"

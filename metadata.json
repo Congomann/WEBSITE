@@ -1,7 +1,5 @@
 {
-  "name": "New Holland Financial CRM",
-  "description": "A modern, responsive Insurance CRM for New Holland Financial with role-based access for Admins, Sub-Admins, Managers, and Agents.",
-  "requestFramePermissions": [
-    "camera"
-  ]
+  "name": "New Holland Financial Group",
+  "description": "A professional website for New Holland Financial Group, an insurance company, showcasing their services, company information, and providing a way for customers to get a quote.",
+  "requestFramePermissions": []
 }

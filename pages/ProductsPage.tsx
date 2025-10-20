@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useProducts } from '../contexts/ProductContext';
 import ProductCard from '../components/ProductCard';
@@ -17,9 +16,9 @@ const ProductsPage: React.FC = () => {
     return (
         <div className="bg-brand-light">
             <SEO
-                title="Shop Financial Resources & Merchandise | New Holland Financial Group"
-                description="Browse and shop for exclusive New Holland Financial Group merchandise, eBooks, and helpful resources to support your financial journey."
-                keywords="financial planning merchandise, financial resources shop, finance books, New Holland Financial swag"
+                title="Shop"
+                description="Shop for exclusive New Holland Financial Group merchandise and resources."
+                keywords="financial planning merchandise, insurance resources, financial books"
             />
             <section className="bg-brand-blue text-white py-20">
                 <div className="container mx-auto px-6 text-center">

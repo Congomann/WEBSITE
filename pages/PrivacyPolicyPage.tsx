@@ -82,7 +82,7 @@ const PrivacyPolicyPage: React.FC = () => {
                 <p className={pStyles}>If you have any questions about this Privacy Policy, please contact us:</p>
                 <ul className={ulStyles}>
                     <li>By email: <a href="mailto:support@newhollandfinancial.com" className={aStyles}>support@newhollandfinancial.com</a></li>
-                    <li>By phone: <a href="tel:515-555-0123" className={aStyles}>(515) 555-0123</a></li>
+                    <li>By phone: <a href="tel:717-847-9638" className={aStyles}>(717) 847-9638</a></li>
                 </ul>
                 <p className={`${pStyles} italic`}>Last updated: {today}</p>
                 
