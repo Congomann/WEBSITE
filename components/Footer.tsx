@@ -32,6 +32,7 @@ const Footer: React.FC = () => {
         { name: 'Health & Benefits', path: '/services/health' },
         { name: 'Home & Property', path: '/services/property' },
         { name: 'Auto & Commercial', path: '/services/auto' },
+        { name: 'Real Estate', path: '/services/real-estate' },
     ];
 
     const companyLinks = [
