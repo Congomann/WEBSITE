@@ -66,7 +66,38 @@ export const service_details: { [key: string]: any[] } = {
   "life": [{ "name": "Whole Life Insurance", "description": "Permanent coverage that builds cash value over time.", "benefits": ["Lifetime protection", "Tax-deferred growth", "Borrowing options"] }],
   "auto": [{ "name": "Passenger Auto", "description": "Protection for everyday vehicles.", "benefits": ["Covers liability, collision, and comprehensive damages."] }],
   "property": [{ "name": "Homeowners Insurance", "description": "Protection for home, belongings, and liability.", "benefits": [] }],
-  "real-estate": [{ "name": "Residential Sales", "description": "Expert guidance for buying or selling your primary home.", "benefits": ["Market analysis", "Expert negotiation"] }],
+  "real-estate": [
+    {
+      "name": "Residential Sales & Purchases",
+      "description": "Whether you're a first-time homebuyer or a seasoned seller, we provide expert guidance through every step of the process, ensuring a smooth and successful transaction.",
+      "benefits": ["Personalized property searches", "Expert negotiation on offers", "Comprehensive closing coordination", "First-time homebuyer programs"]
+    },
+    {
+      "name": "Commercial Real Estate",
+      "description": "We assist businesses in finding, acquiring, or leasing commercial properties that align with their operational needs and investment goals.",
+      "benefits": ["Office, retail, and industrial spaces", "Lease negotiation and analysis", "Investment property acquisition", "Site selection services"]
+    },
+    {
+      "name": "Real Estate Investment Consulting",
+      "description": "Leverage our market expertise to build your real estate portfolio. We help you identify and analyze investment opportunities for long-term wealth creation.",
+      "benefits": ["Rental property analysis (Cap Rate, ROI)", "Portfolio diversification strategies", "Guidance on 1031 exchanges", "Market trend forecasting"]
+    },
+    {
+      "name": "Property Management Services",
+      "description": "Maximize your return and minimize the hassle of owning rental properties with our comprehensive property management services.",
+      "benefits": ["Tenant screening and placement", "Rent collection and financial reporting", "Maintenance and repair coordination", "Lease enforcement"]
+    },
+    {
+      "name": "Comparative Market Analysis (CMA)",
+      "description": "Understand the true market value of your property with our detailed CMA report, essential for setting the right price whether you're buying or selling.",
+      "benefits": ["Accurate home valuation", "Insights into local market trends", "Informed pricing strategies", "Competitive positioning"]
+    },
+    {
+      "name": "Relocation Services",
+      "description": "Moving to or from Iowa? We offer dedicated relocation services to make your transition seamless, from finding a new home to settling into your community.",
+      "benefits": ["Area tours and community information", "Coordination with moving services", "Temporary housing assistance", "Selling your current home"]
+    }
+  ],
   "health": [{ "name": "Health & Dental", "description": "Individual and family medical coverage.", "benefits": ["Access to quality care", "Preventive benefits"] }],
   "group-benefits": [{ "name": "Supplemental Health Plans", "description": "Protect income during illness or injury.", "benefits": [] }]
 };
