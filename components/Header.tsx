@@ -86,7 +86,7 @@ const Header: React.FC = () => {
                     <NavLink to="/about" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>About Us</NavLink>
                     <NavLink to="/advisors" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Advisors</NavLink>
                     <div className="px-4 py-2">
-                         <button onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)} className="w-full text-left text-white flex justify-between">Services<svg className={`w-4 h-4 ml-1 transform ${isMobileServicesOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg></button>
+                         <button onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)} className="w-full text-left text-white">Services</button>
                          {isMobileServicesOpen && (
                             <div className="mt-2 pl-4">{services.map(service => (<NavLink key={service.path} to={service.path} className="block py-2 text-white"><span className="font-semibold">{service.name}</span><span className="text-xs text-gray-400 block">{service.description}</span></NavLink>))}</div>
                          )}

@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
         { name: 'Shop Insurance', path: '/products' },
         { name: 'Find an Advisor', path: '/advisors' },
         { name: 'Resources', path: '/resources' },
-        { name: 'Contact', path: '/contact' },
+        { name: 'Contact US', path: '/contact' },
     ];
 
     const solutionLinks = [
@@ -37,6 +37,7 @@ const Footer: React.FC = () => {
     const companyLinks = [
         { name: 'About Us', path: '/about' },
         { name: 'Agent Portal', path: '/login' },
+        { name: 'Join Our Team', path: '/join-our-team' },
     ];
 
 
