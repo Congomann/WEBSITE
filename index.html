@@ -38,6 +38,7 @@
             'fade-in-down': 'fadeInDown 0.8s ease-out forwards',
             'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
             'fade-in': 'fadeIn 0.8s ease-out forwards',
+            'blink': 'blink 4s infinite ease-in-out',
           },
           keyframes: {
             fadeInDown: {
@@ -51,6 +52,10 @@
             fadeIn: {
               '0%': { opacity: 0 },
               '100%': { opacity: 1 },
+            },
+            blink: {
+              '0%, 100%': { opacity: 0.4 },
+              '50%': { opacity: 1 },
             }
           }
         }

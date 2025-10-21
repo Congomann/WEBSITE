@@ -9,99 +9,134 @@ import { useContent } from '../contexts/ContentContext';
 const ShoppingCartIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg> );
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" /></svg> );
 
-const Header: React.FC = () => {
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
-    const [isDesktopServicesOpen, setIsDesktopServicesOpen] = useState(false);
-    const { content } = useContent();
-    const services: Omit<Service, 'icon'>[] = content.core_services;
-    const { cartCount } = useCart();
-    const { isAuthenticated, user, logout } = useAuth();
-    
-    const location = useLocation();
-    const desktopServicesRef = useRef<HTMLDivElement>(null);
+const backgroundImageBase64 = "data:image/webp;base64,UklGRq4MAABXRUJQVlA4IKIMAABwIgCdASoABQACPlEej0ajoaER+H+h2VAE/A/pr/V/mf+X/oPqf8J/0P95/sv99/4v+f/2X/t/y//g/cX/g/7p/if/N/rP/X/4H/P/6r/2/8p////P+if9X/3/9p/y//2/23/l/6v7P/9R/9f/h9wD/M/7D0z/sf8L/0v9t7gX+b/0/q5+0/8P/u/+X/pf/D/dvyj+yf7v/n/8x/pv+j/xP/V/bf///+f85/tf///9vxX/mf7X/v/+7/n/9f8AP6p/mP/f/13/A/5P/U/37///+X8lfyv+u/6v/N/7f+z/////+9p/yP/b/y/+b/2/9///+E/////+4D/m/+Z/zv+M/zH+5/////+5//0AAA/vr4x/57f/739f/b34V+bfrf6/+v/sP8f+3/9R/d/7P5uP/t5//fX8H+v/tP+S/v/97+yf9t/m/9H+xP5v9v/k/7/+1f8X+v/sf///+fn3//s39x+lO1a0vU2Bv/FjB3qf7N7G+w6/2OQ7N2n+zewvsO0f2b2N9h1/scg2btP9n9jfYdf7HIv/Ydf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N9h1/scg2btP9n9jfYdf7HINm7T/Z/Y32HX+xyDZu0/2f2N";
 
-    useEffect(() => {
-        setIsMobileMenuOpen(false);
-        setIsMobileServicesOpen(false);
-        setIsDesktopServicesOpen(false);
-    }, [location.pathname]);
+const Header: React.FC = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isServicesOpen, setIsServicesOpen] = useState(false);
+    const servicesMenuRef = useRef<HTMLDivElement>(null);
+    const location = useLocation();
     
+    const { content } = useContent();
+    const { cartCount } = useCart();
+    const { user, isAdmin, logout } = useAuth();
+    const services: Omit<Service, 'icon'>[] = content.core_services;
+
+    const navLinkClasses = "text-white hover:text-brand-gold transition-colors duration-300 pb-2 border-b-2 border-transparent hover:border-brand-gold";
+    const activeNavLinkClasses = "text-brand-gold border-brand-gold";
+
+    // Close menus on route change
+    useEffect(() => {
+        setIsMenuOpen(false);
+        setIsServicesOpen(false);
+    }, [location.pathname]);
+
+    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (desktopServicesRef.current && !desktopServicesRef.current.contains(event.target as Node)) {
-                setIsDesktopServicesOpen(false);
+            if (servicesMenuRef.current && !servicesMenuRef.current.contains(event.target as Node)) {
+                setIsServicesOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const navLinkClasses = "block lg:inline-block px-4 py-2 text-white hover:text-brand-gold";
-    const activeLinkClasses = "text-brand-gold";
+    const navLinks = [
+        { name: 'About', path: '/about' },
+        { name: 'Advisors', path: '/advisors' },
+        { name: 'Resources', path: '/resources' },
+        { name: 'Shop', path: '/products' },
+        { name: 'Contact', path: '/contact' },
+    ];
+
+    const allMobileLinks = [
+        { name: 'Home', path: '/' },
+        ...navLinks.filter(l => l.name !== 'Services'), // remove services link to replace with dropdown
+        ...services.map(s => ({ name: s.name, path: s.path })),
+    ];
+
 
     return (
-        <header className="bg-brand-blue shadow-lg sticky top-0 z-50">
-            <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-                <Link to="/" aria-label="Home"><Logo variant="light" /></Link>
+        <header className="relative bg-brand-blue text-white shadow-lg z-50">
+            {/* Background Image and Blink Effect */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div 
+                    className="absolute inset-0 bg-cover bg-center opacity-30"
+                    style={{ backgroundImage: `url(${backgroundImageBase64})` }}
+                ></div>
+                <div 
+                    className="absolute inset-0 animate-blink bg-repeat"
+                    style={{
+                        backgroundImage: `
+                            radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                        `,
+                        backgroundSize: '50px 50px',
+                    }}
+                ></div>
+            </div>
 
-                <nav className="hidden lg:flex items-center space-x-2">
-                    <NavLink to="/" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Home</NavLink>
-                    <NavLink to="/about" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>About Us</NavLink>
-                    <NavLink to="/advisors" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Advisors</NavLink>
-                    <div className="relative" ref={desktopServicesRef} onMouseEnter={() => setIsDesktopServicesOpen(true)} onMouseLeave={() => setIsDesktopServicesOpen(false)}>
-                        <button className={`${navLinkClasses} flex items-center`} aria-haspopup="true" aria-expanded={isDesktopServicesOpen}>Services</button>
-                        {isDesktopServicesOpen && (
-                            <div className="absolute left-0 mt-2 w-72 bg-brand-blue rounded-md shadow-xl py-2 animate-fade-in-down">
-                                {services.map(service => (
-                                    <NavLink key={service.path} to={service.path} className={({ isActive }) => `block px-4 py-3 text-white hover:bg-white/10 ${isActive ? 'bg-white/10' : ''}`}>
-                                        <span className="font-semibold block">{service.name}</span>
-                                        <span className="text-xs text-gray-400 block">{service.description}</span>
-                                    </NavLink>
-                                ))}
+            <div className="container mx-auto px-6 py-4 relative z-10">
+                <div className="flex items-center justify-between">
+                    <Link to="/"><Logo variant="light" /></Link>
+
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center space-x-6">
+                        <NavLink to="/" className={({isActive}) => isActive ? `${navLinkClasses} ${activeNavLinkClasses}` : navLinkClasses} end>Home</NavLink>
+                        {/* Services Dropdown */}
+                        <div className="relative" ref={servicesMenuRef}>
+                            <button onClick={() => setIsServicesOpen(!isServicesOpen)} className={`${navLinkClasses} flex items-center`}>
+                                Services <svg className={`w-4 h-4 ml-1 transform transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            {isServicesOpen && (
+                                <div className="absolute left-0 mt-4 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-2 animate-fade-in-down" style={{animationDuration: '300ms'}}>
+                                    {services.map(service => (
+                                        <Link key={service.path} to={service.path} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand-blue">{service.name}</Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        {navLinks.map(link => (
+                            <NavLink key={link.path} to={link.path} className={({isActive}) => isActive ? `${navLinkClasses} ${activeNavLinkClasses}` : navLinkClasses}>{link.name}</NavLink>
+                        ))}
+                    </nav>
+
+                    {/* Icons & Mobile Menu Button */}
+                    <div className="flex items-center space-x-4">
+                        <Link to="/cart" className="relative p-2" aria-label="View shopping cart">
+                            <ShoppingCartIcon />
+                            {cartCount > 0 && <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">{cartCount}</span>}
+                        </Link>
+                        {user ? (
+                            <div className="relative group">
+                                <Link to={isAdmin ? "/management-dashboard" : "/"} className="p-2 flex items-center gap-2"><UserIcon /> <span className="hidden sm:inline">{user.name.split(' ')[0]}</span></Link>
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block animate-fade-in" style={{animationDuration: '150ms'}}>
+                                    {isAdmin && <Link to="/management-dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</Link>}
+                                    <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+                                </div>
                             </div>
+                        ) : (
+                           <Link to="/login" className="p-2 flex items-center gap-2 hover:text-brand-gold"><UserIcon /> <span className="hidden sm:inline">Login</span></Link>
                         )}
+                        <button className="lg:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Open menu">
+                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} /></svg>
+                        </button>
                     </div>
-                    <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
-                    <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
-                    <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact</NavLink>
-                </nav>
-                 <div className="hidden lg:flex items-center space-x-4">
-                    <Link to="/contact" className="bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400">Get a Quote</Link>
-                     <Link to="/cart" className="relative text-white p-2 rounded-full hover:bg-white/10" aria-label={`Cart with ${cartCount} items`}>
-                        <ShoppingCartIcon />
-                        {cartCount > 0 && (<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs">{cartCount}</span>)}
-                    </Link>
-                    {isAuthenticated ? <button onClick={logout} className="text-white p-2 rounded-full hover:bg-white/10" aria-label="Logout"><svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg></button> : <Link to="/login" className="flex items-center text-white p-2 rounded-full hover:bg-white/10" aria-label="Login"><UserIcon /><span className="ml-2">Login</span></Link>}
-                </div>
-
-                <div className="lg:hidden">
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white" aria-label="Toggle menu"><svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"} /></svg></button>
                 </div>
             </div>
-            
-            {isMobileMenuOpen && (
-                <div className="lg:hidden bg-brand-blue pb-4">
-                    <NavLink to="/" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Home</NavLink>
-                    <NavLink to="/about" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>About Us</NavLink>
-                    <NavLink to="/advisors" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Advisors</NavLink>
-                    <div className="px-4 py-2">
-                         <button onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)} className="w-full text-left text-white">Services</button>
-                         {isMobileServicesOpen && (
-                            <div className="mt-2 pl-4">{services.map(service => (<NavLink key={service.path} to={service.path} className="block py-2 text-white"><span className="font-semibold">{service.name}</span><span className="text-xs text-gray-400 block">{service.description}</span></NavLink>))}</div>
-                         )}
-                    </div>
-                    <NavLink to="/resources" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Resources</NavLink>
-                    <NavLink to="/products" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Shop</NavLink>
-                    <NavLink to="/contact" className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>Contact</NavLink>
-                    <div className="mt-4 px-4 flex items-center justify-between gap-4">
-                        <Link to="/contact" className="flex-grow text-center bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full">Get a Quote</Link>
-                         <Link to="/cart" className="relative text-white p-2" aria-label={`Cart with ${cartCount} items`}><ShoppingCartIcon />{cartCount > 0 && (<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs">{cartCount}</span>)}</Link>
-                    </div>
+
+            {/* Mobile Menu */}
+            {isMenuOpen && (
+                <div className="lg:hidden absolute w-full bg-brand-blue/95 backdrop-blur-sm shadow-xl animate-fade-in-down" style={{animationDuration: '300ms'}}>
+                    <nav className="flex flex-col items-center space-y-4 py-6">
+                        {allMobileLinks.map(link => (
+                            <NavLink key={link.path} to={link.path} className="text-xl" end>{link.name}</NavLink>
+                        ))}
+                    </nav>
                 </div>
             )}
         </header>
     );
 };
 
-export default React.memo(Header);
+export default Header;

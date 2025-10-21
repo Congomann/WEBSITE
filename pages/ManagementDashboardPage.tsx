@@ -6,18 +6,24 @@ import { useProducts } from '../contexts/ProductContext';
 import { useAdvisors } from '../contexts/AdvisorContext';
 import { useContent, ContentKey } from '../contexts/ContentContext';
 
+const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 const ManagementDashboardPage: React.FC = () => {
     const { products, addProduct, deleteProduct } = useProducts();
     const { advisors, addAdvisor, updateAdvisor, deleteAdvisor, advisorToEditId, setAdvisorToEditId } = useAdvisors();
     const { content, updateContent } = useContent();
 
+    const initialAdvisorState = {
+        name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '', email: '', phone: '',
+        ...WEEKDAYS.reduce((acc, day) => ({ ...acc, [`availability${day}`]: '' }), {})
+    };
+
     const [showAdvisorForm, setShowAdvisorForm] = useState(false);
     const [showVideoForm, setShowVideoForm] = useState(false);
     const [showDocumentForm, setShowDocumentForm] = useState(false);
     const [showProductForm, setShowProductForm] = useState(false);
     
-    const [newAdvisor, setNewAdvisor] = useState({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '', email: '', phone: '' });
+    const [newAdvisor, setNewAdvisor] = useState(initialAdvisorState);
     const [editingAdvisor, setEditingAdvisor] = useState<Advisor | null>(null);
     const [newVideo, setNewVideo] = useState({ url: '', title: '', description: '' });
     const [newDocument, setNewDocument] = useState<{ title: string; description: string; file: File | null }>({ title: '', description: '', file: null });
@@ -98,6 +104,18 @@ const ManagementDashboardPage: React.FC = () => {
 
     const handleAdvisorFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        
+        const availability: { [key: string]: string[] } = {};
+        WEEKDAYS.forEach(day => {
+            const timesString = (newAdvisor as any)[`availability${day}`];
+            if (timesString) {
+                const times = timesString.split(',').map((t: string) => t.trim()).filter(Boolean);
+                if (times.length > 0) {
+                    availability[day] = times;
+                }
+            }
+        });
+
         const advisorDataFromForm = {
             name: newAdvisor.name,
             title: newAdvisor.title,
@@ -107,6 +125,7 @@ const ManagementDashboardPage: React.FC = () => {
             languages: newAdvisor.languages.split(',').map(s => s.trim()).filter(Boolean),
             email: newAdvisor.email,
             phone: newAdvisor.phone,
+            availability,
         };
         if (editingAdvisor) {
             updateAdvisor({ ...editingAdvisor, ...advisorDataFromForm });
@@ -118,6 +137,11 @@ const ManagementDashboardPage: React.FC = () => {
 
     const handleEditAdvisor = (advisor: Advisor) => {
         setEditingAdvisor(advisor);
+        const availabilityData = WEEKDAYS.reduce((acc, day) => ({
+            ...acc,
+            [`availability${day}`]: advisor.availability?.[day]?.join(', ') || ''
+        }), {});
+
         setNewAdvisor({
             name: advisor.name,
             title: advisor.title,
@@ -127,20 +151,21 @@ const ManagementDashboardPage: React.FC = () => {
             languages: advisor.languages ? advisor.languages.join(', ') : '',
             email: advisor.email || '',
             phone: advisor.phone || '',
+            ...availabilityData,
         });
         setShowAdvisorForm(true);
     };
     
     const handleAddNewAdvisorClick = () => {
         setEditingAdvisor(null);
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '', email: '', phone: '' });
+        setNewAdvisor(initialAdvisorState);
         setShowAdvisorForm(true);
     };
 
     const handleAdvisorFormCancel = () => {
         setShowAdvisorForm(false);
         setEditingAdvisor(null);
-        setNewAdvisor({ name: '', title: '', imageUrl: '', specialties: '', bio: '', languages: '', email: '', phone: '' });
+        setNewAdvisor(initialAdvisorState);
         setAdvisorToEditId(null);
     };
 
@@ -369,6 +394,28 @@ const ManagementDashboardPage: React.FC = () => {
                                 <div><label htmlFor="specialties" className={formLabelClass}>Specialties (comma-separated)</label><input type="text" name="specialties" required value={newAdvisor.specialties} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="languages" className={formLabelClass}>Languages (comma-separated)</label><input type="text" name="languages" value={newAdvisor.languages} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                 <div><label htmlFor="bio" className={formLabelClass}>Bio</label><textarea name="bio" required rows={3} value={newAdvisor.bio} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass}></textarea></div>
+                                
+                                <div className="pt-4 border-t">
+                                    <h5 className="text-md font-bold text-gray-800 mb-2">Weekly Availability</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {WEEKDAYS.map(day => (
+                                            <div key={day}>
+                                                <label htmlFor={`availability${day}`} className={formLabelClass}>{day}</label>
+                                                <input
+                                                    type="text"
+                                                    name={`availability${day}`}
+                                                    id={`availability${day}`}
+                                                    placeholder="e.g., 09:00, 10:00, 14:00"
+                                                    value={(newAdvisor as any)[`availability${day}`]}
+                                                    onChange={(e) => handleInputChange(setNewAdvisor, e)}
+                                                    className={formInputClass}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-2">Enter available time slots separated by commas (e.g., 09:00, 10:00, 14:00).</p>
+                                </div>
+                                
                                 <div className="flex gap-4"><button type="submit" className="bg-brand-blue text-white font-bold py-2 px-4 rounded-full">{editingAdvisor ? 'Save Changes' : 'Save Advisor'}</button><button type="button" onClick={handleAdvisorFormCancel} className="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-full">Cancel</button></div>
                             </form>
                         ) : <button onClick={handleAddNewAdvisorClick} className="mt-6 bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full">Add New Advisor</button>}

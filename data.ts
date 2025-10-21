@@ -21,6 +21,8 @@ export const initialContent: EditableContent = {
     { name: 'Facebook', url: 'https://facebook.com/newhollandfinancial' },
     { name: 'Instagram', url: 'https://instagram.com/newhollandfinancial' },
     { name: 'Twitter', url: 'https://twitter.com/Newhollandfg' },
+    { name: 'TikTok', url: 'https://www.tiktok.com/@newhollandfinancial' },
+    { name: 'Snapchat', url: 'https://www.snapchat.com/add/newhollandfinancial' },
   ],
   company_info: {
       phone: '(717) 847-9638',

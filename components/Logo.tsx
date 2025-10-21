@@ -14,7 +14,7 @@ const Logo: React.FC<LogoProps> = ({ className = '', variant = 'light' }) => {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Icon */}
-      <div className="flex-shrink-0 w-11 h-11">
+      <div className="flex-shrink-0 w-11 h-11 animate-fade-in-down" style={{ animationDuration: '600ms' }}>
         <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <rect width="44" height="44" rx="9" fill="black"/>
             <path d="M12 33V22.7647L22 14L32 22.7647V33H12Z" fill="#F7C548"/>
@@ -23,7 +23,7 @@ const Logo: React.FC<LogoProps> = ({ className = '', variant = 'light' }) => {
       </div>
 
       {/* Text */}
-      <div>
+      <div className="animate-fade-in-down" style={{ animationDelay: '200ms', animationDuration: '600ms' }}>
         <span className={`block text-xl font-bold leading-tight ${textPrimaryColor}`}>
           New Holland
         </span>

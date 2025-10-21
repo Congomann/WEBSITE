@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const from = location.state?.from?.pathname || '/';
+    const from = (location.state as any)?.from?.pathname || '/management-dashboard';
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -33,16 +33,16 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-brand-light flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <SEO title="Login" description="Access your New Holland Financial Group account." noIndex={true} />
+            <SEO title="Admin Login" description="Access the management dashboard for New Holland Financial Group." noIndex={true} />
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
                     <Logo variant="dark" />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-                    Sign in to your account
+                    Administrator Sign In
                 </h2>
                  <p className="mt-2 text-center text-sm text-gray-600">
-                    Use <span className="font-medium">admin@nhf.com</span> for admin access.
+                    (Use <span className="font-medium">admin@nhf.com</span> for demo access)
                 </p>
             </div>
 

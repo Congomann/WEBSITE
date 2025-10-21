@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Role } from '../types';
+import type { Role } from '../types';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -20,8 +20,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
 
     if (!user || !allowedRoles.includes(user.role)) {
         // If the user is logged in but doesn't have the required role,
-        // redirect them to the homepage or an "unauthorized" page.
-        // For simplicity, we redirect to the homepage.
+        // redirect them to the homepage.
         return <Navigate to="/" replace />;
     }
 
