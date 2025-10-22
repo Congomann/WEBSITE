@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob } from '@google/genai';
+import { useNavigate } from 'react-router-dom';
+import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob, FunctionDeclaration, Type } from '@google/genai';
 import { encode, decode, decodeAudioData } from '../utils/audioUtils';
 import SEO from '../components/SEO';
 
@@ -11,6 +12,22 @@ interface Transcription {
     text: string;
     isFinal: boolean;
 }
+
+// Function declaration for the navigation tool
+const navigationFunctionDeclaration: FunctionDeclaration = {
+  name: 'navigate',
+  parameters: {
+    type: Type.OBJECT,
+    description: 'Navigates the user to a different page on the website.',
+    properties: {
+      path: {
+        type: Type.STRING,
+        description: `The path to navigate to. Must be one of the following: "/", "/about", "/advisors", "/resources", "/products", "/cart", "/contact", "/privacy-policy", "/join-our-team", "/services/life", "/services/auto", "/services/property", "/services/real-estate", "/services/health", "/services/group-benefits"`,
+      },
+    },
+    required: ['path'],
+  },
+};
 
 function createPcmBlob(data: Float32Array): Blob {
     const l = data.length;
@@ -29,6 +46,7 @@ const LiveAssistantPage: React.FC = () => {
     const [speakingState, setSpeakingState] = useState<SpeakingState>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [transcriptionHistory, setTranscriptionHistory] = useState<Transcription[]>([]);
+    const navigate = useNavigate();
 
     const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -37,10 +55,12 @@ const LiveAssistantPage: React.FC = () => {
     const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
     const mediaStreamSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
 
+    // Refs for managing output audio playback queue
     const nextStartTimeRef = useRef<number>(0);
     const audioSourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
 
     const stopConversation = useCallback(() => {
+        // 1. Close the Gemini session
         if (sessionPromiseRef.current) {
             sessionPromiseRef.current.then(session => {
                 session.close();
@@ -48,41 +68,49 @@ const LiveAssistantPage: React.FC = () => {
             sessionPromiseRef.current = null;
         }
 
+        // 2. Stop microphone tracks to turn off the browser's recording indicator
         if (mediaStreamRef.current) {
             mediaStreamRef.current.getTracks().forEach(track => track.stop());
             mediaStreamRef.current = null;
         }
+        
+        // 3. Stop any currently playing or scheduled audio from the assistant
+        if (audioSourcesRef.current) {
+            for (const source of audioSourcesRef.current.values()) {
+                source.stop();
+            }
+            audioSourcesRef.current.clear();
+        }
+        nextStartTimeRef.current = 0;
 
+        // 4. Disconnect and clean up Web Audio API nodes for input
         if (scriptProcessorRef.current) {
             try {
                 scriptProcessorRef.current.disconnect();
-            } catch (e) {
-                console.warn("Error disconnecting script processor:", e);
-            }
+            } catch (e) { console.warn("Error disconnecting script processor:", e); }
             scriptProcessorRef.current = null;
         }
-
         if (mediaStreamSourceRef.current) {
             try {
                 mediaStreamSourceRef.current.disconnect();
-            } catch (e) {
-                console.warn("Error disconnecting media stream source:", e);
-            }
+            } catch (e) { console.warn("Error disconnecting media stream source:", e); }
             mediaStreamSourceRef.current = null;
         }
 
+        // 5. Close AudioContexts to release all associated system audio resources
         if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
-            inputAudioContextRef.current.close();
+            inputAudioContextRef.current.close().catch(e => console.error("Error closing input audio context:", e));
         }
         if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
-            outputAudioContextRef.current.close();
+            outputAudioContextRef.current.close().catch(e => console.error("Error closing output audio context:", e));
         }
-
+        
+        // 6. Reset UI state
         setConversationState('idle');
         setSpeakingState('idle');
     }, []);
 
-    // Effect for cleanup on unmount
+    // Effect for cleanup on component unmount
     useEffect(() => {
         return () => {
             stopConversation();
@@ -105,6 +133,7 @@ const LiveAssistantPage: React.FC = () => {
 
         const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
         
+        // Initialize AudioContexts for input (mic) and output (speaker)
         inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
         outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
         
@@ -118,25 +147,30 @@ const LiveAssistantPage: React.FC = () => {
                 speechConfig: {
                     voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
                 },
-                systemInstruction: `You are a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features.`,
+                systemInstruction: `You are a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features. You can also help users navigate the website. For example, if a user asks 'take me to the about page', you should call the navigate function with the path '/about'.`,
                 inputAudioTranscription: {},
                 outputAudioTranscription: {},
+                tools: [{functionDeclarations: [navigationFunctionDeclaration]}],
             },
             callbacks: {
                 onopen: () => {
                     setConversationState('active');
                     setSpeakingState('user');
                     
-                    const source = inputAudioContextRef.current!.createMediaStreamSource(mediaStreamRef.current!);
+                    if (!mediaStreamRef.current || !inputAudioContextRef.current) return;
+
+                    // Create an audio processing graph to capture microphone input
+                    const source = inputAudioContextRef.current.createMediaStreamSource(mediaStreamRef.current);
                     mediaStreamSourceRef.current = source;
                     
-                    const scriptProcessor = inputAudioContextRef.current!.createScriptProcessor(4096, 1, 1);
+                    const scriptProcessor = inputAudioContextRef.current.createScriptProcessor(4096, 1, 1);
                     scriptProcessorRef.current = scriptProcessor;
 
                     scriptProcessor.onaudioprocess = (audioProcessingEvent) => {
                         const inputData = audioProcessingEvent.inputBuffer.getChannelData(0);
                         const pcmBlob = createPcmBlob(inputData);
                         
+                        // Send the processed audio data to Gemini
                         if (sessionPromiseRef.current) {
                            sessionPromiseRef.current.then((session) => {
                                 session.sendRealtimeInput({ media: pcmBlob });
@@ -144,10 +178,35 @@ const LiveAssistantPage: React.FC = () => {
                         }
                     };
 
+                    // Connect the microphone source to the processor.
+                    // The processor is NOT connected to the destination, to prevent the user
+                    // from hearing their own voice (echo).
                     source.connect(scriptProcessor);
-                    scriptProcessor.connect(inputAudioContextRef.current!.destination);
                 },
                 onmessage: async (message: LiveServerMessage) => {
+                    // Handle Function Calling for navigation
+                    if (message.toolCall) {
+                        for (const fc of message.toolCall.functionCalls) {
+                            if (fc.name === 'navigate') {
+                                const path = fc.args.path;
+                                if (typeof path === 'string') {
+                                    setTimeout(() => navigate(path), 100);
+                                    
+                                    // Send a response back to the model to confirm the action
+                                    sessionPromiseRef.current?.then((session) => {
+                                        session.sendToolResponse({
+                                            functionResponses: {
+                                                id: fc.id,
+                                                name: fc.name,
+                                                response: { result: `Successfully navigated to ${path}` },
+                                            }
+                                        });
+                                    });
+                                }
+                            }
+                        }
+                    }
+
                     // Handle Transcription
                     if (message.serverContent?.inputTranscription) {
                         const { text, isFinal } = message.serverContent.inputTranscription;
@@ -174,10 +233,11 @@ const LiveAssistantPage: React.FC = () => {
                         setSpeakingState('user');
                     }
 
-                    // Handle Audio
+                    // Handle Audio Playback
                     const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
                     if (base64Audio) {
                         const outputAudioContext = outputAudioContextRef.current!;
+                        // Schedule playback to ensure gapless audio streaming
                         nextStartTimeRef.current = Math.max(nextStartTimeRef.current, outputAudioContext.currentTime);
 
                         const audioBuffer = await decodeAudioData(decode(base64Audio), outputAudioContext, 24000, 1);
@@ -197,8 +257,8 @@ const LiveAssistantPage: React.FC = () => {
                         audioSourcesRef.current.add(source);
                     }
 
-                    const interrupted = message.serverContent?.interrupted;
-                    if (interrupted) {
+                    // Handle interruptions from the server
+                    if (message.serverContent?.interrupted) {
                         for (const source of audioSourcesRef.current.values()) {
                             source.stop();
                         }
