@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import { useContent } from '../contexts/ContentContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Role } from '../types';
 
 const LinkedInIcon = () => ( <svg fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg> );
 const FacebookIcon = () => ( <svg fill="currentColor" viewBox="0 0 24 24" className="w-6 h-6"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg> );
@@ -26,6 +28,45 @@ const SnapchatIcon = () => (
         <path d="M12 2C6.477 2 2 6.477 2 12c0 5.523 4.477 10 10 10 5.523 0 10-4.477 10-10S17.523 2 12 2zm5 13.5c0 .828-.672 1.5-1.5 1.5h-7c-.828 0-1.5-.672-1.5-1.5v-1h10v1zm-1.5-3c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5v-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5v1.5zm-5.5 0c0 .828-.672 1.5-1.5 1.5S8.5 13.328 8.5 12.5v-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5v1.5z" />
     </svg>
 );
+
+
+const DevRoleSwitcher: React.FC = () => {
+    const { switchRole, user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const devRoles: Role[] = [Role.Admin, Role.SubAdmin, Role.Manager, Role.Underwriter, Role.Advisor];
+
+    const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value;
+        if (selectedValue === 'logout') {
+            logout();
+            navigate('/', { replace: true });
+        } else {
+            switchRole(selectedValue as Role, navigate);
+        }
+    };
+
+    return (
+        <div className="fixed bottom-4 right-4 z-[100] bg-gray-800 text-white p-3 rounded-lg shadow-2xl border-2 border-brand-gold">
+            <label htmlFor="dev-role-switcher" className="block text-xs font-bold mb-2 uppercase tracking-wider">
+                DEV: Switch Role
+            </label>
+            <select
+                id="dev-role-switcher"
+                value={user?.role || 'logout'}
+                onChange={handleRoleChange}
+                className="bg-gray-700 border border-gray-600 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold w-full"
+            >
+                {devRoles.map(role => (
+                    <option key={role} value={role} className="capitalize">{role}</option>
+                ))}
+                <option value="logout">Public User (Logged Out)</option>
+            </select>
+            {user && <p className="text-xs mt-2 text-gray-400">Logged in as: {user.name}</p>}
+        </div>
+    );
+};
+
 
 const Footer: React.FC = () => {
     const { content } = useContent();
@@ -64,71 +105,74 @@ const Footer: React.FC = () => {
 
 
     return (
-        <footer className="bg-brand-blue text-white">
-            <div className="container mx-auto px-6 py-12">
-                <div className="mb-10">
-                    <Logo variant="light" />
-                    <p className="mt-4 text-gray-300 max-w-lg">
-                        Providing tailored insurance solutions that secure financial peace of mind for individuals, families, and businesses.
-                    </p>
-                    <div className="flex space-x-4 mt-6">
-                        {social_links_data.map(link => (
-                            socialIconMap[link.name] ? (
-                                <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                                    <span className="sr-only">{link.name}</span>
-                                    {socialIconMap[link.name]}
-                                </a>
-                            ) : null
-                        ))}
+        <>
+            <footer className="bg-brand-blue text-white">
+                <div className="container mx-auto px-6 py-12">
+                    <div className="mb-10">
+                        <Logo variant="light" />
+                        <p className="mt-4 text-gray-300 max-w-lg">
+                            Providing tailored insurance solutions that secure financial peace of mind for individuals, families, and businesses.
+                        </p>
+                        <div className="flex space-x-4 mt-6">
+                            {social_links_data.map(link => (
+                                socialIconMap[link.name] ? (
+                                    <a key={link.name} href={link.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                        <span className="sr-only">{link.name}</span>
+                                        {socialIconMap[link.name]}
+                                    </a>
+                                ) : null
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    <div>
-                        <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Navigation</h3>
-                        <ul className="space-y-3 text-gray-300">
-                            {navigationLinks.map(link => (
-                                <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Solutions</h3>
-                        <ul className="space-y-3 text-gray-300">
-                            {solutionLinks.map(link => (
-                                <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Company</h3>
-                        <ul className="space-y-3 text-gray-300">
-                            {companyLinks.map(link => (
-                                <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Contact Us</h3>
-                        <ul className="space-y-3 text-gray-300">
-                            <li><a href={`mailto:${company_info.email}`} className="hover:text-brand-gold transition-colors">{company_info.email}</a></li>
-                            <li><a href={`tel:${company_info.phone.replace(/\D/g, '')}`} className="hover:text-brand-gold transition-colors">{company_info.phone}</a></li>
-                            <li>Des Moines, IA</li>
-                        </ul>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <div>
+                            <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Navigation</h3>
+                            <ul className="space-y-3 text-gray-300">
+                                {navigationLinks.map(link => (
+                                    <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Solutions</h3>
+                            <ul className="space-y-3 text-gray-300">
+                                {solutionLinks.map(link => (
+                                    <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Company</h3>
+                            <ul className="space-y-3 text-gray-300">
+                                {companyLinks.map(link => (
+                                    <li key={link.name}><Link to={link.path} className="hover:text-brand-gold transition-colors">{link.name}</Link></li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold tracking-widest uppercase mb-4">Contact Us</h3>
+                            <ul className="space-y-3 text-gray-300">
+                                <li><a href={`mailto:${company_info.email}`} className="hover:text-brand-gold transition-colors">{company_info.email}</a></li>
+                                <li><a href={`tel:${company_info.phone.replace(/\D/g, '')}`} className="hover:text-brand-gold transition-colors">{company_info.phone}</a></li>
+                                <li>Des Moines, IA</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="py-6 bg-black/20">
-                <div className="container mx-auto px-6 text-center text-xs text-gray-400">
-                    <p className="mb-3">
-                        © 2025 New Holland Financial Group | <a href="http://www.newhollandfinancial.com/" target="_blank" rel="noopener noreferrer" className="hover:underline">www.newhollandfinancial.com</a>
-                    </p>
-                    <p className="max-w-4xl mx-auto leading-relaxed">
-                        This website is for informational purposes only and does not constitute a complete description of our investment services or performance. This website is in no way a solicitation or offer to sell securities or investment advisory services except, where applicable, in states where we are registered or where an exemption or exclusion from such registration exists.
-                    </p>
+                <div className="py-6 bg-black/20">
+                    <div className="container mx-auto px-6 text-center text-xs text-gray-400">
+                        <p className="mb-3">
+                            © 2025 New Holland Financial Group | <a href="http://www.newhollandfinancial.com/" target="_blank" rel="noopener noreferrer" className="hover:underline">www.newhollandfinancial.com</a>
+                        </p>
+                        <p className="max-w-4xl mx-auto leading-relaxed">
+                            This website is for informational purposes only and does not constitute a complete description of our investment services or performance. This website is in no way a solicitation or offer to sell securities or investment advisory services except, where applicable, in states where we are registered or where an exemption or exclusion from such registration exists.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </footer>
+            </footer>
+            <DevRoleSwitcher />
+        </>
     );
 };
 

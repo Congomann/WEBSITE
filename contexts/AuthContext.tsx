@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { User, Role } from '../types';
 import { users as mockUsers } from '../data';
@@ -13,6 +12,7 @@ interface AuthContextType {
     primaryDashboardPath: string | null;
     login: (email: string) => Promise<User | null>;
     logout: () => void;
+    switchRole: (role: Role, navigate: (path: string, options?: { replace?: boolean }) => void) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,6 +71,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
     }, []);
     
+    const switchRole = useCallback((role: Role, navigate: (path: string, options?: { replace?: boolean }) => void) => {
+        const userForRole = mockUsers.find(u => u.role === role);
+        if (userForRole) {
+            setUser(userForRole);
+            const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
+            if (crmRoles.includes(userForRole.role)) {
+                navigate('/crm', { replace: true });
+            } else {
+                // Fallback for non-crm roles like 'user'
+                navigate('/', { replace: true });
+            }
+        } else {
+            console.warn(`No mock user found for role "${role}".`);
+            // Fallback to logout if no user for that role exists
+            setUser(null);
+            navigate('/', { replace: true });
+        }
+    }, []);
+
     const canAccessAdmin = useMemo(() => user?.role === Role.Admin, [user]);
 
     const canAccessCrm = useMemo(() => {
@@ -101,7 +120,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         primaryDashboardPath,
         login,
         logout,
-    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin, primaryDashboardPath]);
+        switchRole,
+    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin, primaryDashboardPath, switchRole]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
