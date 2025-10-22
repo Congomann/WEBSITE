@@ -53,18 +53,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, [user]);
 
     const login = useCallback(async (email: string): Promise<User | null> => {
-        // Simulate an API call
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                const foundUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-                if (foundUser) {
-                    setUser(foundUser);
-                    resolve(foundUser);
-                } else {
-                    reject(new Error("User not found"));
-                }
-            }, 500);
-        });
+        // Find user synchronously without simulated delay
+        const foundUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (foundUser) {
+            setUser(foundUser);
+            return foundUser;
+        } else {
+            throw new Error("User not found");
+        }
     }, []);
 
     const logout = useCallback(() => {

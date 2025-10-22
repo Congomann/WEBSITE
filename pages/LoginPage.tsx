@@ -25,16 +25,14 @@ const LoginPage: React.FC = () => {
             // In this demo, we only check the email. The password is not validated.
             const user = await auth.login(email);
             
+            const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
             let destination = from;
-            // If the user just navigated to login directly (from is '/'), send them to their dashboard.
-            // Otherwise, send them back to the page they were trying to access.
-            if (from === '/') {
-                if (user.role === Role.Admin) {
-                    destination = '/crm';
-                } else if ([Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor].includes(user.role)) {
-                    destination = '/crm';
-                }
+
+            // For CRM users, always redirect to the CRM dashboard.
+            if (user && crmRoles.includes(user.role)) {
+                destination = '/crm';
             }
+            
             navigate(destination, { replace: true });
 
         } catch (err: any) {
