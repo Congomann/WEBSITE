@@ -105,7 +105,7 @@ export interface EditableContent {
 }
 
 // CRM Types
-export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Closed - Won' | 'Closed - Lost';
+export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Approved' | 'Closed - Won' | 'Closed - Lost';
 
 export interface Lead {
   id: number;
@@ -117,6 +117,23 @@ export interface Lead {
   assignedTo: number | null; // Advisor ID
   lastContacted: string;
   createdAt: string;
+  // New detailed fields for Sub-Admin lead creation
+  dob?: string;
+  ssn?: string;
+  bornState?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipcode?: string;
+  preferredCarrier?: string;
+  coverageAmount?: number;
+  weight?: number;
+  height?: number;
+  // Banking Information
+  bankName?: string;
+  accountType?: 'checking' | 'saving';
+  routingNumber?: string;
+  accountNumber?: string;
 }
 
 export interface Client {
@@ -146,4 +163,13 @@ export interface PerformanceData {
         salesVolume: number; // in USD
         commissions: number; // in USD
     };
+}
+
+export interface Notification {
+  id: number;
+  userId: number; // Advisor ID
+  message: string;
+  read: boolean;
+  createdAt: string;
+  link?: string;
 }
