@@ -63,13 +63,15 @@ const LeadDistributionPage: React.FC = () => {
         { header: 'Name', accessor: 'name' },
         { header: 'Status', accessor: 'status' },
         { header: 'Assigned To', accessor: 'assignedTo' },
+        { header: 'Decline Reason', accessor: 'declineReason' },
         { header: 'Source', accessor: 'source' },
         { header: 'Date', accessor: 'createdAt', isDate: true }
     ];
 
-    const dataWithAdvisorNames = leads.map(lead => ({
+    const dataWithFormattedFields = leads.map(lead => ({
         ...lead,
         assignedTo: lead.assignedTo ? advisorMap.get(lead.assignedTo) || `ID: ${lead.assignedTo}` : 'Unassigned',
+        declineReason: lead.declineReason || 'N/A',
     }));
 
     const actions = [
@@ -90,7 +92,7 @@ const LeadDistributionPage: React.FC = () => {
                 </button>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg">
-                <DataTable columns={columns} data={dataWithAdvisorNames} actions={actions} />
+                <DataTable columns={columns} data={dataWithFormattedFields} actions={actions} />
             </div>
 
             {isModalOpen && (

@@ -7,7 +7,7 @@ import SEO from '../../components/SEO';
 import DataTable from '../../components/crm/DataTable';
 import LeadFormModal from '../../components/crm/LeadFormModal';
 
-const statusOptions: LeadStatus[] = ['New', 'Contacted', 'Qualified', 'Approved', 'Closed - Won', 'Closed - Lost'];
+const statusOptions: LeadStatus[] = ['New', 'Contacted', 'Qualified', 'Approved', 'Declined', 'Closed - Won', 'Closed - Lost'];
 
 const LeadsPage: React.FC = () => {
     const { user } = useAuth();
@@ -18,6 +18,7 @@ const LeadsPage: React.FC = () => {
     const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
     const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const [newStatus, setNewStatus] = useState<LeadStatus>('New');
+    const [declineReason, setDeclineReason] = useState('');
 
     const leadsToDisplay = useMemo(() => {
         if (!user) return [];
@@ -47,6 +48,7 @@ const LeadsPage: React.FC = () => {
         setIsEditModalOpen(false);
         setIsStatusModalOpen(false);
         setSelectedLead(null);
+        setDeclineReason('');
     };
 
     const handleSaveLead = (editedLead: Lead) => {
@@ -56,7 +58,11 @@ const LeadsPage: React.FC = () => {
 
     const handleStatusUpdate = () => {
         if (selectedLead) {
-            updateLeadStatus(selectedLead.id, newStatus);
+            if (newStatus === 'Declined' && !declineReason.trim()) {
+                alert('A reason is required to decline a lead.');
+                return;
+            }
+            updateLeadStatus(selectedLead.id, newStatus, declineReason);
         }
         handleCloseModals();
     };
@@ -101,20 +107,43 @@ const LeadsPage: React.FC = () => {
                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
                         <h2 className="text-2xl font-bold text-brand-blue mb-4">Update Status for {selectedLead.name}</h2>
-                        <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
-                            <select
-                                id="status"
-                                value={newStatus}
-                                onChange={(e) => setNewStatus(e.target.value as LeadStatus)}
-                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm rounded-md"
-                            >
-                                {statusOptions.map(status => <option key={status} value={status}>{status}</option>)}
-                            </select>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+                                <select
+                                    id="status"
+                                    value={newStatus}
+                                    onChange={(e) => setNewStatus(e.target.value as LeadStatus)}
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm rounded-md"
+                                >
+                                    {statusOptions.map(status => <option key={status} value={status}>{status}</option>)}
+                                </select>
+                            </div>
+                            {newStatus === 'Declined' && (
+                                <div className="animate-fade-in">
+                                    <label htmlFor="declineReason" className="block text-sm font-medium text-gray-700">
+                                        Reason for Declining (Required)
+                                    </label>
+                                    <textarea
+                                        id="declineReason"
+                                        rows={3}
+                                        value={declineReason}
+                                        onChange={(e) => setDeclineReason(e.target.value)}
+                                        className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-brand-blue focus:border-brand-blue"
+                                        placeholder="e.g., Client is no longer interested, wrong contact info, etc."
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div className="mt-6 flex justify-end gap-4">
                             <button onClick={handleCloseModals} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Cancel</button>
-                            <button onClick={handleStatusUpdate} className="px-4 py-2 bg-brand-blue text-white rounded-md hover:bg-opacity-90">Save</button>
+                            <button 
+                                onClick={handleStatusUpdate} 
+                                className="px-4 py-2 bg-brand-blue text-white rounded-md hover:bg-opacity-90 disabled:bg-gray-400"
+                                disabled={newStatus === 'Declined' && !declineReason.trim()}
+                            >
+                                Save
+                            </button>
                         </div>
                     </div>
                 </div>

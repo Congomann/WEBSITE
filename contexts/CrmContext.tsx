@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useMe
 import type { Lead, Client, PerformanceData, Notification } from '../types';
 import { crmLeads, crmClients, crmPerformance } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
+import { users } from '../data';
+import { Role } from '../types';
 
 interface CrmContextType {
     leads: Lead[];
@@ -11,7 +13,7 @@ interface CrmContextType {
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
     assignLead: (leadId: number, advisorId: number) => void;
-    updateLeadStatus: (leadId: number, status: Lead['status']) => void;
+    updateLeadStatus: (leadId: number, status: Lead['status'], declineReason?: string) => void;
     markNotificationAsRead: (notificationId: number) => void;
     getUnreadNotificationCount: (userId: number) => number;
 }
@@ -115,16 +117,16 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
                 const advisor = advisors.find(a => a.id === advisorId);
                 addNotification(advisorId, `Lead "${leadToAssign.name}" has been assigned to you.`, '/crm/leads');
             }
-            return prevLeads.map(lead => lead.id === leadId ? { ...lead, assignedTo: advisorId, status: lead.status === 'New' ? 'Contacted' : lead.status } : lead);
+            // Also clear decline reason on re-assignment
+            return prevLeads.map(lead => lead.id === leadId ? { ...lead, assignedTo: advisorId, status: 'Contacted', declineReason: undefined } : lead);
         });
     }, [addNotification, advisors]);
 
-    const updateLeadStatus = useCallback((leadId: number, status: Lead['status']) => {
+    const updateLeadStatus = useCallback((leadId: number, status: Lead['status'], declineReason?: string) => {
         const leadToUpdate = leads.find(l => l.id === leadId);
         if (!leadToUpdate) return;
         
         if (status === 'Approved') {
-            // Convert lead to client
             const newClient: Client = {
                 id: Date.now(),
                 name: leadToUpdate.name,
@@ -135,14 +137,30 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
                 since: new Date().toISOString().split('T')[0],
             };
             setClients(prev => [newClient, ...prev]);
-            setLeads(prev => prev.filter(l => l.id !== leadId)); // Remove from leads
+            setLeads(prev => prev.filter(l => l.id !== leadId));
             if (leadToUpdate.assignedTo) {
                 addNotification(leadToUpdate.assignedTo, `Lead ${leadToUpdate.name} approved and converted to a client!`, '/crm/clients');
             }
+        } else if (status === 'Declined') {
+            const decliningAdvisor = advisors.find(a => a.id === leadToUpdate.assignedTo);
+            const advisorName = decliningAdvisor ? decliningAdvisor.name : 'an advisor';
+
+            setLeads(prevLeads => prevLeads.map(lead => 
+                lead.id === leadId 
+                ? { ...lead, status: 'Declined', assignedTo: null, declineReason: declineReason } 
+                : lead
+            ));
+
+            // Notify all Sub-Admins
+            const subAdmins = users.filter(u => u.role === Role.SubAdmin);
+            subAdmins.forEach(subAdmin => {
+                addNotification(subAdmin.id, `Lead '${leadToUpdate.name}' was declined by ${advisorName}.`, '/crm/lead-distribution');
+            });
+
         } else {
             setLeads(prevLeads => prevLeads.map(lead => lead.id === leadId ? { ...lead, status: status } : lead));
         }
-    }, [leads, addNotification]);
+    }, [leads, addNotification, advisors]);
 
     const markNotificationAsRead = useCallback((notificationId: number) => {
         setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));

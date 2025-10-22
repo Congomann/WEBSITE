@@ -105,7 +105,7 @@ export interface EditableContent {
 }
 
 // CRM Types
-export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Approved' | 'Closed - Won' | 'Closed - Lost';
+export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Approved' | 'Declined' | 'Closed - Won' | 'Closed - Lost';
 
 export interface Lead {
   id: number;
@@ -134,6 +134,8 @@ export interface Lead {
   accountType?: 'checking' | 'saving';
   routingNumber?: string;
   accountNumber?: string;
+  // Decline reason
+  declineReason?: string;
 }
 
 export interface Client {
