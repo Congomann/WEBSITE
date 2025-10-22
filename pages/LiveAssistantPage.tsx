@@ -282,7 +282,7 @@ const LiveAssistantPage: React.FC = () => {
                             )}
                             <div ref={historyEndRef} />
                         </div>
-                         <div className="pt-4 border-t flex flex-col items-center justify-center">
+                         <div className="flex-shrink-0 pt-4 border-t flex flex-col items-center justify-center">
                             <p className="text-center text-sm text-gray-600 mb-4 h-5">{statusText}</p>
                             {errorMessage && (
                                 <div className="bg-red-100 border border-red-200 text-red-700 px-4 py-2 rounded-md mb-4 text-sm w-full" role="alert">
