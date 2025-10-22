@@ -1,10 +1,16 @@
-import type { Product, Advisor, User, Role, EditableContent } from './types';
+import type { Product, Advisor, User, EditableContent } from './types';
+// FIX: 'Role' is an enum used as a value, so it must be imported directly,
+// not as a type. The other imports are interfaces and can be type-only.
+import { Role } from './types';
 
 export const users: User[] = [
-  { id: 1, name: 'Admin User', email: 'admin@nhf.com', role: 'admin' as Role.Admin },
-  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: 'advisor' as Role.Advisor },
-  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: 'advisor' as Role.Advisor },
-  { id: 4, name: 'John Doe', email: 'john.doe@example.com', role: 'user' as Role.User },
+  { id: 1, name: 'Admin User', email: 'admin@nhf.com', role: Role.Admin },
+  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: Role.Advisor },
+  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: Role.Advisor },
+  { id: 4, name: 'John Doe', email: 'john.doe@example.com', role: Role.User },
+  { id: 5, name: 'Manager User', email: 'manager@nhf.com', role: Role.Manager },
+  { id: 6, name: 'Sub Admin User', email: 'subadmin@nhf.com', role: Role.SubAdmin },
+  { id: 7, name: 'Underwriter User', email: 'underwriter@nhf.com', role: Role.Underwriter },
 ];
 
 export const initialContent: EditableContent = {

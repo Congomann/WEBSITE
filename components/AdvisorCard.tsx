@@ -1,16 +1,15 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Advisor } from '../types';
 
 interface AdvisorCardProps {
     advisor: Advisor;
-    isAdmin?: boolean;
+    canManage?: boolean;
     onEdit?: () => void;
     onDelete?: () => void;
 }
 
-const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor, isAdmin, onEdit, onDelete }) => {
+const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor, canManage, onEdit, onDelete }) => {
     
     const handleEditClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -26,7 +25,7 @@ const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor, isAdmin, onEdit, onD
 
     return (
         <div className="relative group h-full">
-            {isAdmin && (
+            {canManage && (
                 <div className="absolute top-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <button onClick={handleEditClick} className="p-2 bg-brand-blue text-white rounded-full shadow-lg hover:bg-opacity-80 transition-colors" aria-label={`Edit ${advisor.name}`}>
                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>

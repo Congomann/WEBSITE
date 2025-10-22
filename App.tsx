@@ -18,6 +18,7 @@ import { ProductProvider } from './contexts/ProductContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { AdvisorProvider } from './contexts/AdvisorContext';
 import { ContentProvider } from './contexts/ContentContext';
+import { CrmProvider } from './contexts/CrmContext';
 
 // Types
 import { Role } from './types';
@@ -48,7 +49,19 @@ const RealEstatePage = lazy(() => import('./pages/services/RealEstatePage'));
 const HealthInsurancePage = lazy(() => import('./pages/services/HealthInsurancePage'));
 const GroupBenefitsPage = lazy(() => import('./pages/services/GroupBenefitsPage'));
 
+// Lazy-loaded CRM Pages
+const CrmLayout = lazy(() => import('./pages/crm/CrmLayout'));
+const CrmDashboardPage = lazy(() => import('./pages/crm/CrmDashboardPage'));
+const LeadsPage = lazy(() => import('./pages/crm/LeadsPage'));
+const ClientsPage = lazy(() => import('./pages/crm/ClientsPage'));
+const UserManagementPage = lazy(() => import('./pages/crm/UserManagementPage'));
+const LeaderboardPage = lazy(() => import('./pages/crm/LeaderboardPage'));
+const UnderwritingPage = lazy(() => import('./pages/crm/UnderwritingPage'));
+const MessagingPage = lazy(() => import('./pages/crm/MessagingPage'));
+
 const App: React.FC = () => {
+  const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
+
   return (
     <HashRouter>
       <AuthProvider>
@@ -84,11 +97,30 @@ const App: React.FC = () => {
                           <Route
                             path="/management-dashboard"
                             element={
-                              <ProtectedRoute allowedRoles={[Role.Admin]}>
+                              <ProtectedRoute allowedRoles={[Role.Admin, Role.Manager, Role.SubAdmin]}>
                                 <ManagementDashboardPage />
                               </ProtectedRoute>
                             }
                           />
+
+                          {/* CRM Routes */}
+                          <Route
+                            element={
+                              <ProtectedRoute allowedRoles={crmRoles}>
+                                <CrmProvider>
+                                  <CrmLayout />
+                                </CrmProvider>
+                              </ProtectedRoute>
+                            }
+                          >
+                            <Route path="/crm" element={<CrmDashboardPage />} />
+                            <Route path="/crm/leads" element={<LeadsPage />} />
+                            <Route path="/crm/clients" element={<ClientsPage />} />
+                            <Route path="/crm/leaderboard" element={<LeaderboardPage />} />
+                            <Route path="/crm/users" element={<UserManagementPage />} />
+                            <Route path="/crm/underwriting" element={<UnderwritingPage />} />
+                            <Route path="/crm/messaging" element={<MessagingPage />} />
+                          </Route>
 
                           {/* Service Pages */}
                           <Route path="/services/life" element={<LifeInsurancePage />} />

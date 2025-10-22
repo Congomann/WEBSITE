@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const AdvisorsPage: React.FC = () => {
     const { advisors, deleteAdvisor, setAdvisorToEditId } = useAdvisors();
-    const { isAdmin } = useAuth();
+    const { canAccessAdmin } = useAuth();
     const navigate = useNavigate();
 
     const handleEdit = (id: number) => {
@@ -49,7 +49,7 @@ const AdvisorsPage: React.FC = () => {
                             <AdvisorCard 
                                 key={advisor.id} 
                                 advisor={advisor}
-                                isAdmin={isAdmin}
+                                canManage={canAccessAdmin}
                                 onEdit={() => handleEdit(advisor.id)}
                                 onDelete={() => handleDelete(advisor.id)}
                             />

@@ -5,6 +5,8 @@ import { users as mockUsers } from '../data';
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
+    canAccessAdmin: boolean;
+    canAccessCrm: boolean;
     isAdmin: boolean;
     isAdvisor: boolean;
     login: (email: string) => Promise<User | null>;
@@ -66,15 +68,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const logout = useCallback(() => {
         setUser(null);
     }, []);
+    
+    const canAccessAdmin = useMemo(() => 
+        user?.role === Role.Admin || 
+        user?.role === Role.Manager || 
+        user?.role === Role.SubAdmin, 
+    [user]);
+
+    const canAccessCrm = useMemo(() => {
+        const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
+        return user ? crmRoles.includes(user.role) : false;
+    }, [user]);
+
+    const isAdmin = useMemo(() => user?.role === Role.Admin, [user]);
 
     const value = useMemo(() => ({
         user,
         isAuthenticated: !!user,
-        isAdmin: user?.role === Role.Admin,
+        canAccessAdmin,
+        canAccessCrm,
+        isAdmin,
         isAdvisor: user?.role === Role.Advisor,
         login,
         logout,
-    }), [user, login, logout]);
+    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

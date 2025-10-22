@@ -3,7 +3,10 @@ import type { ReactNode } from 'react';
 export enum Role {
   Admin = 'admin',
   Advisor = 'advisor',
-  User = 'user'
+  User = 'user',
+  Manager = 'manager',
+  SubAdmin = 'subadmin',
+  Underwriter = 'underwriter'
 }
 
 export interface User {
@@ -99,4 +102,48 @@ export interface EditableContent {
     document_resources: DocumentResource[];
     faq_data: FAQItem[];
     real_estate_info_resources: InfoResource[];
+}
+
+// CRM Types
+export type LeadStatus = 'New' | 'Contacted' | 'Qualified' | 'Closed - Won' | 'Closed - Lost';
+
+export interface Lead {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  status: LeadStatus;
+  source: string;
+  assignedTo: number | null; // Advisor ID
+  lastContacted: string;
+  createdAt: string;
+}
+
+export interface Client {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    advisorId: number;
+    policies: Policy[];
+    since: string;
+}
+
+export interface Policy {
+    id: string;
+    type: 'Life' | 'Auto' | 'Home' | 'Health';
+    premium: number;
+    status: 'Active' | 'Pending' | 'Expired';
+    renewalDate: string;
+}
+
+export interface PerformanceData {
+    advisorId: number;
+    metrics: {
+        leads: number;
+        conversionRate: number; // percentage
+        closedDeals: number;
+        salesVolume: number; // in USD
+        commissions: number; // in USD
+    };
 }

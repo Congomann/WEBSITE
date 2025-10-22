@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const from = (location.state as any)?.from?.pathname || '/management-dashboard';
+    const from = (location.state as any)?.from?.pathname || '/';
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -22,8 +22,15 @@ const LoginPage: React.FC = () => {
 
         try {
             // In this demo, we only check the email. The password is not validated.
-            await auth.login(email);
-            navigate(from, { replace: true });
+            const user = await auth.login(email);
+            if (user) {
+                // Redirect to CRM if the user has access, otherwise to their original destination.
+                const destination = auth.canAccessCrm ? '/crm' : from;
+                navigate(destination, { replace: true });
+            } else {
+                 navigate(from, { replace: true });
+            }
+
         } catch (err: any) {
             setError(err.message || 'Failed to log in. Please check your credentials.');
         } finally {
@@ -33,16 +40,16 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-brand-light flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <SEO title="Admin Login" description="Access the management dashboard for New Holland Financial Group." noIndex={true} />
+            <SEO title="Sign In" description="Access the New Holland Financial Group portal." noIndex={true} />
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
                     <Logo variant="dark" />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-                    Administrator Sign In
+                    Sign In
                 </h2>
-                 <p className="mt-2 text-center text-sm text-gray-600">
-                    (Use <span className="font-medium">admin@nhf.com</span> for demo access)
+                 <p className="mt-2 text-center text-sm text-gray-600 max-w-xs mx-auto">
+                    Use <span className="font-medium">admin@nhf.com</span>, <span className="font-medium">manager@nhf.com</span>, <span className="font-medium">jessica.miller@...</span>, etc. for demo access.
                 </p>
             </div>
 

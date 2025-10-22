@@ -5,8 +5,10 @@ import { useContent } from '../contexts/ContentContext';
 
 const breadcrumbNameMap: { [key: string]: string } = {
     'about': 'About Us', 'advisors': 'Advisors', 'resources': 'Resources', 'products': 'Shop', 'cart': 'Shopping Cart',
-    'checkout': 'Checkout', 'order-success': 'Order Confirmation', 'contact': 'Contact Us', 'management-dashboard': 'Management Dashboard',
-    'privacy-policy': 'Privacy Policy', 'services': 'Services', 'join-our-team': 'Join Our Team', 'login': 'Login'
+    'checkout': 'Checkout', 'order-success': 'Order Confirmation', 'contact': 'Contact Us', 'management-dashboard': 'Content Dashboard',
+    'privacy-policy': 'Privacy Policy', 'services': 'Services', 'join-our-team': 'Join Our Team', 'login': 'Sign In',
+    'crm': 'CRM Dashboard', 'leads': 'Leads', 'clients': 'Clients', 'leaderboard': 'Leaderboard', 
+    'users': 'User Management', 'underwriting': 'Underwriting', 'messaging': 'Messaging'
 };
 
 const Breadcrumbs: React.FC = () => {
@@ -15,8 +17,8 @@ const Breadcrumbs: React.FC = () => {
     const { content } = useContent();
     const pathnames = location.pathname.split('/').filter(x => x);
 
-    // Don't show breadcrumbs on the home page
-    if (pathnames.length === 0) return null;
+    // Don't show breadcrumbs on the home page or top-level CRM page
+    if (pathnames.length === 0 || (pathnames.length === 1 && pathnames[0] === 'crm')) return null;
     
     const getFriendlyName = (segment: string, index: number, segments: string[]): string => {
         if (segments[index - 1] === 'advisors' && !isNaN(parseInt(segment, 10))) {
@@ -31,7 +33,7 @@ const Breadcrumbs: React.FC = () => {
     };
 
     return (
-        <nav aria-label="breadcrumb" className="bg-white border-b border-gray-200">
+        <nav aria-label="breadcrumb" className="bg-white border-b border-gray-200 hidden md:block">
             <div className="container mx-auto px-6 py-3">
                 <ol className="flex items-center space-x-2 text-sm text-gray-600">
                     <li><Link to="/" className="text-brand-blue hover:text-brand-gold">Home</Link></li>
