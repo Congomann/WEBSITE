@@ -5,6 +5,7 @@ import fs from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { fileURLToPath } from 'url';
 import Stripe from 'stripe';
+import { GoogleGenAI } from '@google/genai';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +25,14 @@ const stripe = new Stripe('sk_test_51SGWYuAyRjRzCXot6TLt1NcVnZXiknLKaT2t2ZJvXC3R
   apiVersion: '2024-06-20',
 });
 
+// Initialize Gemini API
+// The API key is expected to be in the environment variables
+let ai: GoogleGenAI;
+if (process.env.API_KEY) {
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+} else {
+    console.warn("API_KEY environment variable not set. Generative AI features will be disabled.");
+}
 
 // --- Middleware ---
 app.use(cors());
@@ -95,6 +104,36 @@ app.post('/api/create-payment-intent', async (req, res) => {
     }
 });
 
+// POST to generate a social media post
+app.post('/api/generate-social-post', async (req, res) => {
+    if (!ai) {
+        return res.status(503).json({ message: 'Generative AI service is not configured. API_KEY is missing.' });
+    }
+
+    try {
+        const { topic } = req.body;
+        if (!topic || typeof topic !== 'string' || topic.trim() === '') {
+            return res.status(400).json({ message: 'A valid topic is required.' });
+        }
+
+        const prompt = `You are a social media manager for New Holland Financial, an insurance company. Write an engaging social media post about the provided topic. The post should be concise, professional, and include relevant hashtags. Topic: ${topic}`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        const postText = response.text;
+        res.json({ post: postText });
+
+    } catch (error: any) {
+        console.error('Error in /api/generate-social-post:', error);
+        const errorMessage = error.message || 'Failed to generate social media post.';
+        res.status(500).json({ message: errorMessage });
+    }
+});
+
+
 // GET all core services
 app.get('/api/services', async (req, res) => {
     try {
@@ -138,155 +177,4 @@ app.get('/api/advisors', async (req, res) => {
 app.post('/api/advisors', async (req, res) => {
     try {
         const newAdvisor = req.body;
-        const db = await readDb();
-        const newId = db.advisors.length > 0 ? Math.max(...db.advisors.map((a: any) => a.id)) + 1 : 1;
-        db.advisors.push({ ...newAdvisor, id: newId });
-        await writeDb(db);
-        res.status(201).json({ ...newAdvisor, id: newId });
-    } catch (error) {
-        console.error('Error in POST /api/advisors:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// DELETE an advisor
-app.delete('/api/advisors/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const db = await readDb();
-        db.advisors = db.advisors.filter((a: any) => a.id !== parseInt(id, 10));
-        await writeDb(db);
-        res.status(204).send();
-    } catch (error) {
-        console.error(`Error in DELETE /api/advisors/${req.params.id}:`, error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-
-// GET all videos
-app.get('/api/resources/videos', async (req, res) => {
-    try {
-        const db = await readDb();
-        res.json(db.youtube_videos);
-    } catch (error) {
-        console.error('Error in /api/resources/videos:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// ADD a new video
-app.post('/api/resources/videos', async (req, res) => {
-    try {
-        const newVideo = req.body;
-        const db = await readDb();
-        db.youtube_videos.push(newVideo);
-        await writeDb(db);
-        res.status(201).json(newVideo);
-    } catch (error) {
-        console.error('Error in POST /api/resources/videos:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// DELETE a video
-app.delete('/api/resources/videos/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const db = await readDb();
-        db.youtube_videos = db.youtube_videos.filter((v: any) => v.id !== id);
-        await writeDb(db);
-        res.status(204).send();
-    } catch (error) {
-        console.error(`Error in DELETE /api/resources/videos/${req.params.id}:`, error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-
-// GET all documents
-app.get('/api/resources/documents', async (req, res) => {
-    try {
-        const db = await readDb();
-        res.json(db.document_resources);
-    } catch (error) {
-        console.error('Error in /api/resources/documents:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// ADD a new document
-app.post('/api/resources/documents', async (req, res) => {
-    try {
-        const newDocument = req.body;
-        const db = await readDb();
-        const newId = `doc-${randomUUID()}`;
-        db.document_resources.push({ ...newDocument, id: newId });
-        await writeDb(db);
-        res.status(201).json({ ...newDocument, id: newId });
-    } catch (error) {
-        console.error('Error in POST /api/resources/documents:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// DELETE a document
-app.delete('/api/resources/documents/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const db = await readDb();
-        db.document_resources = db.document_resources.filter((d: any) => d.id !== id);
-        await writeDb(db);
-        res.status(204).send();
-    } catch (error) {
-        console.error(`Error in DELETE /api/resources/documents/${req.params.id}:`, error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-
-// POST a new quote
-app.post('/api/quotes', async (req, res) => {
-    try {
-        const newQuote = req.body;
-        const db = await readDb();
-        db.quotes.push({ ...newQuote, id: Date.now(), submittedAt: new Date().toISOString() });
-        await writeDb(db);
-        res.status(201).json({ message: 'Quote submitted successfully!' });
-    } catch (error) {
-        console.error('Error in POST /api/quotes:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// POST a new callback request
-app.post('/api/callbacks', async (req, res) => {
-    try {
-        const newCallbackRequest = req.body;
-        const db = await readDb();
-        if (!db.callbacks) {
-            db.callbacks = []; // Initialize if it doesn't exist
-        }
-        db.callbacks.push({ ...newCallbackRequest, id: Date.now(), submittedAt: new Date().toISOString() });
-        await writeDb(db);
-        res.status(201).json({ message: 'Callback request submitted successfully!' });
-    } catch (error) {
-        console.error('Error in POST /api/callbacks:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
-// --- Static File Serving ---
-// Serve static files from the root of the project
-app.use(express.static(STATIC_PATH));
-
-// For any other request, serve index.html to support client-side routing
-app.get('*', (req, res) => {
-    res.sendFile(path.join(STATIC_PATH, 'index.html'));
-});
-
-
-// --- Server Start ---
-app.listen(PORT, () => {
-    console.log(`Backend server running at http://localhost:${PORT}`);
-});
+        

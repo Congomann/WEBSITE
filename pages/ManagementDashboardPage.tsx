@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import type { Advisor, VideoResource, DocumentResource, Product, SocialLink } from '../types';
 import Accordion from '../components/Accordion';
@@ -33,6 +34,13 @@ const ManagementDashboardPage: React.FC = () => {
     // Local state for editing content before saving to context
     const [editableContent, setEditableContent] = useState(content);
 
+    // State for AI Social Post Generator
+    const [socialTopic, setSocialTopic] = useState('');
+    const [generatedPost, setGeneratedPost] = useState('');
+    const [isGeneratingPost, setIsGeneratingPost] = useState(false);
+    const [generationError, setGenerationError] = useState('');
+    const [copyButtonText, setCopyButtonText] = useState('Copy Text');
+
     const [openSection, setOpenSection] = useState<string | null>(null);
     const advisorFormRef = useRef<HTMLFormElement>(null);
     
@@ -64,10 +72,11 @@ const ManagementDashboardPage: React.FC = () => {
             const match = url.match(/video\/(\d+)/);
             if (match && match[1]) return { type: 'tiktok', id: match[1] };
         }
-        // Basic check for direct links
-        if (/\.(mp4|webm)$/.test(new URL(url).pathname)) {
-            return { type: 'direct', id: url };
-        }
+        try {
+            if (/\.(mp4|webm)$/.test(new URL(url).pathname)) {
+                return { type: 'direct', id: url };
+            }
+        } catch (_) { /* Ignore invalid URLs for this check */ }
         return { type: null, id: null };
     };
     
@@ -283,6 +292,45 @@ const ManagementDashboardPage: React.FC = () => {
         updatedLinks[index] = { ...updatedLinks[index], [field]: value };
         handleContentChange('social_links_data', updatedLinks);
     };
+    
+    const handleGeneratePost = async () => {
+        if (!socialTopic.trim()) {
+            setGenerationError('Please enter a topic.');
+            return;
+        }
+        setIsGeneratingPost(true);
+        setGeneratedPost('');
+        setGenerationError('');
+        try {
+            const response = await fetch('/api/generate-social-post', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic: socialTopic }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred on the server.' }));
+                throw new Error(errorData.message || 'Failed to generate post.');
+            }
+            const data = await response.json();
+            setGeneratedPost(data.post);
+        } catch (error: any) {
+            setGenerationError(error.message);
+        } finally {
+            setIsGeneratingPost(false);
+        }
+    };
+
+    const handleCopyPost = () => {
+        if (!generatedPost) return;
+        navigator.clipboard.writeText(generatedPost).then(() => {
+            setCopyButtonText('Copied!');
+            setTimeout(() => setCopyButtonText('Copy Text'), 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            setCopyButtonText('Failed!');
+            setTimeout(() => setCopyButtonText('Copy Text'), 2000);
+        });
+    };
 
     const toggleSection = (sectionId: string) => {
         setOpenSection(prev => (prev === sectionId ? null : sectionId));
@@ -327,6 +375,54 @@ const ManagementDashboardPage: React.FC = () => {
                                 </div>
                             ))}
                             <button onClick={() => { handleSaveContent('company_info'); handleSaveContent('social_links_data'); }} className="mt-4 bg-brand-blue text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">Save Settings</button>
+                        </div>
+                    </Accordion>
+
+                    {/* AI Social Media Post Generator */}
+                    <Accordion title="AI Social Media Post Generator" isOpen={openSection === 'social-generator'} onToggle={() => toggleSection('social-generator')}>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="social-topic" className={formLabelClass}>Post Topic</label>
+                                <input
+                                    type="text"
+                                    id="social-topic"
+                                    value={socialTopic}
+                                    onChange={(e) => setSocialTopic(e.target.value)}
+                                    className={formInputClass}
+                                    placeholder="e.g., The importance of term life insurance"
+                                />
+                                <p className="mt-1 text-xs text-gray-500">Enter a topic and our AI will craft a social media post for you.</p>
+                            </div>
+                            <button
+                                onClick={handleGeneratePost}
+                                disabled={isGeneratingPost || !socialTopic.trim()}
+                                className="bg-brand-gold text-brand-blue font-bold py-2 px-6 rounded-full hover:bg-yellow-400 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                            >
+                                {isGeneratingPost ? (
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand-blue"></div>
+                                ) : (
+                                    'Generate Post'
+                                )}
+                            </button>
+                            {generationError && (
+                                <div className="bg-red-50 p-3 rounded-md">
+                                    <p className="text-sm text-red-700">{generationError}</p>
+                                </div>
+                            )}
+                            {generatedPost && (
+                                <div className="mt-4 p-4 bg-gray-50 rounded-lg shadow-inner">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <h4 className="text-lg font-bold text-brand-blue">Generated Post</h4>
+                                        <button
+                                            onClick={handleCopyPost}
+                                            className="bg-gray-200 text-gray-800 font-semibold py-1 px-3 rounded-md hover:bg-gray-300 text-sm"
+                                        >
+                                            {copyButtonText}
+                                        </button>
+                                    </div>
+                                    <p className="text-gray-800 whitespace-pre-wrap font-sans">{generatedPost}</p>
+                                </div>
+                            )}
                         </div>
                     </Accordion>
 

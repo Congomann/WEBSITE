@@ -38,6 +38,7 @@ const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const ManagementDashboardPage = lazy(() => import('./pages/ManagementDashboardPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const JoinOurTeamPage = lazy(() => import('./pages/JoinOurTeamPage'));
+const LiveAssistantPage = lazy(() => import('./pages/LiveAssistantPage'));
 
 // Lazy-loaded Service Pages
 const LifeInsurancePage = lazy(() => import('./pages/services/LifeInsurancePage'));
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                           <Route path="/login" element={<LoginPage />} />
                           <Route path="/join-our-team" element={<JoinOurTeamPage />} />
+                          <Route path="/live-assistant" element={<LiveAssistantPage />} />
                           
                           <Route
                             path="/management-dashboard"

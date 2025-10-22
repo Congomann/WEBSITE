@@ -20,7 +20,8 @@
     "path": "^0.12.7",
     "@stripe/stripe-js": "3.7.0",
     "@stripe/react-stripe-js": "2.7.3",
-    "stripe": "^19.1.0"
+    "stripe": "^19.1.0",
+    "@google/genai": "^1.25.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
