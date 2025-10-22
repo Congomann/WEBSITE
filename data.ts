@@ -1,3 +1,4 @@
+
 import type { Product, Advisor, User, EditableContent } from './types';
 // FIX: 'Role' is an enum used as a value, so it must be imported directly,
 // not as a type. The other imports are interfaces and can be type-only.
@@ -12,6 +13,42 @@ export const users: User[] = [
   { id: 6, name: 'Sub Admin User', email: 'subadmin@nhf.com', role: Role.SubAdmin },
   { id: 7, name: 'Underwriter User', email: 'underwriter@nhf.com', role: Role.Underwriter },
 ];
+
+export const trustedCarrierNames: string[] = [
+    'Aflac',
+    'AIG',
+    'Allianz',
+    'American Continental Insurance Co',
+    'Americo',
+    'Ameritas Life',
+    'Banner Life',
+    'Blue Ridge Ins Co.',
+    'Bristol West',
+    'Combined Insurance',
+    'Corebridge Financial',
+    'F&G',
+    'Foremost',
+    'Foresters Financial',
+    'Geico',
+    'Gerber Life',
+    'Great American Insurance Group',
+    'Illinois Mutual',
+    'John Hancock',
+    'Kansas City Life',
+    'Liberty Bankers Life',
+    'Lincoln Financial',
+    'Mutual of Omaha',
+    'National Life Group',
+    'New York Life',
+    'Next Insurance',
+    'Protective Life',
+    'Prudential',
+    'Root Insurance',
+    'Symetra',
+    'The Hartford',
+    'Transamerica',
+].sort();
+
 
 export const initialContent: EditableContent = {
   core_services: [

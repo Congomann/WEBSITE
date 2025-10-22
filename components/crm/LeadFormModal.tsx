@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Lead } from '../../types';
 import { useAdvisors } from '../../contexts/AdvisorContext';
+import { trustedCarrierNames } from '../../data';
 
 interface LeadFormModalProps {
     isOpen: boolean;
@@ -53,7 +55,15 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
                         <div><label className="block text-sm font-medium text-gray-700">Zip Code</label><input type="text" name="zipcode" value={formData.zipcode || ''} onChange={handleChange} className={inputStyles} /></div>
 
                         {/* Insurance Info */}
-                        <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-700">Preferred Life Insurance Carrier</label><input type="text" name="preferredCarrier" value={formData.preferredCarrier || ''} onChange={handleChange} className={inputStyles} /></div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700">Preferred Life Insurance Carrier</label>
+                            <select name="preferredCarrier" value={formData.preferredCarrier || ''} onChange={handleChange} className={inputStyles}>
+                                <option value="" disabled>Select a carrier...</option>
+                                {trustedCarrierNames.map(carrier => (
+                                    <option key={carrier} value={carrier}>{carrier}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div><label className="block text-sm font-medium text-gray-700">Coverage Amount ($)</label><input type="number" name="coverageAmount" value={formData.coverageAmount || ''} onChange={handleChange} className={inputStyles} /></div>
                         <div><label className="block text-sm font-medium text-gray-700">Weight (lbs)</label><input type="number" name="weight" value={formData.weight || ''} onChange={handleChange} className={inputStyles} /></div>
                         <div><label className="block text-sm font-medium text-gray-700">Height (inches)</label><input type="number" name="height" value={formData.height || ''} onChange={handleChange} className={inputStyles} /></div>
