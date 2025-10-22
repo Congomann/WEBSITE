@@ -15,10 +15,9 @@ const Logo: React.FC<LogoProps> = ({ className = '', variant = 'light' }) => {
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Icon */}
       <div className="flex-shrink-0 w-11 h-11 animate-fade-in-down" style={{ animationDuration: '600ms' }}>
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="44" height="44" rx="9" fill="black"/>
-            <path d="M12 33V22.7647L22 14L32 22.7647V33H12Z" fill="#F7C548"/>
-            <circle cx="22" cy="23" r="3.5" fill="white"/>
+        <svg width="44" height="44" viewBox="5 6 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M5 30 L5 22 L19.5 14 L34 22 L34 30 Z" fill="#F7C548"/>
+            <circle cx="19.5" cy="26" r="3.5" fill="white"/>
         </svg>
       </div>
 

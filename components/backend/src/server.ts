@@ -177,4 +177,122 @@ app.get('/api/advisors', async (req, res) => {
 app.post('/api/advisors', async (req, res) => {
     try {
         const newAdvisor = req.body;
-        
+        if (!newAdvisor || !newAdvisor.name || !newAdvisor.title) {
+            return res.status(400).json({ message: 'Missing required advisor fields.' });
+        }
+        const db = await readDb();
+        const newId = (db.advisors.reduce((maxId: number, advisor: any) => Math.max(advisor.id, maxId), 0) || 0) + 1;
+        const advisorToAdd = { id: newId, ...newAdvisor };
+        db.advisors.push(advisorToAdd);
+        await writeDb(db);
+        res.status(201).json(advisorToAdd);
+    } catch (error) {
+        console.error('Error in POST /api/advisors:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// GET a single advisor
+app.get('/api/advisors/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const db = await readDb();
+        const advisor = db.advisors.find((a: any) => a.id === parseInt(id, 10));
+        if (advisor) {
+            res.json(advisor);
+        } else {
+            res.status(404).json({ message: 'Advisor not found' });
+        }
+    } catch (error) {
+        console.error('Error in GET /api/advisors/:id:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// UPDATE an advisor
+app.put('/api/advisors/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedAdvisor = req.body;
+        const db = await readDb();
+        const index = db.advisors.findIndex((a: any) => a.id === parseInt(id, 10));
+        if (index > -1) {
+            db.advisors[index] = { ...db.advisors[index], ...updatedAdvisor, id: parseInt(id, 10) };
+            await writeDb(db);
+            res.json(db.advisors[index]);
+        } else {
+            res.status(404).json({ message: 'Advisor not found' });
+        }
+    } catch (error) {
+        console.error('Error in PUT /api/advisors/:id:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// DELETE an advisor
+app.delete('/api/advisors/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const db = await readDb();
+        const initialLength = db.advisors.length;
+        db.advisors = db.advisors.filter((a: any) => a.id !== parseInt(id, 10));
+        if (db.advisors.length < initialLength) {
+            await writeDb(db);
+            res.status(204).send();
+        } else {
+            res.status(404).json({ message: 'Advisor not found' });
+        }
+    } catch (error) {
+        console.error('Error in DELETE /api/advisors/:id:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+// POST a new quote
+app.post('/api/quotes', async (req, res) => {
+    try {
+        const newQuote = { id: randomUUID(), ...req.body, timestamp: new Date().toISOString() };
+        const db = await readDb();
+        db.quotes.push(newQuote);
+        await writeDb(db);
+        // Simulate a small delay
+        setTimeout(() => {
+            res.status(201).json({ message: 'Quote submitted successfully!', quote: newQuote });
+        }, 1000);
+    } catch (error) {
+        console.error('Error in /api/quotes:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// POST a new callback request
+app.post('/api/callbacks', async (req, res) => {
+    try {
+        const newCallback = { id: randomUUID(), ...req.body, timestamp: new Date().toISOString() };
+        const db = await readDb();
+        db.callbacks.push(newCallback);
+        await writeDb(db);
+         // Simulate a small delay
+        setTimeout(() => {
+            res.status(201).json({ message: 'Callback requested successfully!', callback: newCallback });
+        }, 1000);
+    } catch (error) {
+        console.error('Error in /api/callbacks:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+// --- Static File Serving ---
+// This should come after API routes to avoid conflicts
+app.use(express.static(STATIC_PATH));
+
+// Catch-all to serve index.html for any other request (for client-side routing)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(STATIC_PATH, 'index.html'));
+});
+
+// --- Server Start ---
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

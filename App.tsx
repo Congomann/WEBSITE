@@ -79,7 +79,7 @@ const App: React.FC = () => {
                           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                           <Route path="/login" element={<LoginPage />} />
                           <Route path="/join-our-team" element={<JoinOurTeamPage />} />
-                          <Route path="/live-assistant" element={<LiveAssistantPage />} />
+                          <Route path="/ai-assistant" element={<LiveAssistantPage />} />
                           
                           <Route
                             path="/management-dashboard"
