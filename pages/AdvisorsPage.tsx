@@ -12,7 +12,7 @@ const AdvisorsPage: React.FC = () => {
 
     const handleEdit = (id: number) => {
         setAdvisorToEditId(id);
-        navigate('/management-dashboard');
+        navigate('/crm/content-management');
     };
 
     const handleDelete = (id: number) => {

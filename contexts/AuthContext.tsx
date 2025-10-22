@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { User, Role } from '../types';
 import { users as mockUsers } from '../data';
@@ -9,6 +10,7 @@ interface AuthContextType {
     canAccessCrm: boolean;
     isAdmin: boolean;
     isAdvisor: boolean;
+    primaryDashboardPath: string | null;
     login: (email: string) => Promise<User | null>;
     logout: () => void;
 }
@@ -69,11 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
     }, []);
     
-    const canAccessAdmin = useMemo(() => 
-        user?.role === Role.Admin || 
-        user?.role === Role.Manager || 
-        user?.role === Role.SubAdmin, 
-    [user]);
+    const canAccessAdmin = useMemo(() => user?.role === Role.Admin, [user]);
 
     const canAccessCrm = useMemo(() => {
         const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
@@ -82,6 +80,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const isAdmin = useMemo(() => user?.role === Role.Admin, [user]);
 
+    const primaryDashboardPath = useMemo(() => {
+        if (!user) return null;
+        if (user.role === Role.Admin) {
+            return '/crm';
+        }
+        if ([Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor].includes(user.role)) {
+            return '/crm';
+        }
+        return null;
+    }, [user]);
+
     const value = useMemo(() => ({
         user,
         isAuthenticated: !!user,
@@ -89,9 +98,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         canAccessCrm,
         isAdmin,
         isAdvisor: user?.role === Role.Advisor,
+        primaryDashboardPath,
         login,
         logout,
-    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin]);
+    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin, primaryDashboardPath]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

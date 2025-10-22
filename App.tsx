@@ -1,3 +1,4 @@
+
 import React, { Suspense, lazy } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
@@ -74,7 +75,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
                   <Header />
                   <CartToast />
-                  <main className="flex-grow">
+                  <main className="flex-grow pt-24">
                     <Breadcrumbs />
                     <ErrorBoundary>
                       <Suspense fallback={<LoadingSpinner />}>
@@ -94,15 +95,6 @@ const App: React.FC = () => {
                           <Route path="/join-our-team" element={<JoinOurTeamPage />} />
                           <Route path="/ai-assistant" element={<LiveAssistantPage />} />
                           
-                          <Route
-                            path="/management-dashboard"
-                            element={
-                              <ProtectedRoute allowedRoles={[Role.Admin, Role.Manager, Role.SubAdmin]}>
-                                <ManagementDashboardPage />
-                              </ProtectedRoute>
-                            }
-                          />
-
                           {/* CRM Routes */}
                           <Route
                             element={
@@ -120,6 +112,14 @@ const App: React.FC = () => {
                             <Route path="/crm/users" element={<UserManagementPage />} />
                             <Route path="/crm/underwriting" element={<UnderwritingPage />} />
                             <Route path="/crm/messaging" element={<MessagingPage />} />
+                            <Route
+                                path="/crm/content-management"
+                                element={
+                                  <ProtectedRoute allowedRoles={[Role.Admin]}>
+                                    <ManagementDashboardPage />
+                                  </ProtectedRoute>
+                                }
+                            />
                           </Route>
 
                           {/* Service Pages */}

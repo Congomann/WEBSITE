@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -10,6 +11,7 @@ const LeaderboardIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className
 const UsersIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-3.562a4.981 4.981 0 00-4.093-4.948 4 4 0 00-1.813 5.39" /></svg>);
 const UnderwritingIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944a11.955 11.955 0 018.618-3.04 11.955 11.955 0 018.618 3.04 12.02 12.02 0 00-3-15.904z" /></svg>);
 const MessagingIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>);
+const ContentIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536l10.732-10.732z" /></svg>);
 
 
 const CrmSidebar: React.FC = () => {
@@ -24,8 +26,9 @@ const CrmSidebar: React.FC = () => {
         { name: 'Clients', path: '/crm/clients', icon: <ClientsIcon />, roles: [Role.Admin, Role.Advisor] },
         { name: 'Leaderboard', path: '/crm/leaderboard', icon: <LeaderboardIcon />, roles: [Role.Admin, Role.Manager, Role.Advisor] },
         { name: 'Underwriting', path: '/crm/underwriting', icon: <UnderwritingIcon />, roles: [Role.Admin, Role.Underwriter] },
-        { name: 'User Management', path: '/crm/users', icon: <UsersIcon />, roles: [Role.Admin] },
         { name: 'Messaging', path: '/crm/messaging', icon: <MessagingIcon />, roles: [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor] },
+        { name: 'User Management', path: '/crm/users', icon: <UsersIcon />, roles: [Role.Admin] },
+        { name: 'Content Mgt.', path: '/crm/content-management', icon: <ContentIcon />, roles: [Role.Admin] },
     ];
 
     const accessibleNavItems = navItems.filter(item => item.roles.includes(role));

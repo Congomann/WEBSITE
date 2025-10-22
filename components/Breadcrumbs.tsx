@@ -5,7 +5,7 @@ import { useContent } from '../contexts/ContentContext';
 
 const breadcrumbNameMap: { [key: string]: string } = {
     'about': 'About Us', 'advisors': 'Advisors', 'resources': 'Resources', 'products': 'Shop', 'cart': 'Shopping Cart',
-    'checkout': 'Checkout', 'order-success': 'Order Confirmation', 'contact': 'Contact Us', 'management-dashboard': 'Content Dashboard',
+    'checkout': 'Checkout', 'order-success': 'Order Confirmation', 'contact': 'Contact Us', 'content-management': 'Content Management',
     'privacy-policy': 'Privacy Policy', 'services': 'Services', 'join-our-team': 'Join Our Team', 'login': 'Sign In',
     'crm': 'CRM Dashboard', 'leads': 'Leads', 'clients': 'Clients', 'leaderboard': 'Leaderboard', 
     'users': 'User Management', 'underwriting': 'Underwriting', 'messaging': 'Messaging'

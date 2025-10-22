@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from '../components/SEO';
 import Logo from '../components/Logo';
+import { Role } from '../types';
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -23,13 +24,18 @@ const LoginPage: React.FC = () => {
         try {
             // In this demo, we only check the email. The password is not validated.
             const user = await auth.login(email);
-            if (user) {
-                // Redirect to CRM if the user has access, otherwise to their original destination.
-                const destination = auth.canAccessCrm ? '/crm' : from;
-                navigate(destination, { replace: true });
-            } else {
-                 navigate(from, { replace: true });
+            
+            let destination = from;
+            // If the user just navigated to login directly (from is '/'), send them to their dashboard.
+            // Otherwise, send them back to the page they were trying to access.
+            if (from === '/') {
+                if (user.role === Role.Admin) {
+                    destination = '/crm';
+                } else if ([Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor].includes(user.role)) {
+                    destination = '/crm';
+                }
             }
+            navigate(destination, { replace: true });
 
         } catch (err: any) {
             setError(err.message || 'Failed to log in. Please check your credentials.');

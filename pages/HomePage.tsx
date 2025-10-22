@@ -29,6 +29,8 @@ const HomePage: React.FC = () => {
     return (
         <div>
             <SEO title="Protecting Your Life, Family & Future" description="New Holland Financial Group: Your partner in securing financial peace of mind with tailored insurance solutions." keywords="insurance, life insurance, auto insurance, home insurance, group benefits, Des Moines insurance" />
+            
+            {/* Hero Section */}
             <section className="relative bg-cover bg-center text-white py-32 md:py-48" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=2070&auto=format&fit=crop')" }}>
                 <div className="absolute inset-0 bg-brand-blue bg-opacity-70"></div>
                 <div className="container mx-auto px-6 text-center relative z-10">
@@ -40,7 +42,8 @@ const HomePage: React.FC = () => {
                     </div>
                 </div>
             </section>
-            <section className="py-20 bg-white"><div className="container mx-auto px-6 text-center"><h2 className="text-3xl font-bold text-brand-blue mb-4">Welcome to New Holland Financial Group</h2><p className="max-w-3xl mx-auto text-gray-600 text-lg">We are built on integrity, experience, and personalized service, dedicated to finding the perfect insurance solutions for your specific needs.</p></div></section>
+            
+            {/* Core Services Section */}
             <section className="py-20 bg-brand-light">
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Core Services</h2>
@@ -49,6 +52,8 @@ const HomePage: React.FC = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Why Choose Us Section */}
             <section className="py-20 bg-white">
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Why Choose Us?</h2>
@@ -62,7 +67,24 @@ const HomePage: React.FC = () => {
                     </div>
                 </div>
             </section>
-            <section className="py-20 bg-brand-blue"><div className="container mx-auto px-6"><div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-2xl"><h2 className="text-3xl font-bold text-center text-brand-blue mb-8">Request Your Free Quote!</h2><QuoteForm /></div></div></section>
+
+            {/* Welcome Section */}
+            <section className="py-20 bg-brand-light">
+                <div className="container mx-auto px-6 text-center">
+                    <h2 className="text-3xl font-bold text-brand-blue mb-4">Welcome to New Holland Financial Group</h2>
+                    <p className="max-w-3xl mx-auto text-gray-600 text-lg">We are built on integrity, experience, and personalized service, dedicated to finding the perfect insurance solutions for your specific needs.</p>
+                </div>
+            </section>
+
+            {/* Quote Form Section */}
+            <section className="py-20 bg-brand-blue">
+                <div className="container mx-auto px-6">
+                    <div className="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-2xl">
+                        <h2 className="text-3xl font-bold text-center text-brand-blue mb-8">Request Your Free Quote!</h2>
+                        <QuoteForm />
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };
