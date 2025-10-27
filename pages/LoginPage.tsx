@@ -11,7 +11,7 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const auth = useAuth();
+    const { login, switchRole } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -23,13 +23,10 @@ const LoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // In this demo, we only check the email. The password is not validated.
-            const user = await auth.login(email);
-            
+            const user = await login(email);
             const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
             let destination = from;
 
-            // For CRM users, always redirect to the CRM dashboard.
             if (user && crmRoles.includes(user.role)) {
                 destination = '/crm';
             }
@@ -42,6 +39,21 @@ const LoginPage: React.FC = () => {
             setIsLoading(false);
         }
     };
+    
+    const handleQuickLogin = (role: Role) => {
+        setIsLoading(true);
+        setError(null);
+        setTimeout(() => {
+            try {
+                switchRole(role, navigate);
+            } catch (e: any) {
+                setError(e.message);
+                setIsLoading(false);
+            }
+        }, 300);
+    };
+
+    const quickLoginButtonStyles = "w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50";
 
     return (
         <div className="min-h-screen bg-brand-light flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -117,6 +129,23 @@ const LoginPage: React.FC = () => {
                             </button>
                         </div>
                     </form>
+                    
+                    <div className="mt-6">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300" /></div>
+                            <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">Quick login for development</span></div>
+                        </div>
+                        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button type="button" onClick={() => handleQuickLogin(Role.Admin)} disabled={isLoading} className={quickLoginButtonStyles}>Admin</button>
+                            <button type="button" onClick={() => handleQuickLogin(Role.Manager)} disabled={isLoading} className={quickLoginButtonStyles}>Manager</button>
+                            <button type="button" onClick={() => handleQuickLogin(Role.SubAdmin)} disabled={isLoading} className={quickLoginButtonStyles}>Sub-Admin</button>
+                            <button type="button" onClick={() => handleQuickLogin(Role.Advisor)} disabled={isLoading} className={quickLoginButtonStyles}>Advisor</button>
+                            <div className="sm:col-span-2">
+                                <button type="button" onClick={() => handleQuickLogin(Role.Underwriter)} disabled={isLoading} className={quickLoginButtonStyles}>Underwriter</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

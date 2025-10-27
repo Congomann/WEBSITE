@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus } from '../types';
-import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions } from '../crmData';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage } from '../types';
+import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users } from '../data';
 import { Role } from '../types';
@@ -14,6 +14,8 @@ interface CrmContextType {
     requests: AdvisorRequest[];
     commissions: Commission[];
     applications: AgentApplication[];
+    conversations: Conversation[];
+    messages: ChatMessage[];
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
     updateClient: (updatedClient: Client) => void;
@@ -25,6 +27,7 @@ interface CrmContextType {
     updateRequestStatus: (requestId: string, status: AdvisorRequest['status']) => void;
     addApplication: (applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => void;
     updateApplicationStatus: (applicationId: string, status: ApplicationStatus) => void;
+    sendMessage: (conversationId: string, senderId: number, text: string) => void;
 }
 
 const CrmContext = createContext<CrmContextType | undefined>(undefined);
@@ -45,66 +48,39 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const { advisors } = useAdvisors();
 
     const [leads, setLeads] = useState<Lead[]>(() => {
-        try {
-            const localData = localStorage.getItem('nhf-crm-leads');
-            return localData ? JSON.parse(localData) : crmLeads;
-        } catch (error) {
-            return crmLeads;
-        }
+        try { const localData = localStorage.getItem('nhf-crm-leads'); return localData ? JSON.parse(localData) : crmLeads; } catch (error) { return crmLeads; }
     });
 
     const [clients, setClients] = useState<Client[]>(() => {
-        try {
-            const localData = localStorage.getItem('nhf-crm-clients');
-            return localData ? JSON.parse(localData) : crmClients;
-        } catch (error) {
-            return crmClients;
-        }
+        try { const localData = localStorage.getItem('nhf-crm-clients'); return localData ? JSON.parse(localData) : crmClients; } catch (error) { return crmClients; }
     });
 
     const [performanceData, setPerformanceData] = useState<PerformanceData[]>(() => {
-         try {
-            const localData = localStorage.getItem('nhf-crm-performance');
-            return localData ? JSON.parse(localData) : crmPerformance;
-        } catch (error) {
-            return crmPerformance;
-        }
+         try { const localData = localStorage.getItem('nhf-crm-performance'); return localData ? JSON.parse(localData) : crmPerformance; } catch (error) { return crmPerformance; }
     });
 
     const [notifications, setNotifications] = useState<Notification[]>(() => {
-         try {
-            const localData = localStorage.getItem('nhf-crm-notifications');
-            return localData ? JSON.parse(localData) : [];
-        } catch (error) {
-            return [];
-        }
+         try { const localData = localStorage.getItem('nhf-crm-notifications'); return localData ? JSON.parse(localData) : []; } catch (error) { return []; }
     });
 
     const [requests, setRequests] = useState<AdvisorRequest[]>(() => {
-        try {
-            const localData = localStorage.getItem('nhf-crm-requests');
-            return localData ? JSON.parse(localData) : crmAdvisorRequests;
-        } catch (error) {
-            return crmAdvisorRequests;
-        }
+        try { const localData = localStorage.getItem('nhf-crm-requests'); return localData ? JSON.parse(localData) : crmAdvisorRequests; } catch (error) { return crmAdvisorRequests; }
     });
 
     const [commissions, setCommissions] = useState<Commission[]>(() => {
-        try {
-            const localData = localStorage.getItem('nhf-crm-commissions');
-            return localData ? JSON.parse(localData) : crmCommissions;
-        } catch (error) {
-            return crmCommissions;
-        }
+        try { const localData = localStorage.getItem('nhf-crm-commissions'); return localData ? JSON.parse(localData) : crmCommissions; } catch (error) { return crmCommissions; }
     });
 
     const [applications, setApplications] = useState<AgentApplication[]>(() => {
-        try {
-            const localData = localStorage.getItem('nhf-crm-applications');
-            return localData ? JSON.parse(localData) : [];
-        } catch (error) {
-            return [];
-        }
+        try { const localData = localStorage.getItem('nhf-crm-applications'); return localData ? JSON.parse(localData) : []; } catch (error) { return []; }
+    });
+    
+    const [conversations, setConversations] = useState<Conversation[]>(() => {
+        try { const localData = localStorage.getItem('nhf-crm-conversations'); return localData ? JSON.parse(localData) : crmConversations; } catch (error) { return crmConversations; }
+    });
+
+    const [messages, setMessages] = useState<ChatMessage[]>(() => {
+        try { const localData = localStorage.getItem('nhf-crm-messages'); return localData ? JSON.parse(localData) : crmMessages; } catch (error) { return crmMessages; }
     });
 
     useEffect(() => { localStorage.setItem('nhf-crm-leads', JSON.stringify(leads)); }, [leads]);
@@ -114,6 +90,8 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     useEffect(() => { localStorage.setItem('nhf-crm-requests', JSON.stringify(requests)); }, [requests]);
     useEffect(() => { localStorage.setItem('nhf-crm-commissions', JSON.stringify(commissions)); }, [commissions]);
     useEffect(() => { localStorage.setItem('nhf-crm-applications', JSON.stringify(applications)); }, [applications]);
+    useEffect(() => { localStorage.setItem('nhf-crm-conversations', JSON.stringify(conversations)); }, [conversations]);
+    useEffect(() => { localStorage.setItem('nhf-crm-messages', JSON.stringify(messages)); }, [messages]);
 
 
     const addNotification = useCallback((userId: number, message: string, link?: string) => {
@@ -195,7 +173,6 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
                 : lead
             ));
 
-            // Notify all Sub-Admins
             const subAdmins = users.filter(u => u.role === Role.SubAdmin);
             subAdmins.forEach(subAdmin => {
                 addNotification(subAdmin.id, `Lead '${leadToUpdate.name}' was declined by ${advisorName}.`, '/crm/lead-distribution');
@@ -237,8 +214,6 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
             submittedAt: new Date().toISOString(),
         };
         setApplications(prev => [newApplication, ...prev]);
-
-        // Notify admins and managers
         const adminsAndManagers = users.filter(u => u.role === Role.Admin || u.role === Role.Manager);
         adminsAndManagers.forEach(user => {
             addNotification(user.id, `New agent application from ${newApplication.name}.`, '/crm/applications');
@@ -249,27 +224,38 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         setApplications(prev => prev.map(app => app.id === applicationId ? { ...app, status } : app));
     }, []);
 
+    const sendMessage = useCallback((conversationId: string, senderId: number, text: string) => {
+        const newMessage: ChatMessage = {
+            id: `msg-${Date.now()}`,
+            conversationId,
+            senderId,
+            text,
+            timestamp: new Date().toISOString(),
+            read: false,
+        };
+        setMessages(prev => [...prev, newMessage]);
+        setConversations(prev => prev.map(conv => {
+            if (conv.id === conversationId) {
+                return {
+                    ...conv,
+                    lastMessage: text,
+                    lastMessageTimestamp: newMessage.timestamp,
+                };
+            }
+            return conv;
+        }));
+    }, []);
+
 
     const value = useMemo(() => ({
-        leads,
-        clients,
-        performanceData,
-        notifications,
-        requests,
-        commissions,
-        applications,
-        addLead,
-        updateLead,
-        updateClient,
-        assignLead,
-        updateLeadStatus,
-        markNotificationAsRead,
-        getUnreadNotificationCount,
-        addRequest,
-        updateRequestStatus,
-        addApplication,
-        updateApplicationStatus,
-    }), [leads, clients, performanceData, notifications, requests, commissions, applications, addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount, addRequest, updateRequestStatus, addApplication, updateApplicationStatus]);
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages,
+        addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
+        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage,
+    }), [
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages,
+        addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
+        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage
+    ]);
 
     return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;
 };

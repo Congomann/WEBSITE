@@ -1,5 +1,5 @@
 
-import type { Lead, Client, PerformanceData, AdvisorRequest, Commission } from './types';
+import type { Lead, Client, PerformanceData, AdvisorRequest, Commission, Conversation, ChatMessage } from './types';
 
 export const crmLeads: Lead[] = [
     { id: 1, name: 'John Appleseed', email: 'j.apple@example.com', phone: '555-123-4567', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-28T10:00:00Z' },
@@ -121,4 +121,45 @@ export const crmCommissions: Commission[] = [
         status: 'Pending',
         date: '2024-08-01T10:00:00Z'
     }
+];
+
+export const crmConversations: Conversation[] = [
+    {
+        id: 'conv-1',
+        participantIds: [1, 2], // Admin and Jessica Miller
+        lastMessage: "Sounds good, I'll get on it.",
+        lastMessageTimestamp: '2024-07-31T11:05:00Z',
+        unreadCount: 0,
+    },
+    {
+        id: 'conv-2',
+        participantIds: [5, 3], // Manager and Brian Carter
+        lastMessage: 'Can you follow up on the new lead from the website?',
+        lastMessageTimestamp: '2024-07-31T09:30:00Z',
+        unreadCount: 1,
+    },
+     {
+        id: 'conv-3',
+        participantIds: [1, 5], // Admin and Manager
+        lastMessage: 'Let’s sync up about Q3 goals tomorrow.',
+        lastMessageTimestamp: '2024-07-30T17:00:00Z',
+        unreadCount: 0,
+    },
+];
+
+export const crmMessages: ChatMessage[] = [
+    // Conversation 1
+    { id: 'msg-1', conversationId: 'conv-1', senderId: 1, text: 'Hi Jessica, can you please review the latest policy application for John Appleseed?', timestamp: '2024-07-31T11:00:00Z', read: true },
+    { id: 'msg-2', conversationId: 'conv-1', senderId: 2, text: 'Yes, of course. I will take a look this afternoon.', timestamp: '2024-07-31T11:02:00Z', read: true },
+    { id: 'msg-3', conversationId: 'conv-1', senderId: 1, text: "Great, let me know if you need anything.", timestamp: '2024-07-31T11:03:00Z', read: true },
+    { id: 'msg-4', conversationId: 'conv-1', senderId: 2, text: "Sounds good, I'll get on it.", timestamp: '2024-07-31T11:05:00Z', read: true },
+    
+    // Conversation 2
+    { id: 'msg-5', conversationId: 'conv-2', senderId: 5, text: 'Brian, checking in on your progress this week.', timestamp: '2024-07-31T09:28:00Z', read: true },
+    { id: 'msg-6', conversationId: 'conv-2', senderId: 5, text: 'Can you follow up on the new lead from the website?', timestamp: '2024-07-31T09:30:00Z', read: false },
+
+    // Conversation 3
+    { id: 'msg-7', conversationId: 'conv-3', senderId: 1, text: 'Hey, quick check-in. How are the new lead assignments going?', timestamp: '2024-07-30T16:55:00Z', read: true },
+    { id: 'msg-8', conversationId: 'conv-3', senderId: 5, text: 'Going well, the team seems to be handling the new volume.', timestamp: '2024-07-30T16:58:00Z', read: true },
+    { id: 'msg-9', conversationId: 'conv-3', senderId: 1, text: 'Let’s sync up about Q3 goals tomorrow.', timestamp: '2024-07-30T17:00:00Z', read: true },
 ];

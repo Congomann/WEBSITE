@@ -228,3 +228,20 @@ export interface AgentApplication {
   status: ApplicationStatus;
   submittedAt: string;
 }
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: number; // User ID
+  text: string;
+  timestamp: string; // ISO string
+  read: boolean;
+}
+
+export interface Conversation {
+  id: string;
+  participantIds: number[]; // Array of User IDs
+  lastMessage: string;
+  lastMessageTimestamp: string;
+  unreadCount: number;
+}
