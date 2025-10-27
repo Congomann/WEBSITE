@@ -49,6 +49,7 @@ const Header: React.FC = () => {
         { path: "/contact", name: "Contact" },
         { path: "/about", name: "About Us" },
         { path: "/products", name: "Shop" },
+        { path: "/ai-assistant", name: "AI Assistant" },
     ];
 
     const renderNavLinks = (isMobile = false) => (
