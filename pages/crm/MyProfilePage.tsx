@@ -2,17 +2,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdvisors } from '../../contexts/AdvisorContext';
-import { useCrm } from '../../contexts/CrmContext';
-import type { Advisor, SocialLink, AdvisorRequest } from '../../types';
+import type { Advisor, SocialLink } from '../../types';
 import SEO from '../../components/SEO';
-import DataTable from '../../components/crm/DataTable';
 
 const MyProfilePage: React.FC = () => {
     const { user } = useAuth();
     const { advisors, updateAdvisor } = useAdvisors();
-    const { requests, updateRequestStatus } = useCrm();
 
-    const [activeTab, setActiveTab] = useState<'settings' | 'requests'>('settings');
     const [editableAdvisor, setEditableAdvisor] = useState<Partial<Advisor>>({});
     const [copyButtonText, setCopyButtonText] = useState('Copy Link');
 
@@ -79,104 +75,66 @@ const MyProfilePage: React.FC = () => {
         });
     };
 
-    const myRequests = useMemo(() => {
-        return requests.filter(r => r.advisorId === user?.id);
-    }, [requests, user]);
-
-    const handleMarkContacted = (request: AdvisorRequest) => {
-        updateRequestStatus(request.id, 'Contacted');
-    };
-
-    const requestColumns = [
-        { header: 'Type', accessor: 'type' },
-        { header: 'Name', accessor: 'name' },
-        { header: 'Phone', accessor: 'phone' },
-        { header: 'Received', accessor: 'createdAt', isDate: true },
-        { header: 'Status', accessor: 'status' },
-    ];
-    
-    const requestActions = [
-        { label: 'Mark as Contacted', onClick: (request: AdvisorRequest) => handleMarkContacted(request) }
-    ];
-
     if (!currentAdvisor) {
         return <div>Loading advisor profile...</div>;
     }
 
     const formInputClass = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm bg-white text-gray-900";
     const formLabelClass = "block text-sm font-medium text-gray-700";
-    const tabButtonStyles = "px-6 py-2 font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold";
-    const activeTabStyles = "border-b-2 border-brand-blue text-brand-blue";
-    const inactiveTabStyles = "text-gray-500 hover:text-brand-blue";
 
     return (
         <div className="animate-fade-in">
-            <SEO title="My Profile" description="Manage your public advisor profile." noIndex={true} />
-            <h1 className="text-3xl font-bold text-brand-blue mb-6">My Public Profile</h1>
+            <SEO title="My Profile Settings" description="Manage your public advisor profile." noIndex={true} />
+            <h1 className="text-3xl font-bold text-brand-blue mb-6">My Profile Settings</h1>
 
-            <div className="mb-6">
-                <div className="flex border-b border-gray-200">
-                    <button onClick={() => setActiveTab('settings')} className={`${tabButtonStyles} ${activeTab === 'settings' ? activeTabStyles : inactiveTabStyles}`}>Profile Settings</button>
-                    <button onClick={() => setActiveTab('requests')} className={`${tabButtonStyles} ${activeTab === 'requests' ? activeTabStyles : inactiveTabStyles}`}>Client Requests ({myRequests.filter(r => r.status === 'New').length})</button>
+            <div className="bg-white p-6 rounded-lg shadow-lg space-y-8">
+                {/* Profile Details */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="md:col-span-1">
+                        <label className={formLabelClass}>Profile Picture</label>
+                        <img src={editableAdvisor.imageUrl} alt="Profile" className="w-48 h-48 rounded-full object-cover my-2 shadow-md" />
+                        <input type="file" accept="image/*" onChange={handleImageUpload} className="block w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-brand-blue focus:border-brand-blue file:bg-brand-blue file:text-white file:font-semibold file:py-2 file:px-4 file:border-0 file:mr-4 hover:file:bg-opacity-90" />
+                    </div>
+                    <div className="md:col-span-2 space-y-4">
+                        <div><label className={formLabelClass}>Full Name</label><input type="text" name="name" value={editableAdvisor.name || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                        <div><label className={formLabelClass}>Title</label><input type="text" name="title" value={editableAdvisor.title || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                        <div><label className={formLabelClass}>Email</label><input type="email" name="email" value={editableAdvisor.email || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                        <div><label className={formLabelClass}>Phone</label><input type="tel" name="phone" value={editableAdvisor.phone || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                    </div>
+                </div>
+                <div><label className={formLabelClass}>Bio</label><textarea name="bio" rows={5} value={editableAdvisor.bio || ''} onChange={handleInputChange} className={formInputClass}></textarea></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* FIX: The input value was being cleared on edit due to a type mismatch. It now correctly displays the string value during editing. */}
+                    <div><label className={formLabelClass}>Specialties (comma-separated)</label><input type="text" name="specialties" value={Array.isArray(editableAdvisor.specialties) ? editableAdvisor.specialties.join(', ') : (editableAdvisor.specialties as any) || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                    <div><label className={formLabelClass}>Languages (comma-separated)</label><input type="text" name="languages" value={Array.isArray(editableAdvisor.languages) ? editableAdvisor.languages.join(', ') : (editableAdvisor.languages as any) || ''} onChange={handleInputChange} className={formInputClass} /></div>
+                </div>
+
+                {/* Social Links */}
+                <div>
+                    <h3 className="text-lg font-bold text-brand-blue mb-2">Social Media</h3>
+                    <div className="space-y-3">
+                        {editableAdvisor.socialLinks?.map((link, index) => (
+                            <div key={link.name} className="flex items-center gap-3">
+                                <label className="w-24 text-sm font-medium">{link.name}</label>
+                                <input type="url" value={link.url} onChange={(e) => handleSocialLinkChange(index, e.target.value)} className={formInputClass} placeholder={`https://www.${link.name.toLowerCase()}.com/...`} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                {/* Shareable Link */}
+                <div>
+                    <h3 className="text-lg font-bold text-brand-blue mb-2">My Sharable Link</h3>
+                    <div className="flex items-center gap-3 bg-gray-100 p-2 rounded-md">
+                        <input type="text" readOnly value={`${window.location.origin}/#/advisors/${currentAdvisor.id}`} className="flex-grow bg-transparent text-sm text-gray-600 focus:outline-none" />
+                        <button onClick={copyShareableLink} className="bg-brand-gold text-brand-blue text-sm font-semibold py-1 px-3 rounded hover:bg-yellow-400">{copyButtonText}</button>
+                    </div>
+                </div>
+                
+                <div className="text-right">
+                    <button onClick={handleSaveChanges} className="bg-brand-blue text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">Save Changes</button>
                 </div>
             </div>
-
-            {activeTab === 'settings' && (
-                <div className="bg-white p-6 rounded-lg shadow-lg space-y-8">
-                    {/* Profile Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-1">
-                            <label className={formLabelClass}>Profile Picture</label>
-                            <img src={editableAdvisor.imageUrl} alt="Profile" className="w-48 h-48 rounded-full object-cover my-2 shadow-md" />
-                            <input type="file" accept="image/*" onChange={handleImageUpload} className="block w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-brand-blue focus:border-brand-blue file:bg-brand-blue file:text-white file:font-semibold file:py-2 file:px-4 file:border-0 file:mr-4 hover:file:bg-opacity-90" />
-                        </div>
-                        <div className="md:col-span-2 space-y-4">
-                            <div><label className={formLabelClass}>Full Name</label><input type="text" name="name" value={editableAdvisor.name || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                            <div><label className={formLabelClass}>Title</label><input type="text" name="title" value={editableAdvisor.title || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                            <div><label className={formLabelClass}>Email</label><input type="email" name="email" value={editableAdvisor.email || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                            <div><label className={formLabelClass}>Phone</label><input type="tel" name="phone" value={editableAdvisor.phone || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                        </div>
-                    </div>
-                    <div><label className={formLabelClass}>Bio</label><textarea name="bio" rows={5} value={editableAdvisor.bio || ''} onChange={handleInputChange} className={formInputClass}></textarea></div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* FIX: The input value was being cleared on edit due to a type mismatch. It now correctly displays the string value during editing. */}
-                        <div><label className={formLabelClass}>Specialties (comma-separated)</label><input type="text" name="specialties" value={Array.isArray(editableAdvisor.specialties) ? editableAdvisor.specialties.join(', ') : (editableAdvisor.specialties as any) || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                        <div><label className={formLabelClass}>Languages (comma-separated)</label><input type="text" name="languages" value={Array.isArray(editableAdvisor.languages) ? editableAdvisor.languages.join(', ') : (editableAdvisor.languages as any) || ''} onChange={handleInputChange} className={formInputClass} /></div>
-                    </div>
-
-                    {/* Social Links */}
-                    <div>
-                        <h3 className="text-lg font-bold text-brand-blue mb-2">Social Media</h3>
-                        <div className="space-y-3">
-                            {editableAdvisor.socialLinks?.map((link, index) => (
-                                <div key={link.name} className="flex items-center gap-3">
-                                    <label className="w-24 text-sm font-medium">{link.name}</label>
-                                    <input type="url" value={link.url} onChange={(e) => handleSocialLinkChange(index, e.target.value)} className={formInputClass} placeholder={`https://www.${link.name.toLowerCase()}.com/...`} />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    
-                    {/* Shareable Link */}
-                    <div>
-                        <h3 className="text-lg font-bold text-brand-blue mb-2">My Sharable Link</h3>
-                        <div className="flex items-center gap-3 bg-gray-100 p-2 rounded-md">
-                            <input type="text" readOnly value={`${window.location.origin}/#/advisors/${currentAdvisor.id}`} className="flex-grow bg-transparent text-sm text-gray-600 focus:outline-none" />
-                            <button onClick={copyShareableLink} className="bg-brand-gold text-brand-blue text-sm font-semibold py-1 px-3 rounded hover:bg-yellow-400">{copyButtonText}</button>
-                        </div>
-                    </div>
-                    
-                    <div className="text-right">
-                        <button onClick={handleSaveChanges} className="bg-brand-blue text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">Save Changes</button>
-                    </div>
-                </div>
-            )}
-            
-            {activeTab === 'requests' && (
-                <div className="bg-white p-6 rounded-lg shadow-lg">
-                    <DataTable columns={requestColumns} data={myRequests} actions={requestActions} />
-                </div>
-            )}
         </div>
     );
 };

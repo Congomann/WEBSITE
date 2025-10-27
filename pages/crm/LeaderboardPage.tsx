@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import SEO from '../../components/SEO';
 import { useCrm } from '../../contexts/CrmContext';
@@ -44,7 +45,6 @@ const LeaderboardPage: React.FC = () => {
             if (a.metrics[sortConfig.key] > b.metrics[sortConfig.key]) {
                 return sortConfig.direction === 'ascending' ? 1 : -1;
             }
-            // Secondary sort by name if primary values are equal
             return a.name.localeCompare(b.name);
         });
         return sortableItems;
@@ -60,6 +60,13 @@ const LeaderboardPage: React.FC = () => {
 
     const getSortDirection = (key: SortKey) => {
         return sortConfig.key === key ? sortConfig.direction : null;
+    };
+
+    const getRankIcon = (index: number) => {
+        if (index === 0) return '🥇';
+        if (index === 1) return '🥈';
+        if (index === 2) return '🥉';
+        return `${index + 1}`;
     };
 
     const tabButtonStyles = "px-6 py-2 font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold";
@@ -114,9 +121,12 @@ const LeaderboardPage: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {sortedData.map((item, index) => (
-                                <tr key={item.advisorId} className={`transition-colors duration-200 ${item.advisorId === user?.id ? 'bg-brand-gold/20' : 'hover:bg-gray-50'}`}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 text-center">{index + 1}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{item.name}</td>
+                                <tr key={item.advisorId} className={`transition-colors duration-200 ${item.advisorId === user?.id ? 'bg-brand-gold/30 border-l-4 border-brand-gold' : 'hover:bg-gray-50'}`}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-lg font-bold text-gray-800 text-center">{getRankIcon(index)}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                        {item.name}
+                                        {item.advisorId === user?.id && <span className="ml-2 text-xs font-bold text-white bg-green-500 px-2 py-0.5 rounded-full">You</span>}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${item.metrics.salesVolume.toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.metrics.closedDeals}</td>
                                 </tr>

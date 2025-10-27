@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCrm } from '../../contexts/CrmContext';
 import { Role } from '../../types';
 
 const DashboardIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>);
@@ -16,10 +17,20 @@ const DistributionIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" classNam
 const MyProfileIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>);
 const CommissionsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v-1m0-1V4m0 2.01M12 14v4m0 2v-2m0-2v-2" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18a6 6 0 100-12 6 6 0 000 12z" /></svg>);
 const ApplicationsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>);
+const RequestsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>);
 
 
 const CrmSidebar: React.FC = () => {
     const { user } = useAuth();
+    const { requests } = useCrm();
+
+    const newRequestCount = useMemo(() => {
+        if (user && user.role === Role.Advisor) {
+            return requests.filter(r => r.advisorId === user.id && r.status === 'New').length;
+        }
+        return 0;
+    }, [requests, user]);
+
     if (!user) return null;
     
     const { role } = user;
@@ -27,6 +38,7 @@ const CrmSidebar: React.FC = () => {
     const navItems = [
         { name: 'Dashboard', path: '/crm', icon: <DashboardIcon />, roles: [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor] },
         { name: 'My Profile', path: '/crm/my-profile', icon: <MyProfileIcon />, roles: [Role.Advisor] },
+        { name: 'Client Requests', path: '/crm/requests', icon: <RequestsIcon />, roles: [Role.Advisor], badge: newRequestCount },
         { name: 'Applications', path: '/crm/applications', icon: <ApplicationsIcon />, roles: [Role.Admin, Role.Manager] },
         { name: 'Leads', path: '/crm/leads', icon: <LeadsIcon />, roles: [Role.Admin, Role.SubAdmin, Role.Advisor] },
         { name: 'Lead Distribution', path: '/crm/lead-distribution', icon: <DistributionIcon />, roles: [Role.SubAdmin] },
@@ -58,7 +70,12 @@ const CrmSidebar: React.FC = () => {
                         className={({ isActive }) => `${linkClasses} ${isActive ? activeLinkClasses : ''}`}
                     >
                         <span className="mr-3">{item.icon}</span>
-                        {item.name}
+                        <span className="flex-grow">{item.name}</span>
+                        {item.badge && item.badge > 0 && (
+                            <span className="bg-brand-gold text-brand-blue text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                {item.badge}
+                            </span>
+                        )}
                     </NavLink>
                 ))}
             </nav>

@@ -15,6 +15,7 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  phone?: string;
 }
 
 export interface Service {
@@ -244,4 +245,10 @@ export interface Conversation {
   lastMessage: string;
   lastMessageTimestamp: string;
   unreadCount: number;
+}
+
+export interface CrmNotificationToastData {
+  senderName: string;
+  messageText: string;
+  conversationId: string;
 }

@@ -1,10 +1,11 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage } from '../types';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData } from '../types';
 import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users } from '../data';
-import { Role } from '../types';
+import { Role, User } from '../types';
+import { useAuth } from './AuthContext';
 
 interface CrmContextType {
     leads: Lead[];
@@ -16,6 +17,7 @@ interface CrmContextType {
     applications: AgentApplication[];
     conversations: Conversation[];
     messages: ChatMessage[];
+    toastNotification: CrmNotificationToastData | null;
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
     updateClient: (updatedClient: Client) => void;
@@ -28,6 +30,10 @@ interface CrmContextType {
     addApplication: (applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => void;
     updateApplicationStatus: (applicationId: string, status: ApplicationStatus) => void;
     sendMessage: (conversationId: string, senderId: number, text: string) => void;
+    dismissToastNotification: () => void;
+    setActiveConversationId: (id: string | null) => void;
+    markConversationAsRead: (conversationId: string) => void;
+    createConversation: (participantId: number) => string;
 }
 
 const CrmContext = createContext<CrmContextType | undefined>(undefined);
@@ -46,6 +52,7 @@ interface CrmProviderProps {
 
 export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const { advisors } = useAdvisors();
+    const { user } = useAuth();
 
     const [leads, setLeads] = useState<Lead[]>(() => {
         try { const localData = localStorage.getItem('nhf-crm-leads'); return localData ? JSON.parse(localData) : crmLeads; } catch (error) { return crmLeads; }
@@ -83,6 +90,9 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         try { const localData = localStorage.getItem('nhf-crm-messages'); return localData ? JSON.parse(localData) : crmMessages; } catch (error) { return crmMessages; }
     });
 
+    const [toastNotification, setToastNotification] = useState<CrmNotificationToastData | null>(null);
+    const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+
     useEffect(() => { localStorage.setItem('nhf-crm-leads', JSON.stringify(leads)); }, [leads]);
     useEffect(() => { localStorage.setItem('nhf-crm-clients', JSON.stringify(clients)); }, [clients]);
     useEffect(() => { localStorage.setItem('nhf-crm-performance', JSON.stringify(performanceData)); }, [performanceData]);
@@ -92,6 +102,23 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     useEffect(() => { localStorage.setItem('nhf-crm-applications', JSON.stringify(applications)); }, [applications]);
     useEffect(() => { localStorage.setItem('nhf-crm-conversations', JSON.stringify(conversations)); }, [conversations]);
     useEffect(() => { localStorage.setItem('nhf-crm-messages', JSON.stringify(messages)); }, [messages]);
+
+    // Listen for storage changes to sync messages between tabs
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            if (event.key === 'nhf-crm-messages' && event.newValue) {
+                setMessages(JSON.parse(event.newValue));
+            }
+            if (event.key === 'nhf-crm-conversations' && event.newValue) {
+                setConversations(JSON.parse(event.newValue));
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []);
 
 
     const addNotification = useCallback((userId: number, message: string, link?: string) => {
@@ -224,6 +251,10 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         setApplications(prev => prev.map(app => app.id === applicationId ? { ...app, status } : app));
     }, []);
 
+    const dismissToastNotification = useCallback(() => {
+        setToastNotification(null);
+    }, []);
+
     const sendMessage = useCallback((conversationId: string, senderId: number, text: string) => {
         const newMessage: ChatMessage = {
             id: `msg-${Date.now()}`,
@@ -231,30 +262,84 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
             senderId,
             text,
             timestamp: new Date().toISOString(),
-            read: false,
+            read: true,
         };
         setMessages(prev => [...prev, newMessage]);
+
+        const currentConv = conversations.find(c => c.id === conversationId);
+        if (!currentConv) return;
+        
+        const otherParticipantId = currentConv.participantIds.find(id => id !== senderId);
+
         setConversations(prev => prev.map(conv => {
             if (conv.id === conversationId) {
-                return {
-                    ...conv,
-                    lastMessage: text,
-                    lastMessageTimestamp: newMessage.timestamp,
-                };
+                return { ...conv, lastMessage: text, lastMessageTimestamp: newMessage.timestamp, unreadCount: 0 };
             }
             return conv;
         }));
+
+        if (otherParticipantId) {
+            const isChatActive = activeConversationId === conversationId;
+            const otherUser = users.find(u => u.id === otherParticipantId);
+             
+            setConversations(prev => prev.map(conv => {
+                if (conv.id === conversationId) {
+                    if (!isChatActive) {
+                        setToastNotification({
+                            senderName: otherUser?.name || 'New Message',
+                            messageText: text,
+                            conversationId: conversationId,
+                        });
+                        return { ...conv, unreadCount: (conv.unreadCount || 0) + 1 };
+                    }
+                }
+                return conv;
+            }));
+        }
+    }, [conversations, activeConversationId]);
+    
+    const markConversationAsRead = useCallback((conversationId: string) => {
+        setMessages(prev => prev.map(msg => 
+            (msg.conversationId === conversationId && !msg.read) ? { ...msg, read: true } : msg
+        ));
+        setConversations(prev => prev.map(conv => 
+            (conv.id === conversationId) ? { ...conv, unreadCount: 0 } : conv
+        ));
     }, []);
+
+    const createConversation = useCallback((participantId: number): string => {
+        if (!user) throw new Error("User not authenticated");
+        
+        const existingConversation = conversations.find(c => 
+            c.participantIds.includes(user.id) && c.participantIds.includes(participantId)
+        );
+
+        if (existingConversation) {
+            return existingConversation.id;
+        }
+
+        const newConversation: Conversation = {
+            id: `conv-${Date.now()}`,
+            participantIds: [user.id, participantId],
+            lastMessage: 'Conversation started.',
+            lastMessageTimestamp: new Date().toISOString(),
+            unreadCount: 0,
+        };
+        setConversations(prev => [newConversation, ...prev]);
+        return newConversation.id;
+    }, [user, conversations]);
 
 
     const value = useMemo(() => ({
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages,
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
-        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage,
+        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
+        setActiveConversationId, markConversationAsRead, createConversation,
     }), [
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages,
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
-        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage
+        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
+        markConversationAsRead, createConversation
     ]);
 
     return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;

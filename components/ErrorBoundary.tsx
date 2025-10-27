@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 interface Props {
@@ -9,10 +9,8 @@ interface State {
   hasError: boolean;
 }
 
-class ErrorBoundary extends Component<Props, State> {
-  // FIX: The class property initialization for state was causing an issue where `this.props` was not being
-  // correctly recognized. Switched to a constructor-based initialization to ensure the component's `this`
-  // context is properly established before render.
+class ErrorBoundary extends React.Component<Props, State> {
+  // FIX: Added the constructor to explicitly initialize state and call `super(props)`. This resolves an issue where `this.props` and `this.state` were not being correctly identified on the component instance.
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };

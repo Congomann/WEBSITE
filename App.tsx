@@ -63,6 +63,7 @@ const LeadDistributionPage = lazy(() => import('./pages/crm/LeadDistributionPage
 const MyProfilePage = lazy(() => import('./pages/crm/MyProfilePage'));
 const CommissionsPage = lazy(() => import('./pages/crm/CommissionsPage'));
 const AgentApplicationsPage = lazy(() => import('./pages/crm/AgentApplicationsPage'));
+const ClientRequestsPage = lazy(() => import('./pages/crm/ClientRequestsPage'));
 
 const App: React.FC = () => {
   const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
@@ -116,7 +117,22 @@ const App: React.FC = () => {
                               <Route path="/crm/users" element={<UserManagementPage />} />
                               <Route path="/crm/underwriting" element={<UnderwritingPage />} />
                               <Route path="/crm/messaging" element={<MessagingPage />} />
-                              <Route path="/crm/my-profile" element={<MyProfilePage />} />
+                              <Route
+                                  path="/crm/my-profile"
+                                  element={
+                                    <ProtectedRoute allowedRoles={[Role.Advisor]}>
+                                      <MyProfilePage />
+                                    </ProtectedRoute>
+                                  }
+                              />
+                              <Route
+                                  path="/crm/requests"
+                                  element={
+                                    <ProtectedRoute allowedRoles={[Role.Advisor]}>
+                                      <ClientRequestsPage />
+                                    </ProtectedRoute>
+                                  }
+                              />
                               <Route
                                   path="/crm/applications"
                                   element={

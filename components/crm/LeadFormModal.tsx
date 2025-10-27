@@ -1,6 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
-import { Lead } from '../../types';
+import type { Lead } from '../../types';
+import { Role } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 import { useAdvisors } from '../../contexts/AdvisorContext';
 import { trustedCarrierNames, productTypes } from '../../data';
 
@@ -13,6 +14,7 @@ interface LeadFormModalProps {
 
 const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, lead }) => {
     const { advisors } = useAdvisors();
+    const { user } = useAuth();
     const [formData, setFormData] = useState<Partial<Lead>>({});
 
     useEffect(() => {
@@ -104,13 +106,15 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
                         <div><label className="block text-sm font-medium text-gray-700">Account Number</label><input type="text" name="accountNumber" value={formData.accountNumber || ''} onChange={handleChange} className={inputStyles} inputMode="numeric" /></div>
 
                         {/* Assignment */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700">Assign to Advisor</label>
-                            <select name="assignedTo" value={formData.assignedTo || ''} onChange={handleChange} className={inputStyles}>
-                                <option value="">Assign later</option>
-                                {advisors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                            </select>
-                        </div>
+                        {user?.role === Role.SubAdmin && (
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700">Assign to Advisor</label>
+                                <select name="assignedTo" value={formData.assignedTo || ''} onChange={handleChange} className={inputStyles}>
+                                    <option value="">Assign later</option>
+                                    {advisors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+                                </select>
+                            </div>
+                        )}
                     </div>
 
                     <div className="mt-6 flex justify-end gap-4">
