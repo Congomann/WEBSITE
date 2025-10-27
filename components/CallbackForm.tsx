@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useCrm } from '../../contexts/CrmContext';
 
 interface CallbackFormProps {
     advisorName?: string;
+    advisorId?: number;
 }
 
-const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName }) => {
+const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) => {
     const [formData, setFormData] = useState({ name: '', phone: '', time: 'Morning' });
     const [fieldErrors, setFieldErrors] = useState({ name: '', phone: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { addRequest } = useCrm();
 
     const validateField = (name: string, value: string): string => {
         if (name === 'name') {
@@ -54,23 +57,42 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName }) => {
         setIsLoading(true);
         setError(null);
 
-        try {
-            // This endpoint will be created in the backend
-            const response = await fetch('/api/callbacks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, advisorName }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to submit request. Please try again.');
+        if (advisorId) {
+            // Logic for direct requests to an advisor
+            try {
+                addRequest({
+                    type: 'Callback',
+                    name: formData.name,
+                    phone: formData.phone,
+                    message: `Preferred time: ${formData.time}.`,
+                    advisorId: advisorId,
+                });
+                await new Promise(res => setTimeout(res, 500));
+                setSubmitted(true);
+            } catch (err: any) {
+                setError("Failed to submit request. Please try again.");
+            } finally {
+                setIsLoading(false);
             }
 
-            setSubmitted(true);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
+        } else {
+            // Existing logic for general callback requests
+            try {
+                const response = await fetch('/api/callbacks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...formData, advisorName }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit request. Please try again.');
+                }
+                setSubmitted(true);
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 

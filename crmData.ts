@@ -1,4 +1,5 @@
-import type { Lead, Client, PerformanceData } from './types';
+
+import type { Lead, Client, PerformanceData, AdvisorRequest, Commission } from './types';
 
 export const crmLeads: Lead[] = [
     { id: 1, name: 'John Appleseed', email: 'j.apple@example.com', phone: '555-123-4567', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-28T10:00:00Z' },
@@ -15,6 +16,30 @@ export const crmClients: Client[] = [
     { id: 103, name: 'Existing Client B', email: 'client.b@example.com', phone: '555-222-2222', advisorId: 3, since: '2022-11-20', policies: [{ id: 'P-HEALTH-001', type: 'Health', premium: 4500, status: 'Pending', renewalDate: '2024-11-20' }] },
 ];
 
+export const crmAdvisorRequests: AdvisorRequest[] = [
+    {
+        id: 'req-1',
+        type: 'Callback',
+        name: 'Michael Scott',
+        phone: '555-100-1001',
+        message: 'Wants to discuss life insurance options.',
+        createdAt: '2024-07-30T11:00:00Z',
+        status: 'New',
+        advisorId: 1 // Jessica Miller
+    },
+    {
+        id: 'req-2',
+        type: 'Callback',
+        name: 'Pamela Beesly',
+        phone: '555-200-2002',
+        message: 'Interested in property insurance.',
+        createdAt: '2024-07-29T16:30:00Z',
+        status: 'Contacted',
+        advisorId: 2 // Brian Carter
+    },
+];
+
+
 export const crmPerformance: PerformanceData[] = [
     {
         advisorId: 1, // Jessica Miller
@@ -27,5 +52,73 @@ export const crmPerformance: PerformanceData[] = [
     {
         advisorId: 3, // Samantha Chen
         metrics: { leads: 18, conversionRate: 16.67, closedDeals: 3, salesVolume: 45000, commissions: 2250 }
+    }
+];
+
+export const crmCommissions: Commission[] = [
+    {
+        id: 'comm-1',
+        clientId: 101,
+        clientName: 'Mary Garcia',
+        advisorId: 2,
+        policyId: 'P-AUTO-001',
+        policyType: 'Auto',
+        premium: 1200,
+        commissionRate: 15,
+        commissionAmount: 180,
+        status: 'Paid',
+        date: '2024-07-26T10:00:00Z'
+    },
+    {
+        id: 'comm-2',
+        clientId: 102,
+        clientName: 'Existing Client A',
+        advisorId: 1,
+        policyId: 'P-LIFE-001',
+        policyType: 'Life',
+        premium: 2500,
+        commissionRate: 50,
+        commissionAmount: 1250,
+        status: 'Paid',
+        date: '2024-07-15T10:00:00Z'
+    },
+    {
+        id: 'comm-3',
+        clientId: 102,
+        clientName: 'Existing Client A',
+        advisorId: 1,
+        policyId: 'P-HOME-001',
+        policyType: 'Home',
+        premium: 800,
+        commissionRate: 12,
+        commissionAmount: 96,
+        status: 'Pending',
+        date: '2024-07-18T10:00:00Z'
+    },
+    {
+        id: 'comm-4',
+        clientId: 103,
+        clientName: 'Existing Client B',
+        advisorId: 3,
+        policyId: 'P-HEALTH-001',
+        policyType: 'Health',
+        premium: 4500,
+        commissionRate: 10,
+        commissionAmount: 450,
+        status: 'Pending',
+        date: '2024-07-21T10:00:00Z'
+    },
+     {
+        id: 'comm-5',
+        clientId: 101, // Mary Garcia
+        clientName: 'Mary Garcia',
+        advisorId: 2,
+        policyId: 'P-HOME-002', // a new policy
+        policyType: 'Home',
+        premium: 950,
+        commissionRate: 12,
+        commissionAmount: 114,
+        status: 'Pending',
+        date: '2024-08-01T10:00:00Z'
     }
 ];

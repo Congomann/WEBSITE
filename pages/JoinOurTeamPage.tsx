@@ -56,7 +56,7 @@ const JoinOurTeamPage: React.FC = () => {
         }, 1500);
     };
 
-    const inputStyles = "mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue";
+    const inputStyles = "mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white text-gray-900 placeholder-gray-500";
     const labelStyles = "block text-sm font-medium text-brand-blue";
 
     return (

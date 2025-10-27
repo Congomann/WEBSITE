@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import type { Advisor, VideoResource, DocumentResource, Product, SocialLink } from '../types';
+import type { Advisor, VideoResource, DocumentResource, Product, SocialLink, HeroBackgroundType } from '../types';
 import Accordion from '../components/Accordion';
 import SEO from '../components/SEO';
 import { useProducts } from '../contexts/ProductContext';
@@ -381,6 +382,25 @@ const ManagementDashboardPage: React.FC = () => {
                                 </div>
                             </Accordion>
 
+                            {/* HOMEPAGE HERO BACKGROUND */}
+                            <Accordion title="Homepage Hero Background" isOpen={openSection === 'hero-background'} onToggle={() => toggleSection('hero-background')}>
+                                <div className="space-y-4">
+                                    <h4 className="text-lg font-bold text-brand-blue">Background Type</h4>
+                                    <div className="flex items-center gap-6">
+                                        <label className="flex items-center gap-2"><input type="radio" name="heroBackgroundType" value="image" checked={editableContent.hero_background.type === 'image'} onChange={(e) => handleContentChange('hero_background', { ...editableContent.hero_background, type: e.target.value as HeroBackgroundType })} className="form-radio h-4 w-4 text-brand-blue"/>Image</label>
+                                        <label className="flex items-center gap-2"><input type="radio" name="heroBackgroundType" value="video" checked={editableContent.hero_background.type === 'video'} onChange={(e) => handleContentChange('hero_background', { ...editableContent.hero_background, type: e.target.value as HeroBackgroundType })} className="form-radio h-4 w-4 text-brand-blue"/>Direct Video</label>
+                                        <label className="flex items-center gap-2"><input type="radio" name="heroBackgroundType" value="youtube" checked={editableContent.hero_background.type === 'youtube'} onChange={(e) => handleContentChange('hero_background', { ...editableContent.hero_background, type: e.target.value as HeroBackgroundType })} className="form-radio h-4 w-4 text-brand-blue"/>YouTube Embed</label>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="hero-source" className={formLabelClass}>
+                                            { { image: 'Image URL', video: 'Video URL (.mp4, .webm)', youtube: 'YouTube Video ID' }[editableContent.hero_background.type] }
+                                        </label>
+                                        <input type="text" id="hero-source" value={editableContent.hero_background.source} onChange={(e) => handleContentChange('hero_background', { ...editableContent.hero_background, source: e.target.value })} className={formInputClass} />
+                                    </div>
+                                    <button onClick={() => handleSaveContent('hero_background')} className="mt-4 bg-brand-blue text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">Save Hero Background</button>
+                                </div>
+                            </Accordion>
+
                             {/* AI Social Media Post Generator */}
                             <Accordion title="AI Social Media Post Generator" isOpen={openSection === 'social-generator'} onToggle={() => toggleSection('social-generator')}>
                                 <div className="space-y-4">
@@ -489,7 +509,7 @@ const ManagementDashboardPage: React.FC = () => {
                                         <div><label htmlFor="title" className={formLabelClass}>Title</label><input type="text" name="title" required value={newAdvisor.title} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                         <div><label htmlFor="email" className={formLabelClass}>Email</label><input type="email" name="email" required value={newAdvisor.email} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                         <div><label htmlFor="phone" className={formLabelClass}>Phone</label><input type="tel" name="phone" required value={newAdvisor.phone} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
-                                        <div><label htmlFor="imageUrl" className={formLabelClass}>Profile Picture</label><input type="file" name="imageUrl" accept="image/*" onChange={handleImageUpload} className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-opacity-90"/>{newAdvisor.imageUrl && <img src={newAdvisor.imageUrl} alt="Preview" className="w-32 h-32 rounded-full object-cover mt-4" />}</div>
+                                        <div><label htmlFor="imageUrl" className={formLabelClass}>Profile Picture</label><input type="file" name="imageUrl" accept="image/*" onChange={handleImageUpload} className="mt-1 block w-full text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer focus:outline-none focus:ring-brand-blue focus:border-brand-blue file:bg-brand-blue file:text-white file:font-semibold file:py-2 file:px-4 file:border-0 file:mr-4 hover:file:bg-opacity-90"/>{newAdvisor.imageUrl && <img src={newAdvisor.imageUrl} alt="Preview" className="w-32 h-32 rounded-full object-cover mt-4" />}</div>
                                         <div><label htmlFor="specialties" className={formLabelClass}>Specialties (comma-separated)</label><input type="text" name="specialties" required value={newAdvisor.specialties} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                         <div><label htmlFor="languages" className={formLabelClass}>Languages (comma-separated)</label><input type="text" name="languages" value={newAdvisor.languages} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass} /></div>
                                         <div><label htmlFor="bio" className={formLabelClass}>Bio</label><textarea name="bio" required rows={3} value={newAdvisor.bio} onChange={(e) => handleInputChange(setNewAdvisor, e)} className={formInputClass}></textarea></div>

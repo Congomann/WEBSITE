@@ -1,3 +1,4 @@
+
 import type { ReactNode } from 'react';
 
 export enum Role {
@@ -42,6 +43,7 @@ export interface Advisor {
   availability?: {
     [dayOfWeek: string]: string[];
   };
+  socialLinks?: SocialLink[];
 }
 
 export interface VideoResource {
@@ -94,6 +96,14 @@ export interface CompanyInfo {
     email: string;
 }
 
+export type HeroBackgroundType = 'image' | 'video' | 'youtube';
+
+export interface HeroBackground {
+  type: HeroBackgroundType;
+  source: string; // URL for image/video, or YouTube embed ID
+}
+
+
 export interface EditableContent {
     core_services: Omit<Service, 'icon'>[];
     social_links_data: SocialLink[];
@@ -102,6 +112,7 @@ export interface EditableContent {
     document_resources: DocumentResource[];
     faq_data: FAQItem[];
     real_estate_info_resources: InfoResource[];
+    hero_background: HeroBackground;
 }
 
 // CRM Types
@@ -125,6 +136,7 @@ export interface Lead {
   city?: string;
   state?: string;
   zipcode?: string;
+  productType?: string;
   preferredCarrier?: string;
   coverageAmount?: number;
   weight?: number;
@@ -174,4 +186,30 @@ export interface Notification {
   read: boolean;
   createdAt: string;
   link?: string;
+}
+
+export interface Commission {
+  id: string;
+  clientId: number;
+  clientName: string;
+  advisorId: number;
+  policyId: string;
+  policyType: Policy['type'];
+  premium: number;
+  commissionRate: number; // percentage
+  commissionAmount: number;
+  status: 'Paid' | 'Pending';
+  date: string; // ISO string
+}
+
+export interface AdvisorRequest {
+  id: string;
+  type: 'Callback' | 'Quote';
+  name: string;
+  phone: string;
+  email?: string;
+  message?: string;
+  createdAt: string;
+  status: 'New' | 'Contacted';
+  advisorId: number;
 }

@@ -49,8 +49,28 @@ export const trustedCarrierNames: string[] = [
     'Transamerica',
 ].sort();
 
+export const productTypes: string[] = [
+    'Whole Life',
+    'Term Life',
+    'Universal Life',
+    'Indexed Universal Life',
+    'Variable Life Insurance',
+    'Final Expenses',
+    'Critical Illness',
+    'Health Insurance',
+    'Real Estate',
+    'Auto or Commercial',
+    'Homeowner Insurance',
+    'Rent Insurance',
+    'Errors and Emission'
+].sort();
+
 
 export const initialContent: EditableContent = {
+  hero_background: {
+    type: 'video',
+    source: 'https://videos.pexels.com/video-files/8544002/8544002-hd_1920_1080_25fps.mp4'
+  },
   core_services: [
     { name: "Life Insurance", path: "/services/life", description: "Protect your family's future with comprehensive life insurance policies." },
     { name: "Auto & Commercial", path: "/services/auto", description: "Coverage for your personal vehicles, classic cars, and commercial fleets." },
@@ -108,7 +128,69 @@ export const advisors: Advisor[] = [
 ];
 
 export const service_details: { [key: string]: any[] } = {
-  "life": [{ "name": "Whole Life Insurance", "description": "Permanent coverage that builds cash value over time.", "benefits": ["Lifetime protection", "Tax-deferred growth", "Borrowing options"] }],
+  "life": [
+    {
+        name: 'Final Expense Insurance',
+        description: 'Designed to cover funeral, burial, and other end-of-life costs so your family doesn’t bear the financial burden.',
+        benefits: [
+            'Affordable, lifetime coverage (no expiration)',
+            'Simple qualification process (often no medical exam)',
+            'Provides quick payout to cover funeral costs, debts, or small medical bills',
+            'Peace of mind knowing loved ones are protected'
+        ]
+    },
+    {
+        name: 'Whole Life Insurance',
+        description: 'Provides permanent coverage that lasts your entire lifetime and builds cash value over time.',
+        benefits: [
+            'Guaranteed death benefit and fixed premiums',
+            'Builds tax-deferred cash value you can borrow from',
+            'Lifetime protection—coverage never expires',
+            'Ideal for legacy planning and wealth transfer'
+        ]
+    },
+    {
+        name: 'Universal Life Insurance (UL)',
+        description: 'Flexible permanent life insurance allowing you to adjust your premiums and death benefits.',
+        benefits: [
+            'Flexible payment options',
+            'Builds cash value with potential to earn interest',
+            'Adjustable coverage amount as your needs change',
+            'Useful for long-term family or business financial planning'
+        ]
+    },
+    {
+        name: 'Indexed Universal Life (IUL)',
+        description: 'A form of Universal Life insurance that links your cash value growth to a market index (like the S&P 500), offering higher potential returns without direct market risk.',
+        benefits: [
+            'Market-linked growth with downside protection',
+            'Tax-deferred cash accumulation',
+            'Flexible premiums and coverage',
+            'Can provide living benefits for retirement income or emergencies'
+        ]
+    },
+    {
+        name: 'Term Life Insurance',
+        description: 'Provides affordable coverage for a specific period—10, 20, or 30 years—to protect your loved ones during key financial years.',
+        benefits: [
+            'Lower cost, higher coverage amounts',
+            'Ideal for income replacement, mortgage, or children’s education',
+            'Convertible to permanent life insurance in some cases',
+            'Simple and easy to qualify for'
+        ]
+    },
+    {
+        name: 'Critical Illness Insurance',
+        description: 'Pays a lump-sum cash benefit if you’re diagnosed with a covered critical illness such as cancer, heart attack, or stroke.',
+        benefits: [
+            'Financial support during serious illness',
+            'Covers medical expenses, income loss, or household bills',
+            'Lump-sum benefit paid directly to you (not medical providers)',
+            'Can be added as a rider to life insurance or purchased separately',
+            'Helps you focus on recovery, not bills'
+        ]
+    }
+  ],
   "auto": [{ "name": "Passenger Auto", "description": "Protection for everyday vehicles.", "benefits": ["Covers liability, collision, and comprehensive damages."] }],
   "property": [{ "name": "Homeowners Insurance", "description": "Protection for home, belongings, and liability.", "benefits": [] }],
   "real-estate": [

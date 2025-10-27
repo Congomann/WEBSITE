@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification } from '../types';
-import { crmLeads, crmClients, crmPerformance } from '../crmData';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission } from '../types';
+import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users } from '../data';
 import { Role } from '../types';
@@ -10,12 +11,17 @@ interface CrmContextType {
     clients: Client[];
     performanceData: PerformanceData[];
     notifications: Notification[];
+    requests: AdvisorRequest[];
+    commissions: Commission[];
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
+    updateClient: (updatedClient: Client) => void;
     assignLead: (leadId: number, advisorId: number) => void;
     updateLeadStatus: (leadId: number, status: Lead['status'], declineReason?: string) => void;
     markNotificationAsRead: (notificationId: number) => void;
     getUnreadNotificationCount: (userId: number) => number;
+    addRequest: (requestData: Omit<AdvisorRequest, 'id' | 'createdAt' | 'status'>) => void;
+    updateRequestStatus: (requestId: string, status: AdvisorRequest['status']) => void;
 }
 
 const CrmContext = createContext<CrmContextType | undefined>(undefined);
@@ -71,10 +77,30 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         }
     });
 
+    const [requests, setRequests] = useState<AdvisorRequest[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-crm-requests');
+            return localData ? JSON.parse(localData) : crmAdvisorRequests;
+        } catch (error) {
+            return crmAdvisorRequests;
+        }
+    });
+
+    const [commissions, setCommissions] = useState<Commission[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-crm-commissions');
+            return localData ? JSON.parse(localData) : crmCommissions;
+        } catch (error) {
+            return crmCommissions;
+        }
+    });
+
     useEffect(() => { localStorage.setItem('nhf-crm-leads', JSON.stringify(leads)); }, [leads]);
     useEffect(() => { localStorage.setItem('nhf-crm-clients', JSON.stringify(clients)); }, [clients]);
     useEffect(() => { localStorage.setItem('nhf-crm-performance', JSON.stringify(performanceData)); }, [performanceData]);
     useEffect(() => { localStorage.setItem('nhf-crm-notifications', JSON.stringify(notifications)); }, [notifications]);
+    useEffect(() => { localStorage.setItem('nhf-crm-requests', JSON.stringify(requests)); }, [requests]);
+    useEffect(() => { localStorage.setItem('nhf-crm-commissions', JSON.stringify(commissions)); }, [commissions]);
 
     const addNotification = useCallback((userId: number, message: string, link?: string) => {
         const newNotification: Notification = {
@@ -108,6 +134,10 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
 
     const updateLead = useCallback((updatedLead: Lead) => {
         setLeads(prev => prev.map(lead => lead.id === updatedLead.id ? updatedLead : lead));
+    }, []);
+    
+    const updateClient = useCallback((updatedClient: Client) => {
+        setClients(prev => prev.map(client => client.id === updatedClient.id ? updatedClient : client));
     }, []);
 
     const assignLead = useCallback((leadId: number, advisorId: number) => {
@@ -170,19 +200,39 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         return notifications.filter(n => n.userId === userId && !n.read).length;
     }, [notifications]);
 
+    const addRequest = useCallback((requestData: Omit<AdvisorRequest, 'id' | 'createdAt' | 'status'>) => {
+        const newRequest: AdvisorRequest = {
+            ...requestData,
+            id: `req-${Date.now()}`,
+            createdAt: new Date().toISOString(),
+            status: 'New',
+        };
+        setRequests(prev => [newRequest, ...prev]);
+        addNotification(requestData.advisorId, `You have a new ${requestData.type} request from ${requestData.name}.`, '/crm/my-profile');
+    }, [addNotification]);
+
+    const updateRequestStatus = useCallback((requestId: string, status: AdvisorRequest['status']) => {
+        setRequests(prev => prev.map(req => req.id === requestId ? { ...req, status } : req));
+    }, []);
+
 
     const value = useMemo(() => ({
         leads,
         clients,
         performanceData,
         notifications,
+        requests,
+        commissions,
         addLead,
         updateLead,
+        updateClient,
         assignLead,
         updateLeadStatus,
         markNotificationAsRead,
         getUnreadNotificationCount,
-    }), [leads, clients, performanceData, notifications, addLead, updateLead, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount]);
+        addRequest,
+        updateRequestStatus,
+    }), [leads, clients, performanceData, notifications, requests, commissions, addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount, addRequest, updateRequestStatus]);
 
     return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;
 };

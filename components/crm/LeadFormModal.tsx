@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Lead } from '../../types';
 import { useAdvisors } from '../../contexts/AdvisorContext';
-import { trustedCarrierNames } from '../../data';
+import { trustedCarrierNames, productTypes } from '../../data';
 
 interface LeadFormModalProps {
     isOpen: boolean;
@@ -32,7 +32,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
         onSave(formData as Lead);
     };
     
-    const inputStyles = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm";
+    const inputStyles = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm bg-white text-gray-900";
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
@@ -55,6 +55,25 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
                         <div><label className="block text-sm font-medium text-gray-700">Zip Code</label><input type="text" name="zipcode" value={formData.zipcode || ''} onChange={handleChange} className={inputStyles} /></div>
 
                         {/* Insurance Info */}
+                        <div className="md:col-span-2 mt-4 pt-4 border-t">
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">Insurance Details</h3>
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700">Type of Product</label>
+                            <input
+                                list="product-types"
+                                name="productType"
+                                value={formData.productType || ''}
+                                onChange={handleChange}
+                                className={inputStyles}
+                                placeholder="Start typing to select..."
+                            />
+                            <datalist id="product-types">
+                                {productTypes.map(type => (
+                                    <option key={type} value={type} />
+                                ))}
+                            </datalist>
+                        </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700">Preferred Life Insurance Carrier</label>
                             <select name="preferredCarrier" value={formData.preferredCarrier || ''} onChange={handleChange} className={inputStyles}>

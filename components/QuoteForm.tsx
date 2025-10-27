@@ -83,7 +83,7 @@ const QuoteForm: React.FC<QuoteFormProps> = ({ advisorName }) => {
 
     if (submitted) return <div className="text-center p-8 bg-green-50 rounded-lg"><svg className="w-16 h-16 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><h3 className="text-2xl font-bold mt-4">Thank You!</h3><p className="mt-2">Your quote request has been sent. An advisor will contact you shortly.</p></div>;
     
-    const inputStyles = "mt-1 block w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2";
+    const inputStyles = "mt-1 block w-full px-4 py-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-gray-900 placeholder-gray-500";
     const labelStyles = "block text-sm font-medium text-brand-blue";
     const ErrorIcon = () => ( <div className="absolute inset-y-0 right-0 pr-3 flex items-center"><svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" /></svg></div> );
 

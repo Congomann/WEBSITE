@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob, FunctionDeclaration, Type } from '@google/genai';
@@ -237,7 +238,7 @@ const LiveAssistantPage: React.FC = () => {
                             value={selectedVoice}
                             onChange={handleVoiceChange}
                             disabled={conversationState !== 'idle'}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm rounded-md disabled:bg-gray-200"
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-brand-blue focus:border-brand-blue sm:text-sm rounded-md disabled:bg-gray-200 bg-white text-gray-900"
                         >
                            {AVAILABLE_VOICES.map(voice => <option key={voice} value={voice}>{voice}</option>)}
                         </select>

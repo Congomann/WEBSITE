@@ -1,17 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import SEO from '../../components/SEO';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAdvisors } from '../../contexts/AdvisorContext';
-import { Role } from '../../types';
+import { Role, Client } from '../../types';
 import DataTable from '../../components/crm/DataTable';
+import ClientDetailModal from '../../components/crm/ClientDetailModal';
 
 
 const ClientsPage: React.FC = () => {
     const { user } = useAuth();
-    const { clients } = useCrm();
+    const { clients, updateClient } = useCrm();
     const { advisors } = useAdvisors();
     
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
     const advisorMap = useMemo(() => new Map(advisors.map(a => [a.id, a.name])), [advisors]);
 
     const clientsToDisplay = useMemo(() => {
@@ -29,6 +33,24 @@ const ClientsPage: React.FC = () => {
         }
         return [];
     }, [clients, user, advisorMap]);
+    
+    const handleOpenDetailModal = (client: Client) => {
+        const originalClient = clients.find(c => c.id === client.id);
+        if (originalClient) {
+            setSelectedClient(originalClient);
+            setIsDetailModalOpen(true);
+        }
+    };
+
+    const handleCloseDetailModal = () => {
+        setIsDetailModalOpen(false);
+        setSelectedClient(null);
+    };
+
+    const handleSaveClient = (updatedClient: Client) => {
+        updateClient(updatedClient);
+        handleCloseDetailModal();
+    };
 
     const columns = [
         { header: 'Name', accessor: 'name' },
@@ -39,7 +61,7 @@ const ClientsPage: React.FC = () => {
     ];
 
     const actions = [
-        { label: 'View Details', onClick: (client: any) => alert(`Viewing details for ${client.name}`) },
+        { label: 'View Details', onClick: (client: Client) => handleOpenDetailModal(client) },
     ];
 
     return (
@@ -49,6 +71,15 @@ const ClientsPage: React.FC = () => {
             <div className="bg-white p-6 rounded-lg shadow-lg">
                 <DataTable columns={columns} data={clientsToDisplay} actions={actions} />
             </div>
+            
+            {isDetailModalOpen && selectedClient && (
+                <ClientDetailModal
+                    isOpen={isDetailModalOpen}
+                    onClose={handleCloseDetailModal}
+                    client={selectedClient}
+                    onSave={handleSaveClient}
+                />
+            )}
         </div>
     );
 };

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ServiceCard from '../components/ServiceCard';
@@ -5,6 +6,7 @@ import QuoteForm from '../components/QuoteForm';
 import type { Service } from '../types';
 import SEO from '../components/SEO';
 import { useContent } from '../contexts/ContentContext';
+import HeroBackground from '../components/HeroBackground';
 
 const LifeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> );
 const AutoIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125a1.125 1.125 0 011.125-1.125V14.25m-17.25 4.5v-9m17.25 9v-9m-17.25-1.5a1.5 1.5 0 011.5-1.5h12.75a1.5 1.5 0 011.5 1.5m-15.75 0v-3.75a1.5 1.5 0 011.5-1.5h12.75a1.5 1.5 0 011.5 1.5V12m-15.75 0h15.75" /></svg> );
@@ -24,6 +26,7 @@ const WHY_CHOOSE_US = [
 
 const HomePage: React.FC = () => {
     const { content } = useContent();
+    const { hero_background } = content;
     const servicesWithIcons: Service[] = content.core_services.map(service => ({ ...service, icon: iconMap[service.name] || <LifeIcon /> }));
 
     return (
@@ -31,14 +34,15 @@ const HomePage: React.FC = () => {
             <SEO title="Protecting Your Life, Family & Future" description="New Holland Financial Group: Your partner in securing financial peace of mind with tailored insurance solutions." keywords="insurance, life insurance, auto insurance, home insurance, group benefits, Des Moines insurance" />
             
             {/* Hero Section */}
-            <section className="relative bg-cover bg-center text-white py-32 md:py-48" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1555431182-0c34c83e4244?q=80&w=2070&auto=format&fit=crop')" }}>
-                <div className="absolute inset-0 bg-brand-blue bg-opacity-70"></div>
-                <div className="container mx-auto px-6 text-center relative z-10">
+            <section className="relative text-white py-32 md:py-48 overflow-hidden">
+                <HeroBackground background={hero_background} />
+                <div className="absolute inset-0 bg-brand-blue opacity-40 z-10"></div>
+                <div className="container mx-auto px-6 text-center relative z-20">
                     <h1 className="text-4xl md:text-6xl font-extrabold animate-fade-in-down">Protect What Matters Most</h1>
                     <p className="text-2xl md:text-4xl font-light mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>Your Life, Family & Future.</p>
                     <div className="space-x-4 animate-fade-in" style={{ animationDelay: '0.8s' }}>
                         <Link to="/contact" className="inline-block bg-brand-gold text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-yellow-400">Get a Free Quote</Link>
-                        <Link to="/advisors" className="inline-block bg-transparent border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-brand-blue">Speak with an Advisor</Link>
+                        <Link to="/advisors" className="inline-block bg-white bg-opacity-20 border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-brand-blue">Speak with an Advisor</Link>
                     </div>
                 </div>
             </section>
