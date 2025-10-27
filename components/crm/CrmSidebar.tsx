@@ -15,6 +15,7 @@ const ContentIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-
 const DistributionIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>);
 const MyProfileIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>);
 const CommissionsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v-1m0-1V4m0 2.01M12 14v4m0 2v-2m0-2v-2" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18a6 6 0 100-12 6 6 0 000 12z" /></svg>);
+const ApplicationsIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>);
 
 
 const CrmSidebar: React.FC = () => {
@@ -26,6 +27,7 @@ const CrmSidebar: React.FC = () => {
     const navItems = [
         { name: 'Dashboard', path: '/crm', icon: <DashboardIcon />, roles: [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor] },
         { name: 'My Profile', path: '/crm/my-profile', icon: <MyProfileIcon />, roles: [Role.Advisor] },
+        { name: 'Applications', path: '/crm/applications', icon: <ApplicationsIcon />, roles: [Role.Admin, Role.Manager] },
         { name: 'Leads', path: '/crm/leads', icon: <LeadsIcon />, roles: [Role.Admin, Role.SubAdmin, Role.Advisor] },
         { name: 'Lead Distribution', path: '/crm/lead-distribution', icon: <DistributionIcon />, roles: [Role.SubAdmin] },
         { name: 'Clients', path: '/crm/clients', icon: <ClientsIcon />, roles: [Role.Admin, Role.Advisor] },

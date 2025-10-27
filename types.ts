@@ -213,3 +213,18 @@ export interface AdvisorRequest {
   status: 'New' | 'Contacted';
   advisorId: number;
 }
+
+export type ApplicationStatus = 'Pending' | 'Approved' | 'Rejected';
+
+export interface AgentApplication {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  licenseNumber: string;
+  experience: string;
+  resumeUrl?: string; // Storing the resume as a data URL
+  status: ApplicationStatus;
+  submittedAt: string;
+}

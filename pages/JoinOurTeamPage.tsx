@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import SEO from '../components/SEO';
+import { useCrm } from '../contexts/CrmContext';
 
 const JoinOurTeamPage: React.FC = () => {
+    const { addApplication } = useCrm();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -44,16 +46,44 @@ const JoinOurTeamPage: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validate()) return;
         setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false);
+
+        let resumeUrl: string | undefined = undefined;
+        if (formData.resume) {
+            try {
+                resumeUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(formData.resume!);
+                });
+            } catch (error) {
+                console.error("Error reading resume file:", error);
+                setErrors(prev => ({ ...prev, resume: 'Could not upload resume file. Please try again.' }));
+                setIsLoading(false);
+                return;
+            }
+        }
+
+        try {
+            addApplication({
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                address: formData.address,
+                licenseNumber: formData.licenseNumber,
+                experience: formData.experience,
+                resumeUrl: resumeUrl,
+            });
             setSubmitted(true);
-            console.log("Application submitted:", formData);
-        }, 1500);
+        } catch (error) {
+             setErrors(prev => ({ ...prev, form: 'Failed to submit application. Please try again later.' }));
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const inputStyles = "mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white text-gray-900 placeholder-gray-500";
@@ -114,7 +144,7 @@ const JoinOurTeamPage: React.FC = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <h3 className="text-2xl font-bold text-green-800 mt-4">Application Received!</h3>
-                                    <p className="text-gray-600 mt-2">Thank you for your interest. If your qualifications meet our needs, we will be in touch soon.</p>
+                                    <p className="text-gray-600 mt-2">Thank you for your interest. Our management team will review your application and will be in touch if your qualifications meet our needs.</p>
                                 </div>
                             ) : (
                                 <>
@@ -153,7 +183,9 @@ const JoinOurTeamPage: React.FC = () => {
                                         <div>
                                             <label htmlFor="resume" className={labelStyles}>Upload Resume (Optional)</label>
                                             <input type="file" name="resume" id="resume" onChange={handleFileChange} accept=".pdf,.doc,.docx" className={`${inputStyles} p-0 file:mr-4 file:py-3 file:px-4 file:rounded-l-md file:border-0 file:text-sm file:font-semibold file:bg-brand-blue file:text-white hover:file:bg-opacity-90`} />
+                                            {errors.resume && <p className="mt-1 text-sm text-red-600">{errors.resume}</p>}
                                         </div>
+                                        {errors.form && <p className="mt-1 text-sm text-red-600 text-center bg-red-50 p-2 rounded-md">{errors.form}</p>}
                                         <button type="submit" disabled={isLoading} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-lg font-bold text-brand-blue bg-brand-gold hover:bg-yellow-400 disabled:bg-gray-400">
                                             {isLoading ? <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-blue"></div> : 'Submit Application'}
                                         </button>

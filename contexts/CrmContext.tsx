@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission } from '../types';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus } from '../types';
 import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users } from '../data';
@@ -13,6 +13,7 @@ interface CrmContextType {
     notifications: Notification[];
     requests: AdvisorRequest[];
     commissions: Commission[];
+    applications: AgentApplication[];
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
     updateClient: (updatedClient: Client) => void;
@@ -22,6 +23,8 @@ interface CrmContextType {
     getUnreadNotificationCount: (userId: number) => number;
     addRequest: (requestData: Omit<AdvisorRequest, 'id' | 'createdAt' | 'status'>) => void;
     updateRequestStatus: (requestId: string, status: AdvisorRequest['status']) => void;
+    addApplication: (applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => void;
+    updateApplicationStatus: (applicationId: string, status: ApplicationStatus) => void;
 }
 
 const CrmContext = createContext<CrmContextType | undefined>(undefined);
@@ -95,12 +98,23 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         }
     });
 
+    const [applications, setApplications] = useState<AgentApplication[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-crm-applications');
+            return localData ? JSON.parse(localData) : [];
+        } catch (error) {
+            return [];
+        }
+    });
+
     useEffect(() => { localStorage.setItem('nhf-crm-leads', JSON.stringify(leads)); }, [leads]);
     useEffect(() => { localStorage.setItem('nhf-crm-clients', JSON.stringify(clients)); }, [clients]);
     useEffect(() => { localStorage.setItem('nhf-crm-performance', JSON.stringify(performanceData)); }, [performanceData]);
     useEffect(() => { localStorage.setItem('nhf-crm-notifications', JSON.stringify(notifications)); }, [notifications]);
     useEffect(() => { localStorage.setItem('nhf-crm-requests', JSON.stringify(requests)); }, [requests]);
     useEffect(() => { localStorage.setItem('nhf-crm-commissions', JSON.stringify(commissions)); }, [commissions]);
+    useEffect(() => { localStorage.setItem('nhf-crm-applications', JSON.stringify(applications)); }, [applications]);
+
 
     const addNotification = useCallback((userId: number, message: string, link?: string) => {
         const newNotification: Notification = {
@@ -215,6 +229,26 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         setRequests(prev => prev.map(req => req.id === requestId ? { ...req, status } : req));
     }, []);
 
+    const addApplication = useCallback((applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => {
+        const newApplication: AgentApplication = {
+            ...applicationData,
+            id: `app-${Date.now()}`,
+            status: 'Pending',
+            submittedAt: new Date().toISOString(),
+        };
+        setApplications(prev => [newApplication, ...prev]);
+
+        // Notify admins and managers
+        const adminsAndManagers = users.filter(u => u.role === Role.Admin || u.role === Role.Manager);
+        adminsAndManagers.forEach(user => {
+            addNotification(user.id, `New agent application from ${newApplication.name}.`, '/crm/applications');
+        });
+    }, [addNotification]);
+
+    const updateApplicationStatus = useCallback((applicationId: string, status: ApplicationStatus) => {
+        setApplications(prev => prev.map(app => app.id === applicationId ? { ...app, status } : app));
+    }, []);
+
 
     const value = useMemo(() => ({
         leads,
@@ -223,6 +257,7 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         notifications,
         requests,
         commissions,
+        applications,
         addLead,
         updateLead,
         updateClient,
@@ -232,7 +267,9 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         getUnreadNotificationCount,
         addRequest,
         updateRequestStatus,
-    }), [leads, clients, performanceData, notifications, requests, commissions, addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount, addRequest, updateRequestStatus]);
+        addApplication,
+        updateApplicationStatus,
+    }), [leads, clients, performanceData, notifications, requests, commissions, applications, addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount, addRequest, updateRequestStatus, addApplication, updateApplicationStatus]);
 
     return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;
 };
