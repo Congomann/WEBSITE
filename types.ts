@@ -1,4 +1,5 @@
 
+
 import type { ReactNode } from 'react';
 
 export enum Role {
@@ -252,4 +253,21 @@ export interface CrmNotificationToastData {
   senderName: string;
   messageText: string;
   conversationId: string;
+}
+
+export interface EventType {
+    name: string;
+    color: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startDate: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
+  isPublic: boolean;
+  creatorId: number;
+  type: string;
+  color: string;
 }

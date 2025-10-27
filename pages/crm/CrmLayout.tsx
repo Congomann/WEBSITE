@@ -26,7 +26,7 @@ const CrmLayout: React.FC = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-96px)] bg-gray-100">
+        <div className="flex h-screen bg-gray-100">
             <CrmSidebar />
             <div className="flex-1 flex flex-col relative">
                 <CrmNotificationToast />

@@ -1,7 +1,8 @@
 
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData } from '../types';
-import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages } from '../crmData';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData, CalendarEvent, EventType } from '../types';
+import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages, crmEvents as initialCrmEvents, crmEventTypes } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users } from '../data';
 import { Role, User } from '../types';
@@ -17,6 +18,8 @@ interface CrmContextType {
     applications: AgentApplication[];
     conversations: Conversation[];
     messages: ChatMessage[];
+    events: CalendarEvent[];
+    eventTypes: EventType[];
     toastNotification: CrmNotificationToastData | null;
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
@@ -34,6 +37,10 @@ interface CrmContextType {
     setActiveConversationId: (id: string | null) => void;
     markConversationAsRead: (conversationId: string) => void;
     createConversation: (participantId: number) => string;
+    addEvent: (eventData: Omit<CalendarEvent, 'id'>) => void;
+    updateEvent: (updatedEvent: CalendarEvent) => void;
+    deleteEvent: (eventId: string) => void;
+    addEventType: (eventType: EventType) => void;
 }
 
 const CrmContext = createContext<CrmContextType | undefined>(undefined);
@@ -49,6 +56,63 @@ export const useCrm = () => {
 interface CrmProviderProps {
     children: ReactNode;
 }
+
+// Dynamically adjust demo event dates to the current month for better visibility
+const getDynamicInitialEvents = (): CalendarEvent[] => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    
+    // Add a past event for demonstration
+    const lastMonthDate = new Date(today);
+    lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+    const lastMonthYear = lastMonthDate.getFullYear();
+    const lastMonth = (lastMonthDate.getMonth() + 1).toString().padStart(2, '0');
+
+    return [
+        {
+            id: 'evt-past-1',
+            title: 'Performance Review',
+            description: 'Reviewed Q2 performance with the management team.',
+            startDate: `${lastMonthYear}-${lastMonth}-15`,
+            isPublic: false,
+            creatorId: 1, // Admin
+            type: 'Team Meeting',
+            color: '#8b5cf6',
+        },
+        {
+            id: 'evt-1',
+            title: 'Jessica - Days Off',
+            description: 'Annual vacation.',
+            startDate: `${year}-${month}-05`,
+            endDate: `${year}-${month}-07`,
+            isPublic: true,
+            creatorId: 2,
+            type: 'Days Off',
+            color: '#ef4444',
+        },
+        {
+            id: 'evt-2',
+            title: 'Quarterly Review - Google Meet',
+            description: 'Team-wide quarterly performance review and planning session.',
+            startDate: `${year}-${month}-08`,
+            isPublic: true,
+            creatorId: 1,
+            type: 'Google Meet',
+            color: '#22c55e',
+        },
+        {
+            id: 'evt-3',
+            title: 'Call Brian Carter at 4pm',
+            description: 'Discuss the new commercial lead from the website.',
+            startDate: `${year}-${month}-08`,
+            isPublic: false,
+            creatorId: 1,
+            type: 'Personal Reminder',
+            color: '#6b7280',
+        },
+    ];
+};
 
 export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const { advisors } = useAdvisors();
@@ -89,6 +153,24 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const [messages, setMessages] = useState<ChatMessage[]>(() => {
         try { const localData = localStorage.getItem('nhf-crm-messages'); return localData ? JSON.parse(localData) : crmMessages; } catch (error) { return crmMessages; }
     });
+    
+    const [events, setEvents] = useState<CalendarEvent[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-crm-events');
+            return localData ? JSON.parse(localData) : getDynamicInitialEvents();
+        } catch (error) {
+            return getDynamicInitialEvents();
+        }
+    });
+
+    const [eventTypes, setEventTypes] = useState<EventType[]>(() => {
+        try {
+            const localData = localStorage.getItem('nhf-crm-event-types');
+            return localData ? JSON.parse(localData) : crmEventTypes;
+        } catch (error) {
+            return crmEventTypes;
+        }
+    });
 
     const [toastNotification, setToastNotification] = useState<CrmNotificationToastData | null>(null);
     const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
@@ -102,6 +184,8 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     useEffect(() => { localStorage.setItem('nhf-crm-applications', JSON.stringify(applications)); }, [applications]);
     useEffect(() => { localStorage.setItem('nhf-crm-conversations', JSON.stringify(conversations)); }, [conversations]);
     useEffect(() => { localStorage.setItem('nhf-crm-messages', JSON.stringify(messages)); }, [messages]);
+    useEffect(() => { localStorage.setItem('nhf-crm-events', JSON.stringify(events)); }, [events]);
+    useEffect(() => { localStorage.setItem('nhf-crm-event-types', JSON.stringify(eventTypes)); }, [eventTypes]);
 
     // Listen for storage changes to sync messages between tabs
     useEffect(() => {
@@ -329,17 +413,37 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         return newConversation.id;
     }, [user, conversations]);
 
+    const addEventType = useCallback((eventType: EventType) => {
+        setEventTypes(prev => [...prev, eventType]);
+    }, []);
+
+    const addEvent = useCallback((eventData: Omit<CalendarEvent, 'id'>) => {
+        const newEvent: CalendarEvent = {
+            ...eventData,
+            id: `evt-${Date.now()}`,
+        };
+        setEvents(prev => [...prev, newEvent]);
+    }, []);
+
+    const updateEvent = useCallback((updatedEvent: CalendarEvent) => {
+        setEvents(prev => prev.map(e => e.id === updatedEvent.id ? updatedEvent : e));
+    }, []);
+
+    const deleteEvent = useCallback((eventId: string) => {
+        setEvents(prev => prev.filter(e => e.id !== eventId));
+    }, []);
+
 
     const value = useMemo(() => ({
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, toastNotification,
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
         addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
-        setActiveConversationId, markConversationAsRead, createConversation,
+        setActiveConversationId, markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType,
     }), [
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, toastNotification,
+        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
         addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
-        markConversationAsRead, createConversation
+        markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType
     ]);
 
     return <CrmContext.Provider value={value}>{children}</CrmContext.Provider>;

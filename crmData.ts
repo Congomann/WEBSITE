@@ -1,5 +1,14 @@
 
-import type { Lead, Client, PerformanceData, AdvisorRequest, Commission, Conversation, ChatMessage } from './types';
+
+import type { Lead, Client, PerformanceData, AdvisorRequest, Commission, Conversation, ChatMessage, CalendarEvent, EventType } from './types';
+
+export const crmEventTypes: EventType[] = [
+    { name: 'Days Off', color: '#ef4444' }, // red-500
+    { name: 'Google Meet', color: '#22c55e' }, // green-500
+    { name: 'Client Call', color: '#3b82f6' }, // blue-500
+    { name: 'Team Meeting', color: '#8b5cf6' }, // violet-500
+    { name: 'Personal Reminder', color: '#6b7280' }, // gray-500
+];
 
 export const crmLeads: Lead[] = [
     { id: 1, name: 'John Appleseed', email: 'j.apple@example.com', phone: '555-123-4567', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-28T10:00:00Z' },
@@ -121,6 +130,40 @@ export const crmCommissions: Commission[] = [
         status: 'Pending',
         date: '2024-08-01T10:00:00Z'
     }
+];
+
+export const crmEvents: CalendarEvent[] = [
+    {
+        id: 'evt-1',
+        title: 'Jessica - Days Off',
+        description: 'Annual vacation.',
+        startDate: '2024-08-05',
+        endDate: '2024-08-07',
+        isPublic: true,
+        creatorId: 2, // Jessica Miller
+        type: 'Days Off',
+        color: '#ef4444',
+    },
+    {
+        id: 'evt-2',
+        title: 'Quarterly Review - Google Meet',
+        description: 'Team-wide quarterly performance review and planning session.',
+        startDate: '2024-08-08',
+        isPublic: true,
+        creatorId: 1, // Admin
+        type: 'Google Meet',
+        color: '#22c55e',
+    },
+    {
+        id: 'evt-3',
+        title: 'Call Brian Carter at 4pm',
+        description: 'Discuss the new commercial lead from the website.',
+        startDate: '2024-08-08',
+        isPublic: false,
+        creatorId: 1, // Admin's private event
+        type: 'Personal Reminder',
+        color: '#6b7280',
+    },
 ];
 
 export const crmConversations: Conversation[] = [

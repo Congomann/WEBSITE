@@ -1,4 +1,5 @@
 
+
 import React, { Suspense, lazy } from 'react';
 import { HashRouter, Route, Routes, Navigate } from 'react-router-dom';
 
@@ -64,6 +65,7 @@ const MyProfilePage = lazy(() => import('./pages/crm/MyProfilePage'));
 const CommissionsPage = lazy(() => import('./pages/crm/CommissionsPage'));
 const AgentApplicationsPage = lazy(() => import('./pages/crm/AgentApplicationsPage'));
 const ClientRequestsPage = lazy(() => import('./pages/crm/ClientRequestsPage'));
+const CalendarPage = lazy(() => import('./pages/crm/CalendarPage'));
 
 
 const CrmApp: React.FC = () => {
@@ -87,6 +89,7 @@ const CrmApp: React.FC = () => {
                         <Route path="/crm/users" element={<UserManagementPage />} />
                         <Route path="/crm/underwriting" element={<UnderwritingPage />} />
                         <Route path="/crm/messaging" element={<MessagingPage />} />
+                        <Route path="/crm/calendar" element={<CalendarPage />} />
                         <Route
                             path="/crm/my-profile"
                             element={

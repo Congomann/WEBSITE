@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import type { Service } from '../types';
@@ -43,20 +44,15 @@ const Header: React.FC = () => {
     const activeLinkClasses = "text-brand-gold";
 
     const mainNavLinks = [
-        { path: "/about", name: "About Us" },
         { path: "/advisors", name: "Find an Advisor" },
         { path: "/resources", name: "Resources" },
-        { path: "/products", name: "Shop" },
         { path: "/contact", name: "Contact" },
+        { path: "/about", name: "About Us" },
+        { path: "/products", name: "Shop" },
     ];
 
     const renderNavLinks = (isMobile = false) => (
         <>
-            {mainNavLinks.map(link => (
-                <NavLink key={link.path} to={link.path} className={({ isActive }) => `${isMobile ? 'block px-4 py-2' : ''} ${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>
-                    {link.name}
-                </NavLink>
-            ))}
             {/* Services Dropdown */}
             <div className={`relative ${isMobile ? 'w-full' : ''}`} ref={servicesMenuRef}>
                 <button
@@ -83,6 +79,11 @@ const Header: React.FC = () => {
                     </div>
                 )}
             </div>
+            {mainNavLinks.map(link => (
+                <NavLink key={link.path} to={link.path} className={({ isActive }) => `${isMobile ? 'block px-4 py-2' : ''} ${navLinkClasses} ${isActive ? activeLinkClasses : ''}`}>
+                    {link.name}
+                </NavLink>
+            ))}
         </>
     );
 
