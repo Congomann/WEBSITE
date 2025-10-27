@@ -1,4 +1,3 @@
-
 import type { Product, Advisor, User, EditableContent } from './types';
 // FIX: 'Role' is an enum used as a value, so it must be imported directly,
 // not as a type. The other imports are interfaces and can be type-only.
@@ -191,8 +190,67 @@ export const service_details: { [key: string]: any[] } = {
         ]
     }
   ],
-  "auto": [{ "name": "Passenger Auto", "description": "Protection for everyday vehicles.", "benefits": ["Covers liability, collision, and comprehensive damages."] }],
-  "property": [{ "name": "Homeowners Insurance", "description": "Protection for home, belongings, and liability.", "benefits": [] }],
+  "auto": [
+    {
+        name: 'Auto Insurance',
+        description: 'Protects you, your vehicle, and others from financial loss due to accidents, theft, or damage.',
+        benefits: [
+            'Covers vehicle repairs or replacement after accidents or theft',
+            'Pays for injuries to you, your passengers, or others',
+            'Includes liability coverage for property damage or bodily injury you cause',
+            'Optional coverage for rental cars, roadside assistance, and uninsured drivers',
+            'Helps you stay compliant with state insurance laws'
+        ]
+    },
+    {
+        name: 'Commercial Truck Insurance',
+        description: 'Covers trucks, drivers, and cargo used for business purposes — ideal for owner-operators, fleet owners, and logistics companies.',
+        benefits: [
+            'Covers damage to trucks, trailers, and cargo',
+            'Provides liability protection for accidents caused by your drivers',
+            'Covers medical payments, towing, downtime, and rental reimbursement',
+            'Can include general liability, motor truck cargo, and non-trucking liability',
+            'Helps keep your business running after unexpected losses'
+        ]
+    }
+  ],
+  "property": [
+    {
+        name: 'Property Insurance Overview',
+        description: 'Protects residential and business properties against loss or damage from covered perils such as fire, storms, theft, vandalism, and liability claims. Since disasters can strike anytime, property insurance is crucial for protecting your home, business, and financial future.',
+        benefits: [
+            'Covers damage to the structure and contents from fire, theft, or storms',
+            'Pays for temporary living expenses if your home becomes uninhabitable (loss of use)',
+            'Liability coverage if someone is injured on your property',
+            'Replacement cost coverage to rebuild or repair property without depreciation',
+            'Optional umbrella policy for higher liability protection',
+            'For businesses: includes coverage for equipment, tools, inventory, signage, and loss of income',
+            'Helps you meet lender or lease insurance requirements',
+            'Peace of mind knowing your biggest investments are protected',
+        ]
+    },
+    {
+        name: 'Main Coverage Types',
+        description: 'We offer a range of policies for every need, from personal homes to commercial buildings.',
+        benefits: [
+            'Homeowners Insurance: Protects your house, attached structures, and personal belongings.',
+            'Renters Insurance: Covers personal property and liability for tenants.',
+            'Condo Insurance (HO-6): Covers the interior of your unit and personal belongings.',
+            'Landlord Insurance: Protects rental properties and provides loss-of-rent coverage.',
+            'Commercial Property Insurance: Covers buildings, inventory, and business equipment.',
+            'Flood, Earthquake, or Windstorm Insurance: Optional add-ons for natural disaster protection.',
+        ]
+    },
+    {
+        name: 'Additional Specialized Protections',
+        description: 'Enhance your policy with specialized coverage for unique assets and risks.',
+        benefits: [
+            'Personal Articles Floater: Covers valuable items like jewelry, art, or collectibles.',
+            'Business Interruption Coverage: Replaces lost income if your business is forced to close due to a covered event.',
+            'Cyber & Data Breach Coverage: For businesses handling customer data.',
+        ]
+    }
+  ],
   "real-estate": [
     {
       "name": "Residential Sales & Purchases",
@@ -225,6 +283,44 @@ export const service_details: { [key: string]: any[] } = {
       "benefits": ["Area tours and community information", "Coordination with moving services", "Temporary housing assistance", "Selling your current home"]
     }
   ],
-  "health": [{ "name": "Health & Dental", "description": "Individual and family medical coverage.", "benefits": ["Access to quality care", "Preventive benefits"] }],
+  "health": [
+    {
+      "name": "🏥 Health Insurance",
+      "description": "Protects individuals, families, and employees from high medical costs while ensuring access to essential and preventive healthcare services. Covers individual & family plans, group health, short-term medical, Medicare, Marketplace (ACA) plans, and more.",
+      "benefits": [
+        "Coverage for doctor visits, hospitalizations, surgeries, and prescriptions",
+        "Preventive and wellness care included (annual exams, screenings, vaccinations)",
+        "Emergency and urgent care coverage",
+        "Mental health and substance abuse treatment",
+        "Maternity, newborn, and pediatric care",
+        "Telehealth & Virtual Care — access to licensed doctors 24/7",
+        "Critical Illness and Accident Riders available for added protection",
+        "Financial safety against unexpected medical bills",
+        "Access to large provider networks and negotiated rates",
+        "HSA/FSA eligible plans to save pre-tax funds for health expenses"
+      ]
+    },
+    {
+      "name": "🦷 Dental & Orthodontic (Braces) Coverage",
+      "description": "Keeps your oral health in top shape and helps manage costs for dental and orthodontic treatments. Highlights include routine checkups, fillings, root canals, crowns, and orthodontic coverage for braces and aligners (e.g., Invisalign).",
+      "benefits": [
+        "Encourages preventive oral care, lowering long-term dental costs",
+        "Affordable access to braces for children or adults",
+        "Reduces out-of-pocket expenses for major dental work",
+        "Can be purchased as standalone or bundled with health coverage",
+        "Helps maintain confident smiles and overall well-being"
+      ]
+    },
+    {
+      "name": "👁️ Vision Coverage",
+      "description": "Helps individuals and families maintain healthy eyesight and reduce the cost of eye care. Highlights include annual eye exams, prescription glasses, contact lenses, and discounts on laser vision correction (LASIK/PRK).",
+      "benefits": [
+        "Affordable access to routine vision care",
+        "Early detection of eye conditions and other health issues",
+        "Helps maintain productivity and quality of life",
+        "Available as a standalone plan or with health/dental packages"
+      ]
+    }
+  ],
   "group-benefits": [{ "name": "Supplemental Health Plans", "description": "Protect income during illness or injury.", "benefits": [] }]
 };
