@@ -1,3 +1,4 @@
+
 import type { Product, Advisor, User, EditableContent } from './types';
 // FIX: 'Role' is an enum used as a value, so it must be imported directly,
 // not as a type. The other imports are interfaces and can be type-only.
@@ -322,5 +323,54 @@ export const service_details: { [key: string]: any[] } = {
       ]
     }
   ],
-  "group-benefits": [{ "name": "Supplemental Health Plans", "description": "Protect income during illness or injury.", "benefits": [] }]
+  "group-benefits": [
+    {
+        name: 'Group Benefits Insurance',
+        description: 'Provides businesses with affordable insurance for their employees, protecting their health, income, and financial security. It is a powerful tool to attract and retain talent, fostering a culture of care, loyalty, and stability.',
+        benefits: [
+            'Group Health, Dental & Vision Plans',
+            'Group Life & Disability Insurance',
+            'Group Accident & Critical Illness Plans',
+            'Group Retirement / 401(k) Plans',
+            'Employee Assistance Programs (EAP)',
+            'Voluntary Benefits (e.g., legal, pet insurance)',
+        ]
+    },
+    {
+        name: 'Key Benefits for Employers',
+        description: 'Offering group benefits is a strategic investment in your company\'s greatest asset—its people.',
+        benefits: [
+            'Attracts and retains top talent',
+            'Increases employee satisfaction and productivity',
+            'Tax-deductible business expense',
+            'Enhances company culture and morale',
+            'Reduces turnover and recruitment costs',
+            'Demonstrates commitment to employee well-being'
+        ]
+    },
+    {
+        name: 'Key Benefits for Employees',
+        description: 'Employees gain access to comprehensive and affordable protection for themselves and their families.',
+        benefits: [
+            'Access to affordable insurance with lower premiums',
+            'Guaranteed issue (no medical exam for basic coverage)',
+            'Convenient payroll deductions',
+            'Financial protection for families',
+            'Access to wellness programs and telehealth',
+            'Mental health and financial literacy support'
+        ]
+    },
+    {
+        name: 'Optional Enhancements',
+        description: 'Customize your benefits package to meet the unique needs of your modern workforce.',
+        benefits: [
+            'Flexible Spending (FSA) and Health Savings (HSA) Accounts',
+            'Cafeteria (Section 125) Plans',
+            'Dependent Care Benefits',
+            'Wellness Incentive Programs',
+            'Telemedicine & Virtual Health Platforms',
+            'Group Long-Term Care and Hybrid/Remote Worker options'
+        ]
+    }
+]
 };

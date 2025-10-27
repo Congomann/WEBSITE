@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
                 <div className="container mx-auto px-6">
                     <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">Our Core Services</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {servicesWithIcons.map((service, index) => ( <ServiceCard key={service.name} service={service} animationDelay={`${index * 150}ms`} /> ))}
+                        {servicesWithIcons.map((service) => ( <ServiceCard key={service.name} service={service} /> ))}
                     </div>
                 </div>
             </section>
