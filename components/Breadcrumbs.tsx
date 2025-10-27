@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAdvisors } from '../contexts/AdvisorContext';
@@ -21,8 +22,8 @@ const Breadcrumbs: React.FC = () => {
     if (pathnames.length === 0 || (pathnames.length === 1 && pathnames[0] === 'crm')) return null;
     
     const getFriendlyName = (segment: string, index: number, segments: string[]): string => {
-        if (segments[index - 1] === 'advisors' && !isNaN(parseInt(segment, 10))) {
-            const advisor = advisors.find(a => a.id === parseInt(segment, 10));
+        if (segments[index - 1] === 'advisors') {
+            const advisor = advisors.find(a => a.slug === segment);
             return advisor ? advisor.name : segment;
         }
         if (segments[index - 1] === 'services') {

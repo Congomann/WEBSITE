@@ -86,6 +86,7 @@ export const initialContent: EditableContent = {
     { name: 'Twitter', url: 'https://twitter.com/Newhollandfg' },
     { name: 'TikTok', url: 'https://www.tiktok.com/@newhollandfinancial' },
     { name: 'Snapchat', url: 'https://www.snapchat.com/add/newhollandfinancial' },
+    { name: 'Threads', url: 'https://www.threads.net/@newhollandfinancial' },
   ],
   company_info: {
       phone: '(717) 847-9638',
@@ -121,10 +122,15 @@ export const products: Product[] = [
   { id: 104, name: "Secure Future Leather Journal", price: 29.99, imageUrl: "https://images.unsplash.com/photo-1516414447565-b14be0adf13e?q=80&w=600&auto=format&fit=crop", description: "A high-quality journal to track your financial goals." }
 ];
 
+const ALL_SOCIALS_TEMPLATE = [
+    { name: 'LinkedIn', url: '' }, { name: 'Facebook', url: '' }, { name: 'Twitter', url: '' },
+    { name: 'Instagram', url: '' }, { name: 'TikTok', url: '' }, { name: 'Snapchat', url: '' }, { name: 'Threads', url: '' },
+];
+
 export const advisors: Advisor[] = [
-  { "id": 1, "name": "Jessica Miller", "title": "Senior Life & Health Advisor", "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"], "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies.", "languages": ["English", "Spanish"], "email": "jessica.miller@newhollandfinancial-demo.com", "phone": "(717) 555-0101", "availability": { "Monday": ["09:00", "10:00", "14:00"], "Tuesday": ["09:00", "10:00", "15:00"], "Friday": ["09:00", "10:00"] } },
-  { "id": 2, "name": "Brian Carter", "title": "Property & Commercial Specialist", "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"], "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets.", "languages": ["English"], "email": "brian.carter@newhollandfinancial-demo.com", "phone": "(717) 555-0102", "availability": { "Monday": ["10:00", "11:00"], "Wednesday": ["09:00", "10:00", "14:00"], "Friday": ["13:00", "14:00"] } },
-  { "id": 3, "name": "Samantha Chen", "title": "Family & Auto Protection Advisor", "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop", "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"], "bio": "Samantha is passionate about helping young families find affordable and effective coverage for their cars, homes, and loved ones.", "languages": ["English", "Mandarin"], "email": "samantha.chen@newhollandfinancial-demo.com", "phone": "(717) 555-0103", "availability": { "Tuesday": ["10:00", "11:00", "14:00"], "Thursday": ["10:00", "11:00", "13:00"] } }
+  { "id": 1, "name": "Jessica Miller", "slug": "jessica-miller", "title": "Senior Life & Health Advisor", "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"], "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies.", "languages": ["English", "Spanish"], "email": "jessica.miller@newhollandfinancial-demo.com", "phone": "(717) 555-0101", "availability": { "Monday": ["09:00", "10:00", "14:00"], "Tuesday": ["09:00", "10:00", "15:00"], "Friday": ["09:00", "10:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
+  { "id": 2, "name": "Brian Carter", "slug": "brian-carter", "title": "Property & Commercial Specialist", "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"], "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets.", "languages": ["English"], "email": "brian.carter@newhollandfinancial-demo.com", "phone": "(717) 555-0102", "availability": { "Monday": ["10:00", "11:00"], "Wednesday": ["09:00", "10:00", "14:00"], "Friday": ["13:00", "14:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
+  { "id": 3, "name": "Samantha Chen", "slug": "samantha-chen", "title": "Family & Auto Protection Advisor", "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop", "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"], "bio": "Samantha is passionate about helping young families find affordable and effective coverage for their cars, homes, and loved ones.", "languages": ["English", "Mandarin"], "email": "samantha.chen@newhollandfinancial-demo.com", "phone": "(717) 555-0103", "availability": { "Tuesday": ["10:00", "11:00", "14:00"], "Thursday": ["10:00", "11:00", "13:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] }
 ];
 
 export const service_details: { [key: string]: any[] } = {

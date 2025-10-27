@@ -5,6 +5,8 @@ import { useAdvisors } from '../../contexts/AdvisorContext';
 import type { Advisor, SocialLink } from '../../types';
 import SEO from '../../components/SEO';
 
+const ALL_SOCIALS = ['LinkedIn', 'Facebook', 'Twitter', 'Instagram', 'TikTok', 'Snapchat', 'Threads'];
+
 const MyProfilePage: React.FC = () => {
     const { user } = useAuth();
     const { advisors, updateAdvisor } = useAdvisors();
@@ -16,16 +18,19 @@ const MyProfilePage: React.FC = () => {
 
     useEffect(() => {
         if (currentAdvisor) {
+            const existingLinks = new Map(currentAdvisor.socialLinks?.map(l => [l.name, l.url]));
+            const fullSocialLinks = ALL_SOCIALS.map(name => ({
+                name,
+                url: existingLinks.get(name) || '',
+            }));
+
             setEditableAdvisor({
                 ...currentAdvisor,
-                socialLinks: currentAdvisor.socialLinks || [
-                    { name: 'LinkedIn', url: '' },
-                    { name: 'Facebook', url: '' },
-                    { name: 'Twitter', url: '' },
-                ]
+                socialLinks: fullSocialLinks,
             });
         }
     }, [currentAdvisor]);
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -60,7 +65,7 @@ const MyProfilePage: React.FC = () => {
                 ...editableAdvisor,
                 specialties: typeof specs === 'string' ? specs.split(',').map((s: string) => s.trim()) : specs,
                 languages: typeof langs === 'string' ? langs.split(',').map((s: string) => s.trim()) : langs,
-                socialLinks: editableAdvisor.socialLinks?.filter(link => link.url.trim() !== ''),
+                socialLinks: editableAdvisor.socialLinks?.filter(link => link.url && link.url.trim() !== ''),
             } as Advisor;
             updateAdvisor(finalAdvisor);
             alert('Profile updated successfully!');
@@ -68,8 +73,13 @@ const MyProfilePage: React.FC = () => {
     };
     
     const copyShareableLink = () => {
-        const link = `${window.location.origin}/#/advisors/${currentAdvisor?.id}`;
-        navigator.clipboard.writeText(link).then(() => {
+        if (!currentAdvisor?.slug) return;
+        const firstName = currentAdvisor.name.split(' ')[0].toLowerCase();
+        const lastName = currentAdvisor.name.split(' ').slice(-1)[0].toLowerCase();
+        const link = `www.newhollandfinancial.com/${firstName}-${lastName}`;
+        const actualUrl = `${window.location.origin}/#/advisors/${currentAdvisor.slug}`;
+        
+        navigator.clipboard.writeText(actualUrl).then(() => {
             setCopyButtonText('Copied!');
             setTimeout(() => setCopyButtonText('Copy Link'), 2000);
         });
@@ -78,6 +88,10 @@ const MyProfilePage: React.FC = () => {
     if (!currentAdvisor) {
         return <div>Loading advisor profile...</div>;
     }
+    
+    const sharableLinkText = currentAdvisor.slug 
+        ? `www.newhollandfinancial.com/#/advisors/${currentAdvisor.slug.split('-').slice(0, 2).join('-')}`
+        : 'Link will be generated upon creation.';
 
     const formInputClass = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm bg-white text-gray-900";
     const formLabelClass = "block text-sm font-medium text-gray-700";
@@ -126,7 +140,7 @@ const MyProfilePage: React.FC = () => {
                 <div>
                     <h3 className="text-lg font-bold text-brand-blue mb-2">My Sharable Link</h3>
                     <div className="flex items-center gap-3 bg-gray-100 p-2 rounded-md">
-                        <input type="text" readOnly value={`${window.location.origin}/#/advisors/${currentAdvisor.id}`} className="flex-grow bg-transparent text-sm text-gray-600 focus:outline-none" />
+                        <input type="text" readOnly value={sharableLinkText} className="flex-grow bg-transparent text-sm text-gray-600 focus:outline-none" />
                         <button onClick={copyShareableLink} className="bg-brand-gold text-brand-blue text-sm font-semibold py-1 px-3 rounded hover:bg-yellow-400">{copyButtonText}</button>
                     </div>
                 </div>

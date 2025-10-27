@@ -1,6 +1,6 @@
 
 import React, { Suspense, lazy } from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes, Navigate } from 'react-router-dom';
 
 // Layout Components
 import Header from './components/Header';
@@ -16,7 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Context Providers
 import { CartProvider } from './contexts/CartContext';
 import { ProductProvider } from './contexts/ProductContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AdvisorProvider } from './contexts/AdvisorContext';
 import { ContentProvider } from './contexts/ContentContext';
 import { CrmProvider } from './contexts/CrmContext';
@@ -65,9 +65,132 @@ const CommissionsPage = lazy(() => import('./pages/crm/CommissionsPage'));
 const AgentApplicationsPage = lazy(() => import('./pages/crm/AgentApplicationsPage'));
 const ClientRequestsPage = lazy(() => import('./pages/crm/ClientRequestsPage'));
 
-const App: React.FC = () => {
-  const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
 
+const CrmApp: React.FC = () => {
+    const crmRoles = [Role.Admin, Role.Manager, Role.SubAdmin, Role.Underwriter, Role.Advisor];
+    return (
+        <ErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                    <Route
+                        element={
+                            <ProtectedRoute allowedRoles={crmRoles}>
+                                <CrmLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route path="/crm" element={<CrmDashboardPage />} />
+                        <Route path="/crm/leads" element={<LeadsPage />} />
+                        <Route path="/crm/clients" element={<ClientsPage />} />
+                        <Route path="/crm/leaderboard" element={<LeaderboardPage />} />
+                        <Route path="/crm/commissions" element={<CommissionsPage />} />
+                        <Route path="/crm/users" element={<UserManagementPage />} />
+                        <Route path="/crm/underwriting" element={<UnderwritingPage />} />
+                        <Route path="/crm/messaging" element={<MessagingPage />} />
+                        <Route
+                            path="/crm/my-profile"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.Advisor]}>
+                                <MyProfilePage />
+                            </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/crm/requests"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.Advisor]}>
+                                <ClientRequestsPage />
+                            </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/crm/applications"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.Admin, Role.Manager]}>
+                                <AgentApplicationsPage />
+                            </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/crm/lead-distribution"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.SubAdmin]}>
+                                <LeadDistributionPage />
+                            </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/crm/content-management"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.Admin]}>
+                                <ManagementDashboardPage />
+                            </ProtectedRoute>
+                            }
+                        />
+                    </Route>
+                    {/* Redirect from root and other paths to /crm if logged in as CRM user */}
+                    <Route path="*" element={<Navigate to="/crm" replace />} />
+                </Routes>
+            </Suspense>
+        </ErrorBoundary>
+    );
+};
+
+const PublicApp: React.FC = () => {
+    return (
+        <>
+            <ScrollToTop />
+            <AnalyticsTracker />
+            <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
+                <Header />
+                <CartToast />
+                <main className="flex-grow pt-24">
+                    <Breadcrumbs />
+                    <ErrorBoundary>
+                        <Suspense fallback={<LoadingSpinner />}>
+                            <Routes>
+                                <Route path="/" element={<HomePage />} />
+                                <Route path="/about" element={<AboutPage />} />
+                                <Route path="/advisors" element={<AdvisorsPage />} />
+                                <Route path="/advisors/:advisorSlug" element={<AdvisorProfilePage />} />
+                                <Route path="/resources" element={<ResourcesPage />} />
+                                <Route path="/products" element={<ProductsPage />} />
+                                <Route path="/cart" element={<CartPage />} />
+                                <Route path="/checkout" element={<CheckoutPage />} />
+                                <Route path="/order-success" element={<OrderSuccessPage />} />
+                                <Route path="/contact" element={<ContactPage />} />
+                                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/join-our-team" element={<JoinOurTeamPage />} />
+                                <Route path="/ai-assistant" element={<LiveAssistantPage />} />
+
+                                {/* Service Pages */}
+                                <Route path="/services/life" element={<LifeInsurancePage />} />
+                                <Route path="/services/auto" element={<AutoInsurancePage />} />
+                                <Route path="/services/property" element={<PropertyInsurancePage />} />
+                                <Route path="/services/real-estate" element={<RealEstatePage />} />
+                                <Route path="/services/health" element={<HealthInsurancePage />} />
+                                <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
+
+                                {/* If a logged-out user tries to access /crm, send them to login */}
+                                <Route path="/crm/*" element={<Navigate to="/login" replace />} />
+                                <Route path="*" element={<NotFoundPage />} />
+                            </Routes>
+                        </Suspense>
+                    </ErrorBoundary>
+                </main>
+                <Footer />
+            </div>
+        </>
+    );
+};
+
+const AppContent: React.FC = () => {
+    const { isAuthenticated, canAccessCrm } = useAuth();
+    return isAuthenticated && canAccessCrm ? <CrmApp /> : <PublicApp />;
+};
+
+const App: React.FC = () => {
   return (
     <HashRouter>
       <AuthProvider>
@@ -76,104 +199,7 @@ const App: React.FC = () => {
             <ProductProvider>
               <CartProvider>
                 <CrmProvider>
-                  <ScrollToTop />
-                  <AnalyticsTracker />
-                  <div className="flex flex-col min-h-screen bg-brand-light text-gray-800">
-                    <Header />
-                    <CartToast />
-                    <main className="flex-grow pt-24">
-                      <Breadcrumbs />
-                      <ErrorBoundary>
-                        <Suspense fallback={<LoadingSpinner />}>
-                          <Routes>
-                            <Route path="/" element={<HomePage />} />
-                            <Route path="/about" element={<AboutPage />} />
-                            <Route path="/advisors" element={<AdvisorsPage />} />
-                            <Route path="/advisors/:advisorId" element={<AdvisorProfilePage />} />
-                            <Route path="/resources" element={<ResourcesPage />} />
-                            <Route path="/products" element={<ProductsPage />} />
-                            <Route path="/cart" element={<CartPage />} />
-                            <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/order-success" element={<OrderSuccessPage />} />
-                            <Route path="/contact" element={<ContactPage />} />
-                            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/join-our-team" element={<JoinOurTeamPage />} />
-                            <Route path="/ai-assistant" element={<LiveAssistantPage />} />
-                            
-                            {/* CRM Routes */}
-                            <Route
-                              element={
-                                <ProtectedRoute allowedRoles={crmRoles}>
-                                    <CrmLayout />
-                                </ProtectedRoute>
-                              }
-                            >
-                              <Route path="/crm" element={<CrmDashboardPage />} />
-                              <Route path="/crm/leads" element={<LeadsPage />} />
-                              <Route path="/crm/clients" element={<ClientsPage />} />
-                              <Route path="/crm/leaderboard" element={<LeaderboardPage />} />
-                              <Route path="/crm/commissions" element={<CommissionsPage />} />
-                              <Route path="/crm/users" element={<UserManagementPage />} />
-                              <Route path="/crm/underwriting" element={<UnderwritingPage />} />
-                              <Route path="/crm/messaging" element={<MessagingPage />} />
-                              <Route
-                                  path="/crm/my-profile"
-                                  element={
-                                    <ProtectedRoute allowedRoles={[Role.Advisor]}>
-                                      <MyProfilePage />
-                                    </ProtectedRoute>
-                                  }
-                              />
-                              <Route
-                                  path="/crm/requests"
-                                  element={
-                                    <ProtectedRoute allowedRoles={[Role.Advisor]}>
-                                      <ClientRequestsPage />
-                                    </ProtectedRoute>
-                                  }
-                              />
-                              <Route
-                                  path="/crm/applications"
-                                  element={
-                                    <ProtectedRoute allowedRoles={[Role.Admin, Role.Manager]}>
-                                      <AgentApplicationsPage />
-                                    </ProtectedRoute>
-                                  }
-                              />
-                              <Route
-                                  path="/crm/lead-distribution"
-                                  element={
-                                    <ProtectedRoute allowedRoles={[Role.SubAdmin]}>
-                                      <LeadDistributionPage />
-                                    </ProtectedRoute>
-                                  }
-                              />
-                              <Route
-                                  path="/crm/content-management"
-                                  element={
-                                    <ProtectedRoute allowedRoles={[Role.Admin]}>
-                                      <ManagementDashboardPage />
-                                    </ProtectedRoute>
-                                  }
-                              />
-                            </Route>
-
-                            {/* Service Pages */}
-                            <Route path="/services/life" element={<LifeInsurancePage />} />
-                            <Route path="/services/auto" element={<AutoInsurancePage />} />
-                            <Route path="/services/property" element={<PropertyInsurancePage />} />
-                            <Route path="/services/real-estate" element={<RealEstatePage />} />
-                            <Route path="/services/health" element={<HealthInsurancePage />} />
-                            <Route path="/services/group-benefits" element={<GroupBenefitsPage />} />
-
-                            <Route path="*" element={<NotFoundPage />} />
-                          </Routes>
-                        </Suspense>
-                      </ErrorBoundary>
-                    </main>
-                    <Footer />
-                  </div>
+                  <AppContent />
                 </CrmProvider>
               </CartProvider>
             </ProductProvider>

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import type { Advisor } from '../types';
 import { advisors as initialAdvisors } from '../data';
@@ -44,11 +45,13 @@ export const AdvisorProvider: React.FC<AdvisorProviderProps> = ({ children }) =>
         localStorage.setItem('nhf-advisors', JSON.stringify(advisors));
     }, [advisors]);
 
-    const addAdvisor = useCallback((advisorData: Omit<Advisor, 'id'>) => {
+    const addAdvisor = useCallback((advisorData: Omit<Advisor, 'id' | 'slug'>) => {
         setAdvisors(prev => {
-            const newAdvisor = {
+            const slug = advisorData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const newAdvisor: Advisor = {
                 ...advisorData,
                 id: Date.now(), // Simple unique ID
+                slug: `${slug}-${Date.now().toString().slice(-4)}`, // Add timestamp to ensure uniqueness
             };
             return [...prev, newAdvisor];
         });

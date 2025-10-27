@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Advisor } from '../types';
@@ -36,7 +37,7 @@ const AdvisorCard: React.FC<AdvisorCardProps> = ({ advisor, canManage, onEdit, o
                 </div>
             )}
             <Link 
-                to={`/advisors/${advisor.id}`} 
+                to={`/advisors/${advisor.slug}`} 
                 className="block bg-white rounded-lg shadow-xl overflow-hidden flex flex-col h-full transform group-hover:-translate-y-1 transition-transform duration-300"
             >
                 <img src={advisor.imageUrl} alt={advisor.name} className="w-full h-56 object-cover" />

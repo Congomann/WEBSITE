@@ -38,6 +38,7 @@ export interface Advisor {
   imageUrl: string;
   specialties: string[];
   bio: string;
+  slug?: string;
   languages?: string[];
   email?: string;
   phone?: string;
