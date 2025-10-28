@@ -17,6 +17,7 @@ export interface User {
   email: string;
   role: Role;
   phone?: string;
+  baseCommissionRate?: number;
 }
 
 export interface Service {

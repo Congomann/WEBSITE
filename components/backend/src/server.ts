@@ -62,6 +62,105 @@ const writeDb = async (data: any) => {
 
 // --- API Routes with Error Handling ---
 
+// POST to generate a social media post
+app.post('/api/generate-social-post', async (req, res) => {
+    if (!ai) {
+        return res.status(503).json({ message: 'Generative AI service is not configured. API_KEY is missing.' });
+    }
+
+    try {
+        const { topic } = req.body;
+        if (!topic || typeof topic !== 'string' || topic.trim() === '') {
+            return res.status(400).json({ message: 'A valid topic is required.' });
+        }
+
+        const prompt = `You are a social media manager for New Holland Financial, an insurance company. Write an engaging social media post about the provided topic. The post should be concise, professional, and include relevant hashtags. Topic: ${topic}`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        const postText = response.text;
+        res.json({ post: postText });
+
+    } catch (error: any) {
+        console.error('Error in /api/generate-social-post:', error);
+        const errorMessage = error.message || 'Failed to generate social media post.';
+        res.status(500).json({ message: errorMessage });
+    }
+});
+
+// --- NEW AI Routes ---
+app.post('/api/summarize-lead', async (req, res) => {
+    if (!ai) {
+        return res.status(503).json({ message: 'AI service is not configured. API_key is missing.' });
+    }
+
+    try {
+        const leadData = req.body;
+        
+        // Sanitize data before sending to AI - exclude sensitive info
+        const { ssn, accountNumber, routingNumber, ...sanitizedLeadData } = leadData;
+
+        const prompt = `
+            You are an expert assistant for an insurance advisor at New Holland Financial Group.
+            Summarize the following lead information into concise, easy-to-read bullet points.
+            Focus on the most important details an advisor needs for a first contact.
+            Do not mention any fields that are empty or not provided.
+
+            Lead Information:
+            ${JSON.stringify(sanitizedLeadData, null, 2)}
+        `;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        res.json({ summary: response.text });
+    } catch (error: any) {
+        console.error('Error in /api/summarize-lead:', error);
+        res.status(500).json({ message: 'Failed to generate lead summary.' });
+    }
+});
+
+app.post('/api/analyze-underwriting-risk', async (req, res) => {
+    if (!ai) {
+        return res.status(503).json({ message: 'AI service is not configured. API_key is missing.' });
+    }
+
+    try {
+        const { client, policy } = req.body;
+        
+        // Sanitize data - exclude sensitive or irrelevant data for risk analysis
+        const { email, phone, policies, since, ssn, ...sanitizedClient } = client;
+        const sanitizedData = { client: sanitizedClient, policy };
+        
+        const prompt = `
+            You are an expert insurance underwriter for New Holland Financial Group.
+            Analyze the following client profile and their pending policy application for potential risks.
+            Provide a detailed risk analysis. Structure your analysis with two clear headings:
+            1.  **Potential Risks**: List and explain potential underwriting risks based on the provided data (e.g., client details, policy type, premium, status). Be specific.
+            2.  **Recommendations for Review**: Suggest specific areas that require further investigation or documentation from the client or agent.
+
+            Client and Policy Data:
+            ${JSON.stringify(sanitizedData, null, 2)}
+        `;
+        
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: prompt,
+        });
+
+        res.json({ analysis: response.text });
+
+    } catch (error: any) {
+        console.error('Error in /api/analyze-underwriting-risk:', error);
+        res.status(500).json({ message: 'Failed to generate risk analysis.' });
+    }
+});
+
 app.post('/api/create-payment-intent', async (req, res) => {
     try {
         const { cartItems } = req.body;
@@ -104,34 +203,6 @@ app.post('/api/create-payment-intent', async (req, res) => {
     }
 });
 
-// POST to generate a social media post
-app.post('/api/generate-social-post', async (req, res) => {
-    if (!ai) {
-        return res.status(503).json({ message: 'Generative AI service is not configured. API_KEY is missing.' });
-    }
-
-    try {
-        const { topic } = req.body;
-        if (!topic || typeof topic !== 'string' || topic.trim() === '') {
-            return res.status(400).json({ message: 'A valid topic is required.' });
-        }
-
-        const prompt = `You are a social media manager for New Holland Financial, an insurance company. Write an engaging social media post about the provided topic. The post should be concise, professional, and include relevant hashtags. Topic: ${topic}`;
-
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-        });
-
-        const postText = response.text;
-        res.json({ post: postText });
-
-    } catch (error: any) {
-        console.error('Error in /api/generate-social-post:', error);
-        const errorMessage = error.message || 'Failed to generate social media post.';
-        res.status(500).json({ message: errorMessage });
-    }
-});
 
 
 // GET all core services

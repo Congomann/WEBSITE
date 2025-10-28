@@ -6,12 +6,13 @@ import { Role } from './types';
 
 export const users: User[] = [
   { id: 1, name: 'Admin User', email: 'admin@nhf.com', role: Role.Admin, phone: '555-0199' },
-  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0101' },
-  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0102' },
+  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0101', baseCommissionRate: 55 },
+  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0102', baseCommissionRate: 50 },
   { id: 4, name: 'John Doe', email: 'john.doe@example.com', role: Role.User, phone: '555-0104' },
   { id: 5, name: 'Manager User', email: 'manager@nhf.com', role: Role.Manager, phone: '555-0105' },
   { id: 6, name: 'Sub Admin User', email: 'subadmin@nhf.com', role: Role.SubAdmin, phone: '555-0106' },
   { id: 7, name: 'Underwriter User', email: 'underwriter@nhf.com', role: Role.Underwriter, phone: '555-0107' },
+  { id: 8, name: 'Samantha Chen', email: 'samantha.chen@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0103', baseCommissionRate: 50 },
 ];
 
 export const trustedCarrierNames: string[] = [

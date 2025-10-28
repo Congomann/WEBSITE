@@ -3,13 +3,12 @@ import React, { useState, useMemo } from 'react';
 import SEO from '../../components/SEO';
 import { useCrm } from '../../contexts/CrmContext';
 import { useAdvisors } from '../../contexts/AdvisorContext';
-import type { AgentApplication, ApplicationStatus } from '../../types';
+import type { AgentApplication, ApplicationStatus, Role } from '../../types';
 import DataTable from '../../components/crm/DataTable';
 import ApplicationDetailModal from '../../components/crm/ApplicationDetailModal';
 
 const AgentApplicationsPage: React.FC = () => {
-    const { applications, updateApplicationStatus } = useCrm();
-    const { addAdvisor } = useAdvisors();
+    const { applications, updateApplicationStatus, addUser } = useCrm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedApplication, setSelectedApplication] = useState<AgentApplication | null>(null);
 
@@ -23,18 +22,14 @@ const AgentApplicationsPage: React.FC = () => {
         setSelectedApplication(null);
     };
 
-    const handleApprove = (application: AgentApplication) => {
-        // Create a new advisor from the application data
-        addAdvisor({
+    const handleApprove = (application: AgentApplication, role: Role, baseCommissionRate: number) => {
+        // Create a new user from the application data
+        addUser({
             name: application.name,
-            title: 'New Advisor', // Default title
-            imageUrl: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=400&auto=format&fit=crop', // Default placeholder image
-            specialties: ['Pending Review'],
-            bio: application.experience,
+            role: role,
             email: application.email,
             phone: application.phone,
-            languages: [],
-            availability: {},
+            baseCommissionRate: baseCommissionRate,
         });
 
         // Update application status

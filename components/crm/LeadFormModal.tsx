@@ -16,9 +16,14 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
     const { advisors } = useAdvisors();
     const { user } = useAuth();
     const [formData, setFormData] = useState<Partial<Lead>>({});
+    const [summary, setSummary] = useState('');
+    const [isSummarizing, setIsSummarizing] = useState(false);
+    const [summaryError, setSummaryError] = useState('');
 
     useEffect(() => {
         setFormData(lead || {});
+        setSummary('');
+        setSummaryError('');
     }, [lead]);
 
     if (!isOpen) return null;
@@ -32,6 +37,29 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSave(formData as Lead);
+    };
+
+    const handleGenerateSummary = async () => {
+        setIsSummarizing(true);
+        setSummaryError('');
+        setSummary('');
+        try {
+            const response = await fetch('/api/summarize-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to generate summary.');
+            }
+            const data = await response.json();
+            setSummary(data.summary);
+        } catch (error: any) {
+            setSummaryError(error.message);
+        } finally {
+            setIsSummarizing(false);
+        }
     };
     
     const inputStyles = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm bg-white text-gray-900";
@@ -113,6 +141,29 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
                                     <option value="">Assign later</option>
                                     {advisors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
                                 </select>
+                            </div>
+                        )}
+                         {/* AI Summary Section */}
+                        {(user?.role === Role.SubAdmin || user?.role === Role.Advisor) && (
+                            <div className="md:col-span-2 mt-4 pt-4 border-t">
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-medium text-gray-900">AI Summary</h3>
+                                    <button
+                                        type="button"
+                                        onClick={handleGenerateSummary}
+                                        disabled={isSummarizing}
+                                        className="bg-brand-gold text-brand-blue font-semibold py-1 px-3 rounded-md hover:bg-yellow-400 text-sm disabled:bg-gray-400"
+                                    >
+                                        {isSummarizing ? 'Generating...' : 'Generate'}
+                                    </button>
+                                </div>
+                                {isSummarizing && <p className="text-sm text-gray-500 mt-2">Generating summary, please wait...</p>}
+                                {summaryError && <p className="text-sm text-red-600 mt-2">{summaryError}</p>}
+                                {summary && (
+                                    <div className="mt-2 p-3 bg-gray-50 rounded-md border">
+                                        <p className="text-sm text-gray-800 whitespace-pre-wrap">{summary}</p>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

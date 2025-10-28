@@ -1,21 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import type { AgentApplication } from '../../types';
+import { Role } from '../../types';
 
 interface ApplicationDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
     application: AgentApplication;
-    onApprove: (application: AgentApplication) => void;
+    onApprove: (application: AgentApplication, role: Role, baseCommissionRate: number) => void;
     onReject: (application: AgentApplication) => void;
 }
 
 const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({ isOpen, onClose, application, onApprove, onReject }) => {
+    const [roleToAssign, setRoleToAssign] = useState<Role>(Role.Advisor);
+    const [commissionRate, setCommissionRate] = useState<string>('');
+
     if (!isOpen) return null;
 
     const infoRowStyles = "py-3 sm:grid sm:grid-cols-3 sm:gap-4";
     const infoLabelStyles = "text-sm font-medium text-gray-600";
     const infoValueStyles = "mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2";
+    const inputStyles = "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue sm:text-sm bg-white text-gray-900";
+
 
     const getStatusChipColor = (status: string) => {
         switch (status) {
@@ -24,6 +30,15 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({ isOpen,
             case 'Rejected': return 'bg-red-100 text-red-800';
             default: return 'bg-gray-100 text-gray-800';
         }
+    };
+
+    const handleApproveClick = () => {
+        const rate = Number(commissionRate);
+        if (isNaN(rate) || rate < 0) {
+            alert("Please enter a valid commission rate.");
+            return;
+        }
+        onApprove(application, roleToAssign, rate);
     };
 
     return (
@@ -62,9 +77,27 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({ isOpen,
                 </div>
                 
                 {application.status === 'Pending' && (
-                    <div className="mt-6 flex justify-end gap-4 border-t pt-4">
-                        <button onClick={() => onReject(application)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Reject</button>
-                        <button onClick={() => onApprove(application)} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Approve</button>
+                    <div className="mt-6 border-t pt-4">
+                        <h3 className="text-lg font-semibold text-brand-blue mb-4">Approval Settings</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="role" className={infoLabelStyles}>Assign Role</label>
+                                <select id="role" value={roleToAssign} onChange={e => setRoleToAssign(e.target.value as Role)} className={inputStyles}>
+                                    <option value={Role.Advisor}>Advisor</option>
+                                    <option value={Role.SubAdmin}>Sub-Admin</option>
+                                    <option value={Role.Manager}>Manager</option>
+                                </select>
+                            </div>
+                            <div>
+                                 <label htmlFor="commissionRate" className={infoLabelStyles}>Base Commission Rate (%)</label>
+                                <input type="number" id="commissionRate" value={commissionRate} onChange={e => setCommissionRate(e.target.value)} className={inputStyles} placeholder="e.g., 50" />
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-4">
+                            <button onClick={() => onReject(application)} className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Reject</button>
+                            <button onClick={handleApproveClick} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" disabled={!commissionRate}>Approve</button>
+                        </div>
                     </div>
                 )}
             </div>

@@ -66,6 +66,7 @@ const CommissionsPage = lazy(() => import('./pages/crm/CommissionsPage'));
 const AgentApplicationsPage = lazy(() => import('./pages/crm/AgentApplicationsPage'));
 const ClientRequestsPage = lazy(() => import('./pages/crm/ClientRequestsPage'));
 const CalendarPage = lazy(() => import('./pages/crm/CalendarPage'));
+const AgentsPage = lazy(() => import('./pages/crm/AgentsPage'));
 
 
 const CrmApp: React.FC = () => {
@@ -90,6 +91,14 @@ const CrmApp: React.FC = () => {
                         <Route path="/crm/underwriting" element={<UnderwritingPage />} />
                         <Route path="/crm/messaging" element={<MessagingPage />} />
                         <Route path="/crm/calendar" element={<CalendarPage />} />
+                        <Route
+                            path="/crm/agents"
+                            element={
+                            <ProtectedRoute allowedRoles={[Role.Admin, Role.Manager]}>
+                                <AgentsPage />
+                            </ProtectedRoute>
+                            }
+                        />
                         <Route
                             path="/crm/my-profile"
                             element={

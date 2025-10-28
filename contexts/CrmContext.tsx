@@ -4,11 +4,12 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useMe
 import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData, CalendarEvent, EventType } from '../types';
 import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages, crmEvents as initialCrmEvents, crmEventTypes } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
-import { users } from '../data';
+import { users as initialUsers } from '../data';
 import { Role, User } from '../types';
 import { useAuth } from './AuthContext';
 
 interface CrmContextType {
+    users: User[];
     leads: Lead[];
     clients: Client[];
     performanceData: PerformanceData[];
@@ -21,6 +22,9 @@ interface CrmContextType {
     events: CalendarEvent[];
     eventTypes: EventType[];
     toastNotification: CrmNotificationToastData | null;
+    addUser: (userData: Omit<User, 'id'>) => void;
+    updateUser: (updatedUser: User) => void;
+    deleteUser: (userId: number) => void;
     addLead: (leadData: Omit<Lead, 'id' | 'status' | 'source' | 'lastContacted' | 'createdAt'>) => void;
     updateLead: (updatedLead: Lead) => void;
     updateClient: (updatedClient: Client) => void;
@@ -119,6 +123,9 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const { advisors } = useAdvisors();
     const { user } = useAuth();
 
+    const [users, setUsers] = useState<User[]>(() => {
+        try { const localData = localStorage.getItem('nhf-crm-users'); return localData ? JSON.parse(localData) : initialUsers; } catch (error) { return initialUsers; }
+    });
     const [leads, setLeads] = useState<Lead[]>(() => {
         try { const localData = localStorage.getItem('nhf-crm-leads'); return localData ? JSON.parse(localData) : crmLeads; } catch (error) { return crmLeads; }
     });
@@ -176,6 +183,7 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const [toastNotification, setToastNotification] = useState<CrmNotificationToastData | null>(null);
     const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
+    useEffect(() => { localStorage.setItem('nhf-crm-users', JSON.stringify(users)); }, [users]);
     useEffect(() => { localStorage.setItem('nhf-crm-leads', JSON.stringify(leads)); }, [leads]);
     useEffect(() => { localStorage.setItem('nhf-crm-clients', JSON.stringify(clients)); }, [clients]);
     useEffect(() => { localStorage.setItem('nhf-crm-performance', JSON.stringify(performanceData)); }, [performanceData]);
@@ -197,6 +205,9 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
             if (event.key === 'nhf-crm-conversations' && event.newValue) {
                 setConversations(JSON.parse(event.newValue));
             }
+            if (event.key === 'nhf-crm-users' && event.newValue) {
+                setUsers(JSON.parse(event.newValue));
+            }
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -205,6 +216,20 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         };
     }, []);
 
+    const addUser = useCallback((userData: Omit<User, 'id'>) => {
+        setUsers(prev => {
+            const newUser: User = { ...userData, id: Date.now() };
+            return [...prev, newUser];
+        });
+    }, []);
+
+    const updateUser = useCallback((updatedUser: User) => {
+        setUsers(prev => prev.map(u => (u.id === updatedUser.id ? updatedUser : u)));
+    }, []);
+
+    const deleteUser = useCallback((userId: number) => {
+        setUsers(prev => prev.filter(u => u.id !== userId));
+    }, []);
 
     const addNotification = useCallback((userId: number, message: string, link?: string) => {
         const newNotification: Notification = {
@@ -440,12 +465,14 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
 
 
     const value = useMemo(() => ({
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
+        users, leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
+        addUser, updateUser, deleteUser,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
         addRequest, updateRequestStatus, updateCommission, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
         setActiveConversationId, markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType,
     }), [
-        leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
+        users, leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
+        addUser, updateUser, deleteUser,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
         addRequest, updateRequestStatus, updateCommission, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
         markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType
