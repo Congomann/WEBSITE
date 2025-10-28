@@ -1,4 +1,3 @@
-
 import React, { ErrorInfo, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,8 +10,7 @@ interface State {
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
-  // FIX: Initializing state as a class property to resolve potential issues
-  // with constructor-based initialization in the current build setup.
+  // FIX: Replaced constructor with class property state initialization for modern React syntax and to resolve typing errors.
   state: State = { hasError: false };
 
   static getDerivedStateFromError(_: Error): State {

@@ -11,12 +11,12 @@ export const crmEventTypes: EventType[] = [
 ];
 
 export const crmLeads: Lead[] = [
-    { id: 1, name: 'John Appleseed', email: 'j.apple@example.com', phone: '555-123-4567', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-28T10:00:00Z' },
-    { id: 2, name: 'Jane Doe', email: 'jane.d@example.com', phone: '555-987-6543', status: 'Contacted', source: 'Referral', assignedTo: 2, lastContacted: '2024-07-29T14:30:00Z', createdAt: '2024-07-27T11:00:00Z' },
-    { id: 3, name: 'Peter Jones', email: 'p.jones@example.com', phone: '555-555-1212', status: 'Qualified', source: 'Marketing Campaign', assignedTo: 2, lastContacted: '2024-07-30T09:00:00Z', createdAt: '2024-07-26T12:00:00Z' },
+    { id: 1, name: 'John Appleseed', email: 'j.apple@example.com', phone: '555-123-4567', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-28T10:00:00Z', priority: 'High' },
+    { id: 2, name: 'Jane Doe', email: 'jane.d@example.com', phone: '555-987-6543', status: 'Contacted', source: 'Referral', assignedTo: 2, lastContacted: '2024-07-29T14:30:00Z', createdAt: '2024-07-27T11:00:00Z', priority: 'Medium' },
+    { id: 3, name: 'Peter Jones', email: 'p.jones@example.com', phone: '555-555-1212', status: 'Qualified', source: 'Marketing Campaign', assignedTo: 2, lastContacted: '2024-07-30T09:00:00Z', createdAt: '2024-07-26T12:00:00Z', priority: 'Medium' },
     { id: 4, name: 'Mary Garcia', email: 'm.garcia@example.com', phone: '555-222-3333', status: 'Closed - Won', source: 'Website Form', assignedTo: 3, lastContacted: '2024-07-25T16:00:00Z', createdAt: '2024-07-20T13:00:00Z' },
     { id: 5, name: 'David Smith', email: 'd.smith@example.com', phone: '555-444-5555', status: 'Closed - Lost', source: 'Referral', assignedTo: 8, lastContacted: '2024-07-22T11:00:00Z', createdAt: '2024-07-19T14:00:00Z' },
-    { id: 6, name: 'Laura Williams', email: 'l.williams@example.com', phone: '555-666-7777', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-30T15:00:00Z' },
+    { id: 6, name: 'Laura Williams', email: 'l.williams@example.com', phone: '555-666-7777', status: 'New', source: 'Website Form', assignedTo: null, lastContacted: '', createdAt: '2024-07-30T15:00:00Z', priority: 'Low' },
 ];
 
 export const crmClients: Client[] = [

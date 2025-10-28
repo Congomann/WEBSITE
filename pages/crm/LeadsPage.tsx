@@ -10,6 +10,22 @@ import LeadFormModal from '../../components/crm/LeadFormModal';
 
 const statusOptions: LeadStatus[] = ['New', 'Contacted', 'Qualified', 'Approved', 'Declined', 'Closed - Won', 'Closed - Lost'];
 
+const PriorityBadge: React.FC<{ priority?: 'High' | 'Medium' | 'Low' }> = ({ priority }) => {
+    if (!priority) return null;
+
+    const colors = {
+        High: 'bg-red-100 text-red-800',
+        Medium: 'bg-yellow-100 text-yellow-800',
+        Low: 'bg-green-100 text-green-800',
+    };
+
+    return (
+        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${colors[priority]}`}>
+            {priority}
+        </span>
+    );
+};
+
 const LeadsPage: React.FC = () => {
     const { user } = useAuth();
     const { leads, updateLead, updateLeadStatus } = useCrm();
@@ -71,6 +87,7 @@ const LeadsPage: React.FC = () => {
     const columns = [
         { header: 'Name', accessor: 'name' },
         { header: 'Status', accessor: 'status' },
+        { header: 'Priority', accessor: 'priority' },
         { header: 'Assigned To', accessor: 'assignedTo' },
         { header: 'Source', accessor: 'source' },
         { header: 'Last Contacted', accessor: 'lastContacted', isDate: true }
@@ -80,6 +97,7 @@ const LeadsPage: React.FC = () => {
         ...lead,
         assignedTo: lead.assignedTo ? advisorMap.get(lead.assignedTo) || `ID: ${lead.assignedTo}` : 'Unassigned',
         lastContacted: lead.lastContacted || 'N/A',
+        priority: <PriorityBadge priority={lead.priority} />,
     }));
 
     const actions = [

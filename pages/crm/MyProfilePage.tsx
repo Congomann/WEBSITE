@@ -63,8 +63,8 @@ const MyProfilePage: React.FC = () => {
             const langs: any = editableAdvisor.languages;
             const finalAdvisor = {
                 ...editableAdvisor,
-                specialties: typeof specs === 'string' ? specs.split(',').map((s: string) => s.trim()) : specs,
-                languages: typeof langs === 'string' ? langs.split(',').map((s: string) => s.trim()) : langs,
+                specialties: typeof specs === 'string' ? specs.split(',').map((s: string) => s.trim()).filter(Boolean) : specs,
+                languages: typeof langs === 'string' ? langs.split(',').map((s: string) => s.trim()).filter(Boolean) : langs,
                 socialLinks: editableAdvisor.socialLinks?.filter(link => link.url && link.url.trim() !== ''),
             } as Advisor;
             updateAdvisor(finalAdvisor);

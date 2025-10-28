@@ -133,6 +133,7 @@ export interface Lead {
   assignedTo: number | null; // Advisor ID
   lastContacted: string;
   createdAt: string;
+  priority?: 'High' | 'Medium' | 'Low';
   // New detailed fields for Sub-Admin lead creation
   dob?: string;
   ssn?: string;

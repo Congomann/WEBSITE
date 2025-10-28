@@ -1,3 +1,4 @@
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -74,7 +75,11 @@ const writeDb = async (data: any) => {
 
 async function getSystemInstructionForRole(role: Role, userId: number, db: any): Promise<string> {
     let contextData = {};
-    let baseInstruction = `You are a helpful AI assistant for New Holland Financial Group. Your user is a ${role}. Provide concise and helpful answers based on their role and the provided CRM data. Do not make up information if it's not in the data context.`;
+    
+    const allAdvisorLanguages = db.advisors.flatMap((a: any) => a.languages || []).filter(Boolean);
+    const supportedLanguages = [...new Set(allAdvisorLanguages)];
+    
+    let baseInstruction = `Always respond in Tanzanian Swahili. First, detect the user's language. If their language is one of the supported languages (${supportedLanguages.join(', ')}), acknowledge it in your Swahili response before answering. You are a helpful AI assistant for New Holland Financial Group. Your user is a ${role}. Provide concise and helpful answers based on their role and the provided CRM data. Do not make up information if it's not in the data context.`;
 
     switch (role) {
         case Role.Advisor:

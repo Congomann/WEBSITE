@@ -1,6 +1,6 @@
 
 
-import type { Product, Advisor, User, EditableContent } from './types';
+import type { Product, Advisor, User, EditableContent, ServiceDetail } from './types';
 // FIX: 'Role' is an enum used as a value, so it must be imported directly,
 // not as a type. The other imports are interfaces and can be type-only.
 import { Role } from './types';
@@ -85,7 +85,7 @@ export const initialContent: EditableContent = {
     { name: 'LinkedIn', url: 'https://linkedin.com/company/newhollandfinancial' },
     { name: 'Facebook', url: 'https://facebook.com/newhollandfinancial' },
     { name: 'Instagram', url: 'https://instagram.com/newhollandfinancial' },
-    { name: 'Twitter', url: 'https://twitter.com/Newhollandfg' },
+    { name: 'X', url: 'https://x.com/Newhollandfg' },
     { name: 'TikTok', url: 'https://www.tiktok.com/@newhollandfinancial' },
     { name: 'Snapchat', url: 'https://www.snapchat.com/add/newhollandfinancial' },
     { name: 'Threads', url: 'https://www.threads.net/@newhollandfinancial' },
@@ -108,277 +108,130 @@ export const initialContent: EditableContent = {
     { id: 'life-1', category: 'Life & Health', question: "Term vs. Whole life insurance?", answer: "Term life covers a specific period and is affordable. Whole life is permanent and builds cash value." },
     { id: 'life-2', category: 'Life & Health', question: "How much life insurance do I need?", answer: "A common rule is 10-12 times your annual income, but it depends on your debts, future expenses, and financial goals." },
     { id: 'prop-1', category: 'Property & Auto', question: "Does homeowners insurance cover floods?", answer: "No, standard policies do not cover flood or earthquake damage. You need separate, specialized policies for this." },
-    { id: 're-1', category: 'Real Estate', question: "What are the first steps to buying a home?", answer: "Get pre-approved for a mortgage to understand your budget and show sellers you're a serious buyer." },
+    { id: 're-1', category: 'Real Estate', question: "What are the first steps to buying a home?", answer: "Getting pre-approved for a mortgage is the best first step. It shows sellers you're a serious buyer and helps you understand your budget." },
+    { id: 'fp-1', category: 'Financial Planning', question: "What is an annuity?", answer: "An annuity is a contract between you and an insurance company in which you make a lump-sum payment or series of payments and, in return, receive regular disbursements, beginning either immediately or at some point in the future." },
   ],
+  // FIX: Added missing 'real_estate_info_resources' to satisfy the EditableContent type.
   real_estate_info_resources: [
-    { title: 'Buying a Home', description: 'Expert guidance from pre-approval to closing.', points: ['Financial pre-approval', 'Personalized searches', 'Expert negotiation'] },
-    { title: 'Selling Your Property', description: 'Maximize your return and minimize stress.', points: ['Market analysis', 'Staging tips', 'Targeted marketing'] },
-    { title: 'Investing in Real Estate', description: 'Build long-term wealth through strategic investments.', points: ['Cash flow analysis', 'Portfolio diversification', '1031 exchanges'] },
-  ]
+    {
+      title: 'Buying a Home',
+      description: 'Key steps and considerations when purchasing a property.',
+      points: ['Get pre-approved for a mortgage', 'Find a trusted real estate agent', 'Make a competitive offer', 'Complete a home inspection']
+    },
+    {
+      title: 'Selling Your Property',
+      description: 'Strategies to maximize your home\'s value and sell quickly.',
+      points: ['Price your home correctly', 'Stage your home effectively', 'Market your property online', 'Negotiate offers wisely']
+    },
+    {
+      title: 'Investing in Real Estate',
+      description: 'Learn about opportunities in real estate investment.',
+      points: ['Understand market trends', 'Analyze cash flow and ROI', 'Explore different property types', 'Leverage financing options']
+    }
+  ],
 };
 
-export const products: Product[] = [
-  { id: 101, name: "Financial Peace of Mind Mug", price: 15.99, imageUrl: "https://images.unsplash.com/photo-1594228949824-c15535b248a3?q=80&w=600&auto=format&fit=crop", description: "A sturdy ceramic mug for your morning coffee." },
-  { id: 102, name: "Insure Your Future T-Shirt", price: 24.50, imageUrl: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=600&auto=format&fit=crop", description: "A comfortable 100% cotton t-shirt." },
-  { id: 103, name: "Guide to Personal Finance (eBook)", price: 9.99, imageUrl: "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=600&auto=format&fit=crop", description: "A comprehensive digital guide. Instant download." },
-  { id: 104, name: "Secure Future Leather Journal", price: 29.99, imageUrl: "https://images.unsplash.com/photo-1516414447565-b14be0adf13e?q=80&w=600&auto=format&fit=crop", description: "A high-quality journal to track your financial goals." }
-];
-
-const ALL_SOCIALS_TEMPLATE = [
-    { name: 'LinkedIn', url: '' }, { name: 'Facebook', url: '' }, { name: 'Twitter', url: '' },
-    { name: 'Instagram', url: '' }, { name: 'TikTok', url: '' }, { name: 'Snapchat', url: '' }, { name: 'Threads', url: '' },
-];
-
+// FIX: Added and exported `advisors` data for the AdvisorContext.
 export const advisors: Advisor[] = [
-  { "id": 2, "name": "Jessica Miller", "slug": "jessica-miller", "title": "Senior Life & Health Advisor", "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"], "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies.", "languages": ["English", "Spanish"], "email": "jessica.miller@newhollandfinancial-demo.com", "phone": "(717) 555-0101", "availability": { "Monday": ["09:00", "10:00", "14:00"], "Tuesday": ["09:00", "10:00", "15:00"], "Friday": ["09:00", "10:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
-  { "id": 3, "name": "Brian Carter", "slug": "brian-carter", "title": "Property & Commercial Specialist", "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"], "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets.", "languages": ["English"], "email": "brian.carter@newhollandfinancial-demo.com", "phone": "(717) 555-0102", "availability": { "Monday": ["10:00", "11:00"], "Wednesday": ["09:00", "10:00", "14:00"], "Friday": ["13:00", "14:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
-  { "id": 8, "name": "Samantha Chen", "slug": "samantha-chen", "title": "Family & Auto Protection Advisor", "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop", "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"], "bio": "Samantha is passionate about helping young families find affordable and effective coverage for their cars, homes, and loved ones.", "languages": ["English", "Mandarin"], "email": "samantha.chen@newhollandfinancial-demo.com", "phone": "(717) 555-0103", "availability": { "Tuesday": ["10:00", "11:00", "14:00"], "Thursday": ["10:00", "11:00", "13:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] }
+  {
+    id: 2,
+    name: 'Jessica Miller',
+    title: 'Senior Financial Advisor',
+    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop',
+    specialties: ['Life Insurance', 'Retirement Planning', 'Annuities'],
+    bio: 'With over 15 years of experience, Jessica specializes in crafting personalized life insurance and retirement strategies to help families secure their financial futures. She is passionate about educating clients and empowering them to make informed decisions.',
+    slug: 'jessica-miller',
+    languages: ['English', 'Spanish'],
+    email: 'jessica.miller@newhollandfinancial-demo.com',
+    phone: '(717) 555-0101',
+    availability: {
+      'Monday': ['09:00', '10:00', '14:00', '15:00'],
+      'Tuesday': ['10:00', '11:00', '13:00'],
+      'Wednesday': ['09:00', '10:00', '14:00', '15:00'],
+      'Thursday': ['11:00', '14:00'],
+      'Friday': ['09:00', '10:00'],
+    },
+    socialLinks: [{ name: 'LinkedIn', url: 'https://www.linkedin.com/in/jessica-miller-demo' }]
+  },
+  {
+    id: 3,
+    name: 'Brian Carter',
+    title: 'Property & Casualty Specialist',
+    imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
+    specialties: ['Auto & Commercial', 'Property Insurance', 'Business Insurance'],
+    bio: 'Brian is an expert in property and casualty insurance. He works with individuals and businesses to protect their most valuable assets, from personal homes and vehicles to large commercial operations. His proactive approach minimizes risks for his clients.',
+    slug: 'brian-carter',
+    languages: ['English'],
+    email: 'brian.carter@newhollandfinancial-demo.com',
+    phone: '(717) 555-0102',
+    availability: {
+      'Monday': ['11:00', '13:00', '16:00'],
+      'Tuesday': ['09:00', '10:00', '14:00', '15:00'],
+      'Wednesday': ['11:00', '13:00'],
+      'Thursday': ['09:00', '10:00', '14:00', '15:00'],
+      'Friday': ['13:00', '14:00'],
+    },
+    socialLinks: [{ name: 'X', url: 'https://x.com/brian-carter-demo' }]
+  },
+  {
+    id: 8,
+    name: 'Samantha Chen',
+    title: 'Health & Benefits Consultant',
+    imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop',
+    specialties: ['Health Insurance', 'Group Benefits', 'Real Estate'],
+    bio: 'Samantha helps businesses design competitive employee benefits packages and guides individuals through the complexities of health insurance. She is also a licensed real estate agent, offering a unique combination of expertise to her clients.',
+    slug: 'samantha-chen',
+    languages: ['English', 'Mandarin'],
+    email: 'samantha.chen@newhollandfinancial-demo.com',
+    phone: '(717) 555-0103',
+    availability: {
+      'Monday': ['10:00', '11:00', '15:00'],
+      'Tuesday': ['13:00', '14:00', '16:00'],
+      'Wednesday': ['10:00', '11:00', '15:00'],
+      'Thursday': ['13:00', '14:00'],
+      'Friday': ['11:00'],
+    },
+    socialLinks: [{ name: 'LinkedIn', url: 'https://www.linkedin.com/in/samantha-chen-demo' }]
+  },
 ];
 
-export const service_details: { [key: string]: any[] } = {
-  "life": [
-    {
-        name: 'Final Expense Insurance',
-        description: 'Designed to cover funeral, burial, and other end-of-life costs so your family doesn’t bear the financial burden.',
-        benefits: [
-            'Affordable, lifetime coverage (no expiration)',
-            'Simple qualification process (often no medical exam)',
-            'Provides quick payout to cover funeral costs, debts, or small medical bills',
-            'Peace of mind knowing loved ones are protected'
-        ]
-    },
-    {
-        name: 'Whole Life Insurance',
-        description: 'Provides permanent coverage that lasts your entire lifetime and builds cash value over time.',
-        benefits: [
-            'Guaranteed death benefit and fixed premiums',
-            'Builds tax-deferred cash value you can borrow from',
-            'Lifetime protection—coverage never expires',
-            'Ideal for legacy planning and wealth transfer'
-        ]
-    },
-    {
-        name: 'Universal Life Insurance (UL)',
-        description: 'Flexible permanent life insurance allowing you to adjust your premiums and death benefits.',
-        benefits: [
-            'Flexible payment options',
-            'Builds cash value with potential to earn interest',
-            'Adjustable coverage amount as your needs change',
-            'Useful for long-term family or business financial planning'
-        ]
-    },
-    {
-        name: 'Indexed Universal Life (IUL)',
-        description: 'A form of Universal Life insurance that links your cash value growth to a market index (like the S&P 500), offering higher potential returns without direct market risk.',
-        benefits: [
-            'Market-linked growth with downside protection',
-            'Tax-deferred cash accumulation',
-            'Flexible premiums and coverage',
-            'Can provide living benefits for retirement income or emergencies'
-        ]
-    },
-    {
-        name: 'Term Life Insurance',
-        description: 'Provides affordable coverage for a specific period—10, 20, or 30 years—to protect your loved ones during key financial years.',
-        benefits: [
-            'Lower cost, higher coverage amounts',
-            'Ideal for income replacement, mortgage, or children’s education',
-            'Convertible to permanent life insurance in some cases',
-            'Simple and easy to qualify for'
-        ]
-    },
-    {
-        name: 'Critical Illness Insurance',
-        description: 'Pays a lump-sum cash benefit if you’re diagnosed with a covered critical illness such as cancer, heart attack, or stroke.',
-        benefits: [
-            'Financial support during serious illness',
-            'Covers medical expenses, income loss, or household bills',
-            'Lump-sum benefit paid directly to you (not medical providers)',
-            'Can be added as a rider to life insurance or purchased separately',
-            'Helps you focus on recovery, not bills'
-        ]
-    }
+// FIX: Added and exported `products` data for the ProductContext.
+export const products: Product[] = [
+  { id: 1, name: 'Financial Planning Guide', price: 29.99, imageUrl: 'https://images.unsplash.com/photo-1554224155-1696413565d3?q=80&w=800&auto=format&fit=crop', description: 'A comprehensive guide to managing your personal finances and planning for the future.' },
+  { id: 2, name: 'Retirement Savings Workbook', price: 19.99, imageUrl: 'https://images.unsplash.com/photo-1633158829595-186091380214?q=80&w=800&auto=format&fit=crop', description: 'An interactive workbook to help you plan and track your retirement savings goals.' },
+  { id: 3, name: 'Insurance 101 E-Book', price: 9.99, imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=800&auto=format&fit=crop', description: 'An essential e-book that demystifies the world of insurance.' },
+  { id: 4, name: 'Investment Strategies Webinar', price: 49.99, imageUrl: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop', description: 'Access to our exclusive webinar on building a successful investment portfolio.' },
+];
+
+// FIX: Added and exported `service_details` for all service pages.
+export const service_details: { [key: string]: ServiceDetail[] } = {
+  life: [
+    { name: 'Term Life Insurance', description: 'Provides coverage for a specific period (e.g., 10, 20, or 30 years). It\'s an affordable way to protect your family during critical years.', benefits: ['Affordable premiums', 'Simple to understand', 'Covers specific financial obligations like mortgages or college tuition'] },
+    { name: 'Whole Life Insurance', description: 'A permanent policy that provides lifelong coverage and builds cash value over time. The cash value grows at a guaranteed rate.', benefits: ['Lifelong protection', 'Builds tax-deferred cash value', 'Fixed premiums'] },
+    { name: 'Indexed Universal Life (IUL)', description: 'A type of permanent life insurance with flexible premiums and a cash value component that is tied to a stock market index, like the S&P 500.', benefits: ['Potential for higher cash value growth', 'Flexible premiums and death benefit', 'Downside protection from market losses'] },
+    { name: 'Final Expense Insurance', description: 'A small whole life policy designed to cover end-of-life expenses like medical bills, credit card debt, and funeral costs.', benefits: ['Small, affordable premiums', 'No medical exam usually required', 'Peace of mind for loved ones'] },
   ],
-  "auto": [
-    {
-        name: 'Auto Insurance',
-        description: 'Protects you, your vehicle, and others from financial loss due to accidents, theft, or damage.',
-        benefits: [
-            'Covers vehicle repairs or replacement after accidents or theft',
-            'Pays for injuries to you, your passengers, or others',
-            'Includes liability coverage for property damage or bodily injury you cause',
-            'Optional coverage for rental cars, roadside assistance, and uninsured drivers',
-            'Helps you stay compliant with state insurance laws'
-        ]
-    },
-    {
-        name: 'Commercial Truck Insurance',
-        description: 'Covers trucks, drivers, and cargo used for business purposes — ideal for owner-operators, fleet owners, and logistics companies.',
-        benefits: [
-            'Covers damage to trucks, trailers, and cargo',
-            'Provides liability protection for accidents caused by your drivers',
-            'Covers medical payments, towing, downtime, and rental reimbursement',
-            'Can include general liability, motor truck cargo, and non-trucking liability',
-            'Helps keep your business running after unexpected losses'
-        ]
-    }
+  auto: [
+    { name: 'Personal Auto Insurance', description: 'Protects you financially in case of an accident involving your personal vehicle. Covers liability, collision, and comprehensive damages.', benefits: ['Fulfills legal driving requirements', 'Covers medical expenses for you and others', 'Protects your vehicle from damage or theft'] },
+    { name: 'Commercial Auto Insurance', description: 'Provides coverage for vehicles used for business purposes, from single cars to entire fleets. Protects your business from liability.', benefits: ['Covers employees driving company vehicles', 'Protects business assets', 'Higher liability limits available'] },
+    { name: 'Classic Car Insurance', description: 'Specialized coverage for antique, classic, or collector cars. Policies are based on an agreed value rather than actual cash value.', benefits: ['Guaranteed "Agreed Value" coverage', 'Lower premiums than standard auto policies', 'Flexible usage options'] },
   ],
-  "property": [
-    {
-        name: 'Property Insurance Overview',
-        description: 'Protects residential and business properties against loss or damage from covered perils such as fire, storms, theft, vandalism, and liability claims. Since disasters can strike anytime, property insurance is crucial for protecting your home, business, and financial future.',
-        benefits: [
-            'Covers damage to the structure and contents from fire, theft, or storms',
-            'Pays for temporary living expenses if your home becomes uninhabitable (loss of use)',
-            'Liability coverage if someone is injured on your property',
-            'Replacement cost coverage to rebuild or repair property without depreciation',
-            'Optional umbrella policy for higher liability protection',
-            'For businesses: includes coverage for equipment, tools, inventory, signage, and loss of income',
-            'Helps you meet lender or lease insurance requirements',
-            'Peace of mind knowing your biggest investments are protected',
-        ]
-    },
-    {
-        name: 'Main Coverage Types',
-        description: 'We offer a range of policies for every need, from personal homes to commercial buildings.',
-        benefits: [
-            'Homeowners Insurance: Protects your house, attached structures, and personal belongings.',
-            'Renters Insurance: Covers personal property and liability for tenants.',
-            'Condo Insurance (HO-6): Covers the interior of your unit and personal belongings.',
-            'Landlord Insurance: Protects rental properties and provides loss-of-rent coverage.',
-            'Commercial Property Insurance: Covers buildings, inventory, and business equipment.',
-            'Flood, Earthquake, or Windstorm Insurance: Optional add-ons for natural disaster protection.',
-        ]
-    },
-    {
-        name: 'Additional Specialized Protections',
-        description: 'Enhance your policy with specialized coverage for unique assets and risks.',
-        benefits: [
-            'Personal Articles Floater: Covers valuable items like jewelry, art, or collectibles.',
-            'Business Interruption Coverage: Replaces lost income if your business is forced to close due to a covered event.',
-            'Cyber & Data Breach Coverage: For businesses handling customer data.',
-        ]
-    }
+  property: [
+    { name: 'Homeowners Insurance', description: 'Protects your home and personal belongings from damage or loss due to events like fire, theft, or storms. Also includes liability coverage.', benefits: ['Covers structural damage to your home', 'Protects your personal property', 'Provides liability protection against accidents'] },
+    { name: 'Renters Insurance', description: 'Covers your personal belongings if you rent a home or apartment. It also provides liability protection if someone is injured in your rental.', benefits: ['Affordable way to protect your possessions', 'Liability coverage for accidents', 'Covers additional living expenses if your rental is uninhabitable'] },
+    { name: 'Flood & Fire Insurance', description: 'Specialized policies that provide coverage for damages specifically caused by floods or fires, which are often excluded from standard homeowners policies.', benefits: ['Essential for homes in high-risk areas', 'Covers costly repairs and rebuilding', 'Peace of mind against natural disasters'] },
   ],
-  "real-estate": [
-    {
-      "name": "Residential Sales & Purchases",
-      "description": "Whether you're a first-time homebuyer or a seasoned seller, we provide expert guidance through every step of the process, ensuring a smooth and successful transaction.",
-      "benefits": ["Personalized property searches", "Expert negotiation on offers", "Comprehensive closing coordination", "First-time homebuyer programs"]
-    },
-    {
-      "name": "Commercial Real Estate",
-      "description": "We assist businesses in finding, acquiring, or leasing commercial properties that align with their operational needs and investment goals.",
-      "benefits": ["Office, retail, and industrial spaces", "Lease negotiation and analysis", "Investment property acquisition", "Site selection services"]
-    },
-    {
-      "name": "Real Estate Investment Consulting",
-      "description": "Leverage our market expertise to build your real estate portfolio. We help you identify and analyze investment opportunities for long-term wealth creation.",
-      "benefits": ["Rental property analysis (Cap Rate, ROI)", "Portfolio diversification strategies", "Guidance on 1031 exchanges", "Market trend forecasting"]
-    },
-    {
-      "name": "Property Management Services",
-      "description": "Maximize your return and minimize the hassle of owning rental properties with our comprehensive property management services.",
-      "benefits": ["Tenant screening and placement", "Rent collection and financial reporting", "Maintenance and repair coordination", "Lease enforcement"]
-    },
-    {
-      "name": "Comparative Market Analysis (CMA)",
-      "description": "Understand the true market value of your property with our detailed CMA report, essential for setting the right price whether you're buying or selling.",
-      "benefits": ["Accurate home valuation", "Insights into local market trends", "Informed pricing strategies", "Competitive positioning"]
-    },
-    {
-      "name": "Relocation Services",
-      "description": "Moving to or from Iowa? We offer dedicated relocation services to make your transition seamless, from finding a new home to settling into your community.",
-      "benefits": ["Area tours and community information", "Coordination with moving services", "Temporary housing assistance", "Selling your current home"]
-    }
+  health: [
+      { name: 'Individual & Family Plans', description: 'Health coverage for individuals and families who don\'t have access to employer-sponsored plans. We help you navigate the marketplace.', benefits: ['Access to a network of doctors and hospitals', 'Covers preventive care services', 'Financial protection against high medical costs'] },
+      { name: 'Dental Insurance', description: 'Plans that help cover the cost of dental care, from routine cleanings to major procedures like crowns and root canals.', benefits: ['Promotes regular preventive care', 'Reduces out-of-pocket dental costs', 'Various plan levels to fit your needs'] },
   ],
-  "health": [
-    {
-      "name": "🏥 Health Insurance",
-      "description": "Protects individuals, families, and employees from high medical costs while ensuring access to essential and preventive healthcare services. Covers individual & family plans, group health, short-term medical, Medicare, Marketplace (ACA) plans, and more.",
-      "benefits": [
-        "Coverage for doctor visits, hospitalizations, surgeries, and prescriptions",
-        "Preventive and wellness care included (annual exams, screenings, vaccinations)",
-        "Emergency and urgent care coverage",
-        "Mental health and substance abuse treatment",
-        "Maternity, newborn, and pediatric care",
-        "Telehealth & Virtual Care — access to licensed doctors 24/7",
-        "Critical Illness and Accident Riders available for added protection",
-        "Financial safety against unexpected medical bills",
-        "Access to large provider networks and negotiated rates",
-        "HSA/FSA eligible plans to save pre-tax funds for health expenses"
-      ]
-    },
-    {
-      "name": "🦷 Dental & Orthodontic (Braces) Coverage",
-      "description": "Keeps your oral health in top shape and helps manage costs for dental and orthodontic treatments. Highlights include routine checkups, fillings, root canals, crowns, and orthodontic coverage for braces and aligners (e.g., Invisalign).",
-      "benefits": [
-        "Encourages preventive oral care, lowering long-term dental costs",
-        "Affordable access to braces for children or adults",
-        "Reduces out-of-pocket expenses for major dental work",
-        "Can be purchased as standalone or bundled with health coverage",
-        "Helps maintain confident smiles and overall well-being"
-      ]
-    },
-    {
-      "name": "👁️ Vision Coverage",
-      "description": "Helps individuals and families maintain healthy eyesight and reduce the cost of eye care. Highlights include annual eye exams, prescription glasses, contact lenses, and discounts on laser vision correction (LASIK/PRK).",
-      "benefits": [
-        "Affordable access to routine vision care",
-        "Early detection of eye conditions and other health issues",
-        "Helps maintain productivity and quality of life",
-        "Available as a standalone plan or with health/dental packages"
-      ]
-    }
+  'group-benefits': [
+      { name: 'Group Health Plans', description: 'Offer your employees access to quality healthcare with group medical, dental, and vision insurance plans.', benefits: ['Attracts and retains top talent', 'Tax advantages for the business', 'Promotes a healthier, more productive workforce'] },
+      { name: 'Disability & Income Protection', description: 'Provides employees with income replacement if they are unable to work due to illness or injury.', benefits: ['Protects employees\' financial stability', 'Short-term and long-term options', 'Valuable addition to a benefits package'] },
   ],
-  "group-benefits": [
-    {
-        name: 'Group Benefits Insurance',
-        description: 'Provides businesses with affordable insurance for their employees, protecting their health, income, and financial security. It is a powerful tool to attract and retain talent, fostering a culture of care, loyalty, and stability.',
-        benefits: [
-            'Group Health, Dental & Vision Plans',
-            'Group Life & Disability Insurance',
-            'Group Accident & Critical Illness Plans',
-            'Group Retirement / 401(k) Plans',
-            'Employee Assistance Programs (EAP)',
-            'Voluntary Benefits (e.g., legal, pet insurance)',
-        ]
-    },
-    {
-        name: 'Key Benefits for Employers',
-        description: 'Offering group benefits is a strategic investment in your company\'s greatest asset—its people.',
-        benefits: [
-            'Attracts and retains top talent',
-            'Increases employee satisfaction and productivity',
-            'Tax-deductible business expense',
-            'Enhances company culture and morale',
-            'Reduces turnover and recruitment costs',
-            'Demonstrates commitment to employee well-being'
-        ]
-    },
-    {
-        name: 'Key Benefits for Employees',
-        description: 'Employees gain access to comprehensive and affordable protection for themselves and their families.',
-        benefits: [
-            'Access to affordable insurance with lower premiums',
-            'Guaranteed issue (no medical exam for basic coverage)',
-            'Convenient payroll deductions',
-            'Financial protection for families',
-            'Access to wellness programs and telehealth',
-            'Mental health and financial literacy support'
-        ]
-    },
-    {
-        name: 'Optional Enhancements',
-        description: 'Customize your benefits package to meet the unique needs of your modern workforce.',
-        benefits: [
-            'Flexible Spending (FSA) and Health Savings (HSA) Accounts',
-            'Cafeteria (Section 125) Plans',
-            'Dependent Care Benefits',
-            'Wellness Incentive Programs',
-            'Telemedicine & Virtual Health Platforms',
-            'Group Long-Term Care and Hybrid/Remote Worker options'
-        ]
-    }
-]
+  'real-estate': [
+    { name: 'Residential Real Estate', description: 'Expert guidance for buying or selling your home. We help you navigate the market, negotiate offers, and handle all the paperwork for a smooth transaction.', benefits: ['Expert market analysis and pricing', 'Professional marketing for sellers', 'Skilled negotiation on your behalf'] },
+    { name: 'Commercial Real Estate', description: 'Services for buying, selling, or leasing commercial properties, including office spaces, retail locations, and industrial buildings.', benefits: ['In-depth investment analysis', 'Access to off-market properties', 'Guidance on zoning and regulations'] },
+    { name: 'Real Estate Investment', description: 'Strategic advice for individuals and companies looking to invest in real estate. We help identify profitable opportunities and manage properties.', benefits: ['Identify high-yield investment properties', 'Portfolio diversification strategies', 'Long-term wealth creation'] },
+  ],
 };

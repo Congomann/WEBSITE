@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob, FunctionDeclaration, Type } from '@google/genai';
 import SEO from '../components/SEO';
 import { encode, decode, decodeAudioData } from '../utils/audioUtils';
+import { useAdvisors } from '../contexts/AdvisorContext';
 
 // Function declaration for the navigation tool
 const navigationFunctionDeclaration: FunctionDeclaration = {
@@ -29,6 +30,20 @@ interface Transcription {
 
 const AVAILABLE_VOICES = ['Zephyr', 'Puck', 'Charon', 'Kore', 'Fenrir'];
 
+// Helper to create a PCM blob from audio data.
+function createBlob(data: Float32Array): Blob {
+    const l = data.length;
+    const int16 = new Int16Array(l);
+    for (let i = 0; i < l; i++) {
+        int16[i] = data[i] * 32768;
+    }
+    return {
+        data: encode(new Uint8Array(int16.buffer)),
+        mimeType: 'audio/pcm;rate=16000',
+    };
+}
+
+
 const LiveAssistantPage: React.FC = () => {
     const [conversationState, setConversationState] = useState<ConversationState>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,6 +52,7 @@ const LiveAssistantPage: React.FC = () => {
     const [selectedVoice, setSelectedVoice] = useState<string>(() => localStorage.getItem('nhf-assistant-voice') || AVAILABLE_VOICES[0]);
 
     const navigate = useNavigate();
+    const { advisors } = useAdvisors();
     
     const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
     const inputAudioContextRef = useRef<AudioContext | null>(null);
@@ -105,11 +121,14 @@ const LiveAssistantPage: React.FC = () => {
             inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
             outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
             
+            const allAdvisorLanguages = advisors.flatMap(a => a.languages || []);
+            const supportedLanguages = [...new Set(allAdvisorLanguages)];
+
             const sessionPromise = ai.live.connect({
                 model: 'gemini-2.5-flash-native-audio-preview-09-2025',
                 config: {
                     responseModalities: [Modality.AUDIO],
-                    systemInstruction: `You are a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features. You can also help users navigate the website. For example, if a user asks 'take me to the about page', you should call the navigate function with the path '/about'.`,
+                    systemInstruction: `Always respond in Tanzanian Swahili. First, detect the user's spoken language. If their language is one of the supported languages (${supportedLanguages.join(', ')}), acknowledge it in your Swahili response before answering. Then, proceed to answer their question. You are a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features. You can also help users navigate the website. For example, if a user asks 'take me to the about page', you should call the navigate function with the path '/about'.`,
                     tools: [{ functionDeclarations: [navigationFunctionDeclaration] }],
                     speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: selectedVoice } } },
                     inputAudioTranscription: {},
@@ -126,10 +145,7 @@ const LiveAssistantPage: React.FC = () => {
 
                         scriptProcessor.onaudioprocess = (audioProcessingEvent) => {
                             const inputData = audioProcessingEvent.inputBuffer.getChannelData(0);
-                            const pcmBlob: Blob = {
-                                data: encode(new Uint8Array(new Int16Array(inputData.map(x => x * 32768)).buffer)),
-                                mimeType: 'audio/pcm;rate=16000',
-                            };
+                            const pcmBlob = createBlob(inputData);
                             sessionPromise.then((session) => {
                                 session.sendRealtimeInput({ media: pcmBlob });
                             });
@@ -182,7 +198,10 @@ const LiveAssistantPage: React.FC = () => {
                         stopSession();
                     },
                     onclose: (e: CloseEvent) => {
-                        console.log('Session closed');
+                        console.log('Session closed', e.code, e.reason);
+                        if (e.code !== 1000 && e.code !== 1005) { // 1000 = Normal, 1005 = No status (e.g., tab close)
+                            setErrorMessage('Session disconnected unexpectedly. Please try again.');
+                        }
                         stopSession();
                     },
                 },
@@ -194,7 +213,7 @@ const LiveAssistantPage: React.FC = () => {
             setErrorMessage(error.message || "Could not start the assistant. Please check microphone permissions.");
             setConversationState('error');
         }
-    }, [navigate, selectedVoice, stopSession]);
+    }, [navigate, selectedVoice, stopSession, advisors]);
     
     useEffect(() => {
         return () => {

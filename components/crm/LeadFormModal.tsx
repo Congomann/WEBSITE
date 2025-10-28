@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { Lead } from '../../types';
 import { Role } from '../../types';
@@ -21,7 +22,7 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
     const [summaryError, setSummaryError] = useState('');
 
     useEffect(() => {
-        setFormData(lead || {});
+        setFormData(lead || { priority: 'Medium' });
         setSummary('');
         setSummaryError('');
     }, [lead]);
@@ -72,6 +73,14 @@ const LeadFormModal: React.FC<LeadFormModalProps> = ({ isOpen, onClose, onSave, 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Basic Info */}
                         <div><label className="block text-sm font-medium text-gray-700">Full Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleChange} className={inputStyles} required /></div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">Priority</label>
+                            <select name="priority" value={formData.priority || 'Medium'} onChange={handleChange} className={inputStyles}>
+                                <option value="Low">Low</option>
+                                <option value="Medium">Medium</option>
+                                <option value="High">High</option>
+                            </select>
+                        </div>
                         <div><label className="block text-sm font-medium text-gray-700">Phone</label><input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} className={inputStyles} required /></div>
                         <div><label className="block text-sm font-medium text-gray-700">Email</label><input type="email" name="email" value={formData.email || ''} onChange={handleChange} className={inputStyles} required /></div>
                         <div><label className="block text-sm font-medium text-gray-700">Date of Birth</label><input type="date" name="dob" value={formData.dob || ''} onChange={handleChange} className={inputStyles} /></div>
