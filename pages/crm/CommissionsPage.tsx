@@ -3,11 +3,12 @@
 import React, { useMemo, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCrm } from '../../contexts/CrmContext';
-import { Role, Commission } from '../../types';
+import { Role, Commission, Policy } from '../../types';
 import SEO from '../../components/SEO';
 import StatCard from '../../components/crm/StatCard';
 import DataTable from '../../components/crm/DataTable';
 import CommissionDetailModal from '../../components/crm/CommissionDetailModal';
+import CommissionBreakdownChart from '../../components/crm/CommissionBreakdownChart';
 
 const CommissionsPage: React.FC = () => {
     const { user } = useAuth();
@@ -15,8 +16,9 @@ const CommissionsPage: React.FC = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
+    const [filterType, setFilterType] = useState<Policy['type'] | null>(null);
 
-    const commissionsToDisplay = useMemo(() => {
+    const commissionsForUser = useMemo(() => {
         if (!user) return [];
         if (user.role === Role.Admin || user.role === Role.Manager) {
             return commissions;
@@ -27,20 +29,51 @@ const CommissionsPage: React.FC = () => {
         return [];
     }, [commissions, user]);
 
-    const summary = useMemo(() => {
-        const totalPaid = commissionsToDisplay
+    const { summary, breakdownData } = useMemo(() => {
+        const totalPaid = commissionsForUser
             .filter(c => c.status === 'Paid')
             .reduce((sum, c) => sum + c.commissionAmount, 0);
         
-        const totalPending = commissionsToDisplay
+        const totalPending = commissionsForUser
             .filter(c => c.status === 'Pending')
             .reduce((sum, c) => sum + c.commissionAmount, 0);
 
-        return { totalPaid, totalPending, totalOverall: totalPaid + totalPending };
-    }, [commissionsToDisplay]);
+        const policyTypeColors: Record<string, string> = {
+            'Life': '#3b82f6', // blue-500
+            'Auto': '#ef4444', // red-500
+            'Home': '#22c55e', // green-500
+            'Health': '#eab308', // yellow-500
+        };
+
+        // FIX: Explicitly type the accumulator in the reduce function to ensure the `breakdown` object has a strong type.
+        const breakdown = commissionsForUser.reduce<Record<string, { type: Policy['type'], amount: number, color: string }>>((acc, commission) => {
+            const type = commission.policyType;
+            if (!acc[type]) {
+                acc[type] = { type, amount: 0, color: policyTypeColors[type] || '#6b7280' };
+            }
+            acc[type].amount += commission.commissionAmount;
+            return acc;
+        }, {});
+
+        return {
+            summary: {
+                totalPaid,
+                totalPending,
+                totalOverall: totalPaid + totalPending,
+            },
+            breakdownData: Object.values(breakdown).sort((a,b) => b.amount - a.amount)
+        };
+    }, [commissionsForUser]);
+
+    const commissionsToDisplay = useMemo(() => {
+        if (!filterType) {
+            return commissionsForUser;
+        }
+        return commissionsForUser.filter(c => c.policyType === filterType);
+    }, [commissionsForUser, filterType]);
+
 
     const handleOpenModal = (commission: Commission) => {
-        // Find the original, unformatted commission object to pass to the modal
         const originalCommission = commissions.find(c => c.id === commission.id);
         if (originalCommission) {
             setSelectedCommission(originalCommission);
@@ -98,8 +131,29 @@ const CommissionsPage: React.FC = () => {
                 <StatCard title="Total Overall" value={`$${summary.totalOverall.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} icon={<TotalIcon />} color="bg-blue-500" />
             </div>
 
+            <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-brand-blue">Commission Breakdown</h2>
+                    {filterType && (
+                        <button 
+                            onClick={() => setFilterType(null)} 
+                            className="text-sm font-semibold text-brand-blue hover:underline"
+                        >
+                            &times; Clear filter ({filterType})
+                        </button>
+                    )}
+                </div>
+                <CommissionBreakdownChart 
+                    data={breakdownData}
+                    onSegmentClick={setFilterType}
+                    activeFilter={filterType}
+                />
+            </div>
+
             <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h2 className="text-xl font-bold text-brand-blue mb-4">Commission Details</h2>
+                <h2 className="text-xl font-bold text-brand-blue mb-4">
+                     {filterType ? `Commission Details for ${filterType}` : 'All Commission Details'}
+                </h2>
                 <DataTable columns={columns} data={formattedData} actions={actions} />
             </div>
 
