@@ -1,15 +1,20 @@
 
-import React, { useMemo } from 'react';
+
+import React, { useMemo, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCrm } from '../../contexts/CrmContext';
-import { Role } from '../../types';
+import { Role, Commission } from '../../types';
 import SEO from '../../components/SEO';
 import StatCard from '../../components/crm/StatCard';
 import DataTable from '../../components/crm/DataTable';
+import CommissionDetailModal from '../../components/crm/CommissionDetailModal';
 
 const CommissionsPage: React.FC = () => {
     const { user } = useAuth();
-    const { commissions } = useCrm();
+    const { commissions, updateCommission } = useCrm();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
 
     const commissionsToDisplay = useMemo(() => {
         if (!user) return [];
@@ -34,11 +39,34 @@ const CommissionsPage: React.FC = () => {
         return { totalPaid, totalPending, totalOverall: totalPaid + totalPending };
     }, [commissionsToDisplay]);
 
+    const handleOpenModal = (commission: Commission) => {
+        // Find the original, unformatted commission object to pass to the modal
+        const originalCommission = commissions.find(c => c.id === commission.id);
+        if (originalCommission) {
+            setSelectedCommission(originalCommission);
+            setIsModalOpen(true);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedCommission(null);
+    };
+
+    const handleSaveCommission = (updatedCommission: Commission) => {
+        updateCommission(updatedCommission);
+        handleCloseModal();
+    };
+
+
     const columns = [
         { header: 'Date', accessor: 'date', isDate: true },
         { header: 'Client', accessor: 'clientName' },
         { header: 'Policy Type', accessor: 'policyType' },
+        { header: 'Carrier', accessor: 'carrier' },
+        { header: 'Policy #', accessor: 'policyNumber' },
         { header: 'Premium', accessor: 'premium' },
+        { header: 'Rate (%)', accessor: 'commissionRate' },
         { header: 'Commission', accessor: 'commissionAmount' },
         { header: 'Status', accessor: 'status' },
     ];
@@ -46,8 +74,13 @@ const CommissionsPage: React.FC = () => {
     const formattedData = commissionsToDisplay.map(c => ({
         ...c,
         premium: `$${c.premium.toLocaleString()}`,
+        commissionRate: `${c.commissionRate}%`,
         commissionAmount: `$${c.commissionAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
     }));
+
+    const actions = [
+        { label: 'View / Edit', onClick: handleOpenModal }
+    ];
 
     const PaidIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>);
     const PendingIcon = () => (<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>);
@@ -67,8 +100,17 @@ const CommissionsPage: React.FC = () => {
 
             <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl font-bold text-brand-blue mb-4">Commission Details</h2>
-                <DataTable columns={columns} data={formattedData} />
+                <DataTable columns={columns} data={formattedData} actions={actions} />
             </div>
+
+            {selectedCommission && (
+                <CommissionDetailModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    commission={selectedCommission}
+                    onSave={handleSaveCommission}
+                />
+            )}
         </div>
     );
 };

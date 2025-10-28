@@ -196,7 +196,8 @@ export interface Commission {
   clientId: number;
   clientName: string;
   advisorId: number;
-  policyId: string;
+  policyNumber: string;
+  carrier: string;
   policyType: Policy['type'];
   premium: number;
   commissionRate: number; // percentage

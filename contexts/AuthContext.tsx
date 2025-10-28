@@ -8,6 +8,7 @@ interface AuthContextType {
     canAccessAdmin: boolean;
     canAccessCrm: boolean;
     isAdmin: boolean;
+    isManager: boolean;
     isAdvisor: boolean;
     primaryDashboardPath: string | null;
     login: (email: string) => Promise<User | null>;
@@ -94,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, [user]);
 
     const isAdmin = useMemo(() => user?.role === Role.Admin, [user]);
+    const isManager = useMemo(() => user?.role === Role.Manager, [user]);
 
     const primaryDashboardPath = useMemo(() => {
         if (!user) return null;
@@ -112,12 +114,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         canAccessAdmin,
         canAccessCrm,
         isAdmin,
+        isManager,
         isAdvisor: user?.role === Role.Advisor,
         primaryDashboardPath,
         login,
         logout,
         switchRole,
-    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin, primaryDashboardPath, switchRole]);
+    }), [user, login, logout, canAccessAdmin, canAccessCrm, isAdmin, isManager, primaryDashboardPath, switchRole]);
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

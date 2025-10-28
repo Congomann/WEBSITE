@@ -30,6 +30,7 @@ interface CrmContextType {
     getUnreadNotificationCount: (userId: number) => number;
     addRequest: (requestData: Omit<AdvisorRequest, 'id' | 'createdAt' | 'status'>) => void;
     updateRequestStatus: (requestId: string, status: AdvisorRequest['status']) => void;
+    updateCommission: (updatedCommission: Commission) => void;
     addApplication: (applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => void;
     updateApplicationStatus: (applicationId: string, status: ApplicationStatus) => void;
     sendMessage: (conversationId: string, senderId: number, text: string) => void;
@@ -316,6 +317,10 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const updateRequestStatus = useCallback((requestId: string, status: AdvisorRequest['status']) => {
         setRequests(prev => prev.map(req => req.id === requestId ? { ...req, status } : req));
     }, []);
+    
+    const updateCommission = useCallback((updatedCommission: Commission) => {
+        setCommissions(prev => prev.map(c => c.id === updatedCommission.id ? updatedCommission : c));
+    }, []);
 
     const addApplication = useCallback((applicationData: Omit<AgentApplication, 'id' | 'status' | 'submittedAt'>) => {
         const newApplication: AgentApplication = {
@@ -437,12 +442,12 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
     const value = useMemo(() => ({
         leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
-        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
+        addRequest, updateRequestStatus, updateCommission, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
         setActiveConversationId, markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType,
     }), [
         leads, clients, performanceData, notifications, requests, commissions, applications, conversations, messages, events, eventTypes, toastNotification,
         addLead, updateLead, updateClient, assignLead, updateLeadStatus, markNotificationAsRead, getUnreadNotificationCount,
-        addRequest, updateRequestStatus, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
+        addRequest, updateRequestStatus, updateCommission, addApplication, updateApplicationStatus, sendMessage, dismissToastNotification,
         markConversationAsRead, createConversation, addEvent, updateEvent, deleteEvent, addEventType
     ]);
 
