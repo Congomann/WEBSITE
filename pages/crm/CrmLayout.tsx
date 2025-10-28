@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CrmSidebar from '../../components/crm/CrmSidebar';
@@ -6,6 +7,7 @@ import NotificationBell from '../../components/crm/NotificationBell';
 import { useAuth } from '../../contexts/AuthContext';
 import CrmNotificationToast from '../../components/crm/CrmNotificationToast';
 import SwitchAccountModal from '../../components/crm/SwitchAccountModal';
+import GeminiAiAssistantModal from '../../components/crm/GeminiAiAssistantModal';
 
 const SwitchUserIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -19,6 +21,7 @@ const CrmLayout: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isSwitchAccountModalOpen, setIsSwitchAccountModalOpen] = useState(false);
+    const [isAiAssistantOpen, setIsAiAssistantOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -27,7 +30,7 @@ const CrmLayout: React.FC = () => {
 
     return (
         <div className="flex h-screen bg-gray-100">
-            <CrmSidebar />
+            <CrmSidebar onToggleAiAssistant={() => setIsAiAssistantOpen(prev => !prev)} />
             <div className="flex-1 flex flex-col relative">
                 <CrmNotificationToast />
                 <header className="bg-white shadow-sm p-4 flex justify-between items-center border-b z-10">
@@ -52,6 +55,10 @@ const CrmLayout: React.FC = () => {
                     <Outlet />
                 </main>
             </div>
+            <GeminiAiAssistantModal 
+                isOpen={isAiAssistantOpen} 
+                onClose={() => setIsAiAssistantOpen(false)} 
+            />
             <SwitchAccountModal 
                 isOpen={isSwitchAccountModalOpen} 
                 onClose={() => setIsSwitchAccountModalOpen(false)} 

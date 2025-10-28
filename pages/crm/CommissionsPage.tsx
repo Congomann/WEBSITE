@@ -1,5 +1,6 @@
 
 
+
 import React, { useMemo, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCrm } from '../../contexts/CrmContext';
@@ -45,7 +46,7 @@ const CommissionsPage: React.FC = () => {
             'Health': '#eab308', // yellow-500
         };
 
-        // FIX: Explicitly type the accumulator in the reduce function to ensure the `breakdown` object has a strong type.
+        // FIX: Explicitly typed the accumulator in the reduce function to ensure the `breakdown` object has a strong type.
         const breakdown = commissionsForUser.reduce<Record<string, { type: Policy['type'], amount: number, color: string }>>((acc, commission) => {
             const type = commission.policyType;
             if (!acc[type]) {

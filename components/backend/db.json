@@ -33,39 +33,63 @@
       {
         "name": "Whole Life Insurance",
         "description": "Permanent coverage that builds cash value over time.",
-        "benefits": ["Lifetime protection", "Tax-deferred growth", "Borrowing options"]
+        "benefits": [
+          "Lifetime protection",
+          "Tax-deferred growth",
+          "Borrowing options"
+        ]
       },
       {
         "name": "Universal Life Insurance",
         "description": "Flexible premiums and adjustable death benefits.",
-        "benefits": ["Cash value growth", "Flexibility", "Tax advantages"]
+        "benefits": [
+          "Cash value growth",
+          "Flexibility",
+          "Tax advantages"
+        ]
       },
       {
         "name": "Indexed Universal Life (IUL)",
         "description": "Tied to market performance (e.g., S&P 500) with downside protection.",
-        "benefits": ["Growth potential", "Living benefits", "Tax-free loans"]
+        "benefits": [
+          "Growth potential",
+          "Living benefits",
+          "Tax-free loans"
+        ]
       },
       {
         "name": "Annuities",
         "description": "Guaranteed income for retirement.",
-        "benefits": ["Lifetime income", "Principal protection", "Growth options"]
+        "benefits": [
+          "Lifetime income",
+          "Principal protection",
+          "Growth options"
+        ]
       },
       {
         "name": "Term Life",
         "description": "Affordable coverage for a set period (10, 20, 30 years).",
-        "benefits": ["High coverage", "Low cost", "Simple protection"]
+        "benefits": [
+          "High coverage",
+          "Low cost",
+          "Simple protection"
+        ]
       },
       {
         "name": "Term Life with Living Benefits",
         "description": "Adds protection for illness or injury.",
-        "benefits": ["Access cash while living for critical, chronic, or terminal conditions."]
+        "benefits": [
+          "Access cash while living for critical, chronic, or terminal conditions."
+        ]
       }
     ],
     "auto": [
       {
         "name": "Passenger Auto",
         "description": "Protection for everyday vehicles.",
-        "benefits": ["Covers liability, collision, and comprehensive damages."]
+        "benefits": [
+          "Covers liability, collision, and comprehensive damages."
+        ]
       },
       {
         "name": "Classic & Custom Cars",
@@ -75,7 +99,9 @@
       {
         "name": "Commercial (Heavy-Duty) Vehicles",
         "description": "Coverage for trucks, fleets, and contractors.",
-        "benefits": ["Protects against liability, damage, and downtime."]
+        "benefits": [
+          "Protects against liability, damage, and downtime."
+        ]
       }
     ],
     "property": [
@@ -99,7 +125,11 @@
       {
         "name": "Health & Dental",
         "description": "Individual and family medical coverage.",
-        "benefits": ["Access to quality care", "Preventive benefits", "Affordable premiums"]
+        "benefits": [
+          "Access to quality care",
+          "Preventive benefits",
+          "Affordable premiums"
+        ]
       }
     ],
     "group-benefits": [
@@ -131,16 +161,45 @@
       "name": "Jessica Miller",
       "title": "Senior Life & Health Advisor",
       "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop",
-      "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"],
+      "specialties": [
+        "Life Insurance",
+        "Health Insurance",
+        "Retirement Planning"
+      ],
       "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies for families and individuals, ensuring their long-term security.",
-      "languages": ["English", "Spanish"],
+      "languages": [
+        "English",
+        "Spanish"
+      ],
       "email": "jessica.miller@newhollandfinancial-demo.com",
       "availability": {
-        "Monday": ["09:00", "10:00", "11:00", "14:00"],
-        "Tuesday": ["09:00", "10:00", "14:00", "15:00"],
-        "Wednesday": ["10:00", "11:00", "12:00"],
-        "Thursday": ["09:00", "10:00", "15:00", "16:00"],
-        "Friday": ["09:00", "10:00"]
+        "Monday": [
+          "09:00",
+          "10:00",
+          "11:00",
+          "14:00"
+        ],
+        "Tuesday": [
+          "09:00",
+          "10:00",
+          "14:00",
+          "15:00"
+        ],
+        "Wednesday": [
+          "10:00",
+          "11:00",
+          "12:00"
+        ],
+        "Thursday": [
+          "09:00",
+          "10:00",
+          "15:00",
+          "16:00"
+        ],
+        "Friday": [
+          "09:00",
+          "10:00"
+        ]
       }
     },
     {
@@ -148,14 +207,34 @@
       "name": "Brian Carter",
       "title": "Property & Commercial Specialist",
       "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop",
-      "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"],
+      "specialties": [
+        "Homeowners Insurance",
+        "Commercial Auto",
+        "Group Benefits"
+      ],
       "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets with tailored coverage.",
-      "languages": ["English"],
+      "languages": [
+        "English"
+      ],
       "email": "brian.carter@newhollandfinancial-demo.com",
       "availability": {
-        "Monday": ["10:00", "11:00", "13:00"],
-        "Wednesday": ["09:00", "10:00", "11:00", "14:00", "15:00"],
-        "Friday": ["13:00", "14:00", "15:00"]
+        "Monday": [
+          "10:00",
+          "11:00",
+          "13:00"
+        ],
+        "Wednesday": [
+          "09:00",
+          "10:00",
+          "11:00",
+          "14:00",
+          "15:00"
+        ],
+        "Friday": [
+          "13:00",
+          "14:00",
+          "15:00"
+        ]
       }
     },
     {
@@ -163,14 +242,37 @@
       "name": "Samantha Chen",
       "title": "Family & Auto Protection Advisor",
       "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop",
-      "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"],
+      "specialties": [
+        "Auto Insurance",
+        "Renters Insurance",
+        "Term Life"
+      ],
       "bio": "Samantha is passionate about helping young families and individuals find affordable and effective coverage for their cars, homes, and loved ones.",
-      "languages": ["English", "Mandarin", "Cantonese"],
+      "languages": [
+        "English",
+        "Mandarin",
+        "Cantonese"
+      ],
       "email": "samantha.chen@newhollandfinancial-demo.com",
       "availability": {
-        "Tuesday": ["10:00", "11:00", "13:00", "14:00", "15:00"],
-        "Wednesday": ["10:00", "11:00", "12:00"],
-        "Thursday": ["10:00", "11:00", "13:00", "14:00"]
+        "Tuesday": [
+          "10:00",
+          "11:00",
+          "13:00",
+          "14:00",
+          "15:00"
+        ],
+        "Wednesday": [
+          "10:00",
+          "11:00",
+          "12:00"
+        ],
+        "Thursday": [
+          "10:00",
+          "11:00",
+          "13:00",
+          "14:00"
+        ]
       }
     }
   ],
@@ -198,6 +300,42 @@
       "title": "Home Inventory Checklist",
       "description": "A helpful guide and template for creating a home inventory for your property insurance records.",
       "filePath": "https://www.iii.org/sites/default/files/docs/pdf/home_inventory_checklist.pdf"
+    }
+  ],
+  "agentApplications": [],
+  "advisorRequests": [
+    {
+      "id": "req-1",
+      "type": "Callback",
+      "name": "Michael Scott",
+      "phone": "555-100-1001",
+      "message": "Wants to discuss life insurance options.",
+      "createdAt": "2024-07-30T11:00:00Z",
+      "status": "New",
+      "advisorId": 1
+    },
+    {
+      "id": "req-2",
+      "type": "Callback",
+      "name": "Pamela Beesly",
+      "phone": "555-200-2002",
+      "message": "Interested in property insurance.",
+      "createdAt": "2024-07-29T16:30:00Z",
+      "status": "Contacted",
+      "advisorId": 2
+    }
+  ],
+  "calendarEvents": [
+    {
+      "id": "evt-1",
+      "title": "Jessica - Days Off",
+      "description": "Annual vacation.",
+      "startDate": "2024-08-05",
+      "endDate": "2024-08-07",
+      "isPublic": true,
+      "creatorId": 2,
+      "type": "Days Off",
+      "color": "#ef4444"
     }
   ]
 }

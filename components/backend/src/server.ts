@@ -10,6 +10,17 @@ import { GoogleGenAI } from '@google/genai';
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Define a local enum to avoid import issues from the frontend project structure
+enum Role {
+  Admin = 'admin',
+  Advisor = 'advisor',
+  User = 'user',
+  Manager = 'manager',
+  SubAdmin = 'subadmin',
+  Underwriter = 'underwriter'
+}
+
+
 // Fix: __dirname is not available in ES modules. This recreates it.
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +70,49 @@ const writeDb = async (data: any) => {
         throw new Error('Could not write to database.');
     }
 };
+
+
+async function getSystemInstructionForRole(role: Role, userId: number, db: any): Promise<string> {
+    let contextData = {};
+    let baseInstruction = `You are a helpful AI assistant for New Holland Financial Group. Your user is a ${role}. Provide concise and helpful answers based on their role and the provided CRM data. Do not make up information if it's not in the data context.`;
+
+    switch (role) {
+        case Role.Advisor:
+            const myLeads = db.leads.filter((l: any) => l.assignedTo === userId && (l.status === 'Contacted' || l.status === 'Qualified'));
+            const myRequests = (db.advisorRequests || []).filter((r: any) => r.advisorId === userId && r.status === 'New');
+            contextData = { 
+                leadsNeedingFollowUp: myLeads.map((l:any) => ({ name: l.name, lastContacted: l.lastContacted })),
+                newClientRequests: myRequests.map((r:any) => ({ name: r.name, type: r.type }))
+            };
+            baseInstruction += ' You are speaking to an advisor. Help them manage their leads and client requests.';
+            break;
+        case Role.Underwriter:
+            const pendingPolicies = (db.clients || []).flatMap((c: any) => (c.policies || []).filter((p: any) => p.status === 'Pending').map((p: any) => ({...p, clientName: c.name})));
+            contextData = { pendingPolicies };
+            baseInstruction += ' You are speaking to an underwriter. Help them review pending policies and assess risk.';
+            break;
+        case Role.Admin:
+        case Role.Manager:
+            const newApplications = (db.agentApplications || []).filter((app: any) => app.status === 'Pending');
+            contextData = { 
+                metrics: { totalLeads: db.leads.length, totalClients: (db.clients || []).length },
+                pendingAgentApplications: newApplications.map((app: any) => ({ name: app.name, submittedAt: app.submittedAt }))
+            };
+            baseInstruction += ` You are speaking to a ${role}. Provide high-level summaries and insights about the team's performance and pending administrative tasks.`;
+            break;
+        case Role.SubAdmin:
+             const declinedLeads = db.leads.filter((l: any) => l.status === 'Declined');
+             contextData = { 
+                leadsToReevaluate: declinedLeads.map((l: any) => ({ name: l.name, declineReason: l.declineReason }))
+             };
+             baseInstruction += ' You are speaking to a sub-admin. Help them manage lead distribution, focusing on leads that have been declined.';
+             break;
+    }
+
+    const contextString = JSON.stringify(contextData);
+    return `${baseInstruction}\n\nHere is a snapshot of relevant data from the CRM:\n${contextString}`;
+}
+
 
 // --- API Routes with Error Handling ---
 
@@ -160,6 +214,43 @@ app.post('/api/analyze-underwriting-risk', async (req, res) => {
         res.status(500).json({ message: 'Failed to generate risk analysis.' });
     }
 });
+
+app.post('/api/ai-chat', async (req, res) => {
+    if (!ai) {
+        return res.status(503).json({ message: 'AI service is not configured. API_KEY is missing.' });
+    }
+
+    try {
+        const { messages, role, userId } = req.body;
+
+        if (!messages || !Array.isArray(messages) || messages.length === 0 || !role || !userId) {
+            return res.status(400).json({ message: 'Missing required parameters: messages, role, userId.' });
+        }
+
+        const db = await readDb();
+        const systemInstruction = await getSystemInstructionForRole(role, userId, db);
+
+        const formattedHistory = messages.map((msg: { role: 'user' | 'model', text: string }) => ({
+            role: msg.role,
+            parts: [{ text: msg.text }]
+        }));
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: formattedHistory,
+            config: {
+                systemInstruction,
+            },
+        });
+
+        res.json({ text: response.text });
+
+    } catch (error: any) {
+        console.error('Error in /api/ai-chat:', error);
+        res.status(500).json({ message: 'Failed to get AI response.' });
+    }
+});
+
 
 app.post('/api/create-payment-intent', async (req, res) => {
     try {

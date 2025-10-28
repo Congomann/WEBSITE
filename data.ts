@@ -1,18 +1,19 @@
 
+
 import type { Product, Advisor, User, EditableContent } from './types';
 // FIX: 'Role' is an enum used as a value, so it must be imported directly,
 // not as a type. The other imports are interfaces and can be type-only.
 import { Role } from './types';
 
 export const users: User[] = [
-  { id: 1, name: 'Admin User', email: 'admin@nhf.com', role: Role.Admin, phone: '555-0199' },
-  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0101', baseCommissionRate: 55 },
-  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0102', baseCommissionRate: 50 },
-  { id: 4, name: 'John Doe', email: 'john.doe@example.com', role: Role.User, phone: '555-0104' },
-  { id: 5, name: 'Manager User', email: 'manager@nhf.com', role: Role.Manager, phone: '555-0105' },
-  { id: 6, name: 'Sub Admin User', email: 'subadmin@nhf.com', role: Role.SubAdmin, phone: '555-0106' },
-  { id: 7, name: 'Underwriter User', email: 'underwriter@nhf.com', role: Role.Underwriter, phone: '555-0107' },
-  { id: 8, name: 'Samantha Chen', email: 'samantha.chen@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0103', baseCommissionRate: 50 },
+  { id: 1, name: 'Admin User', email: 'admin@nhf.com', role: Role.Admin, phone: '555-0199', language: 'English' },
+  { id: 2, name: 'Jessica Miller', email: 'jessica.miller@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0101', baseCommissionRate: 55, language: 'English' },
+  { id: 3, name: 'Brian Carter', email: 'brian.carter@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0102', baseCommissionRate: 50, language: 'English' },
+  { id: 4, name: 'John Doe', email: 'john.doe@example.com', role: Role.User, phone: '555-0104', language: 'English' },
+  { id: 5, name: 'Manager User', email: 'manager@nhf.com', role: Role.Manager, phone: '555-0105', language: 'English' },
+  { id: 6, name: 'Sub Admin User', email: 'subadmin@nhf.com', role: Role.SubAdmin, phone: '555-0106', language: 'English' },
+  { id: 7, name: 'Underwriter User', email: 'underwriter@nhf.com', role: Role.Underwriter, phone: '555-0107', language: 'English' },
+  { id: 8, name: 'Samantha Chen', email: 'samantha.chen@newhollandfinancial-demo.com', role: Role.Advisor, phone: '(717) 555-0103', baseCommissionRate: 50, language: 'English' },
 ];
 
 export const trustedCarrierNames: string[] = [
@@ -129,9 +130,9 @@ const ALL_SOCIALS_TEMPLATE = [
 ];
 
 export const advisors: Advisor[] = [
-  { "id": 1, "name": "Jessica Miller", "slug": "jessica-miller", "title": "Senior Life & Health Advisor", "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"], "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies.", "languages": ["English", "Spanish"], "email": "jessica.miller@newhollandfinancial-demo.com", "phone": "(717) 555-0101", "availability": { "Monday": ["09:00", "10:00", "14:00"], "Tuesday": ["09:00", "10:00", "15:00"], "Friday": ["09:00", "10:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
-  { "id": 2, "name": "Brian Carter", "slug": "brian-carter", "title": "Property & Commercial Specialist", "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"], "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets.", "languages": ["English"], "email": "brian.carter@newhollandfinancial-demo.com", "phone": "(717) 555-0102", "availability": { "Monday": ["10:00", "11:00"], "Wednesday": ["09:00", "10:00", "14:00"], "Friday": ["13:00", "14:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
-  { "id": 3, "name": "Samantha Chen", "slug": "samantha-chen", "title": "Family & Auto Protection Advisor", "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop", "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"], "bio": "Samantha is passionate about helping young families find affordable and effective coverage for their cars, homes, and loved ones.", "languages": ["English", "Mandarin"], "email": "samantha.chen@newhollandfinancial-demo.com", "phone": "(717) 555-0103", "availability": { "Tuesday": ["10:00", "11:00", "14:00"], "Thursday": ["10:00", "11:00", "13:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] }
+  { "id": 2, "name": "Jessica Miller", "slug": "jessica-miller", "title": "Senior Life & Health Advisor", "imageUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", "specialties": ["Life Insurance", "Health Insurance", "Retirement Planning"], "bio": "With over 15 years of experience, Jessica specializes in creating comprehensive life and health insurance strategies.", "languages": ["English", "Spanish"], "email": "jessica.miller@newhollandfinancial-demo.com", "phone": "(717) 555-0101", "availability": { "Monday": ["09:00", "10:00", "14:00"], "Tuesday": ["09:00", "10:00", "15:00"], "Friday": ["09:00", "10:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
+  { "id": 3, "name": "Brian Carter", "slug": "brian-carter", "title": "Property & Commercial Specialist", "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", "specialties": ["Homeowners Insurance", "Commercial Auto", "Group Benefits"], "bio": "Brian is an expert in property and commercial lines, helping business owners and homeowners protect their most valuable assets.", "languages": ["English"], "email": "brian.carter@newhollandfinancial-demo.com", "phone": "(717) 555-0102", "availability": { "Monday": ["10:00", "11:00"], "Wednesday": ["09:00", "10:00", "14:00"], "Friday": ["13:00", "14:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] },
+  { "id": 8, "name": "Samantha Chen", "slug": "samantha-chen", "title": "Family & Auto Protection Advisor", "imageUrl": "https://images.unsplash.com/photo-1554774853-719586f82d77?q=80&w=400&auto=format&fit=crop", "specialties": ["Auto Insurance", "Renters Insurance", "Term Life"], "bio": "Samantha is passionate about helping young families find affordable and effective coverage for their cars, homes, and loved ones.", "languages": ["English", "Mandarin"], "email": "samantha.chen@newhollandfinancial-demo.com", "phone": "(717) 555-0103", "availability": { "Tuesday": ["10:00", "11:00", "14:00"], "Thursday": ["10:00", "11:00", "13:00"] }, "socialLinks": [...ALL_SOCIALS_TEMPLATE] }
 ];
 
 export const service_details: { [key: string]: any[] } = {
