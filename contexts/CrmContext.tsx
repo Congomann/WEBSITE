@@ -1,12 +1,20 @@
 
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData, CalendarEvent, EventType } from '../types';
+import type { Lead, Client, PerformanceData, Notification, AdvisorRequest, Commission, AgentApplication, ApplicationStatus, Conversation, ChatMessage, CrmNotificationToastData, CalendarEvent, EventType, Policy } from '../types';
 import { crmLeads, crmClients, crmPerformance, crmAdvisorRequests, crmCommissions, crmConversations, crmMessages, crmEvents as initialCrmEvents, crmEventTypes } from '../crmData';
 import { useAdvisors } from './AdvisorContext';
 import { users as initialUsers } from '../data';
 import { Role, User } from '../types';
 import { useAuth } from './AuthContext';
+
+interface NewPolicyInfo {
+    policyType: Policy['type'];
+    carrier: string;
+    policyNumber: string;
+    premium: number;
+    commissionRate: number;
+}
 
 interface CrmContextType {
     users: User[];
@@ -29,7 +37,7 @@ interface CrmContextType {
     updateLead: (updatedLead: Lead) => void;
     updateClient: (updatedClient: Client) => void;
     assignLead: (leadId: number, advisorId: number) => void;
-    updateLeadStatus: (leadId: number, status: Lead['status'], declineReason?: string) => void;
+    updateLeadStatus: (leadId: number, status: Lead['status'], details?: string | NewPolicyInfo) => void;
     markNotificationAsRead: (notificationId: number) => void;
     getUnreadNotificationCount: (userId: number) => number;
     addRequest: (requestData: Omit<AdvisorRequest, 'id' | 'createdAt' | 'status'>) => void;
@@ -281,11 +289,14 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         });
     }, [addNotification, advisors]);
 
-    const updateLeadStatus = useCallback((leadId: number, status: Lead['status'], declineReason?: string) => {
+    const updateLeadStatus = useCallback((leadId: number, status: Lead['status'], details?: string | NewPolicyInfo) => {
         const leadToUpdate = leads.find(l => l.id === leadId);
         if (!leadToUpdate) return;
         
-        if (status === 'Approved') {
+        if (status === 'Approved' && typeof details === 'object') {
+            const policyInfo = details as NewPolicyInfo;
+            
+            // 1. Create new client
             const newClient: Client = {
                 id: Date.now(),
                 name: leadToUpdate.name,
@@ -295,12 +306,45 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
                 policies: [],
                 since: new Date().toISOString().split('T')[0],
             };
+            
+            // 2. Create new policy and add to client
+            const newPolicy: Policy = {
+                id: policyInfo.policyNumber || `P-${Date.now()}`,
+                type: policyInfo.policyType,
+                premium: policyInfo.premium,
+                status: 'Active',
+                renewalDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+            };
+            newClient.policies.push(newPolicy);
             setClients(prev => [newClient, ...prev]);
+
+            // 3. Create new commission record
+            const commissionAmount = (policyInfo.premium * policyInfo.commissionRate) / 100;
+            const newCommission: Commission = {
+                id: `comm-${Date.now()}`,
+                clientId: newClient.id,
+                clientName: newClient.name,
+                advisorId: newClient.advisorId,
+                policyNumber: newPolicy.id,
+                carrier: policyInfo.carrier,
+                policyType: newPolicy.type,
+                premium: newPolicy.premium,
+                commissionRate: policyInfo.commissionRate,
+                commissionAmount: commissionAmount,
+                status: 'Pending',
+                date: new Date().toISOString(),
+            };
+            setCommissions(prev => [newCommission, ...prev]);
+
+            // 4. Remove lead
             setLeads(prev => prev.filter(l => l.id !== leadId));
+
+            // 5. Notification
             if (leadToUpdate.assignedTo) {
-                addNotification(leadToUpdate.assignedTo, `Lead ${leadToUpdate.name} approved and converted to a client!`, '/crm/clients');
+                addNotification(leadToUpdate.assignedTo, `Lead ${leadToUpdate.name} approved and converted to client!`, '/crm/clients');
             }
-        } else if (status === 'Declined') {
+        } else if (status === 'Declined' && typeof details === 'string') {
+            const declineReason = details;
             const decliningAdvisor = advisors.find(a => a.id === leadToUpdate.assignedTo);
             const advisorName = decliningAdvisor ? decliningAdvisor.name : 'an advisor';
 
@@ -318,7 +362,7 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
         } else {
             setLeads(prevLeads => prevLeads.map(lead => lead.id === leadId ? { ...lead, status: status } : lead));
         }
-    }, [leads, addNotification, advisors]);
+    }, [leads, commissions, addNotification, advisors, users]);
 
     const markNotificationAsRead = useCallback((notificationId: number) => {
         setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, read: true } : n));
@@ -336,7 +380,7 @@ export const CrmProvider: React.FC<CrmProviderProps> = ({ children }) => {
             status: 'New',
         };
         setRequests(prev => [newRequest, ...prev]);
-        addNotification(requestData.advisorId, `You have a new ${requestData.type} request from ${requestData.name}.`, '/crm/my-profile');
+        addNotification(requestData.advisorId, `You have a new ${requestData.type} request from ${requestData.name}.`, '/crm/requests');
     }, [addNotification]);
 
     const updateRequestStatus = useCallback((requestId: string, status: AdvisorRequest['status']) => {

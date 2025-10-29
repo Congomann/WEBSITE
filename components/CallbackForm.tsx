@@ -7,8 +7,8 @@ interface CallbackFormProps {
 }
 
 const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) => {
-    const [formData, setFormData] = useState({ name: '', phone: '', time: 'Morning' });
-    const [fieldErrors, setFieldErrors] = useState({ name: '', phone: '' });
+    const [formData, setFormData] = useState({ name: '', phone: '', time: 'Morning', notes: '' });
+    const [fieldErrors, setFieldErrors] = useState({ name: '', phone: '', notes: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,10 +25,13 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
             }
             return '';
         }
+        if (name === 'notes') {
+            return value.trim() ? '' : 'A note is required.';
+        }
         return '';
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
         if (fieldErrors[name as keyof typeof fieldErrors]) {
@@ -36,7 +39,7 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
         }
     };
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         const error = validateField(name, value);
         if (error) {
@@ -48,14 +51,17 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
         e.preventDefault();
         const nameError = validateField('name', formData.name);
         const phoneError = validateField('phone', formData.phone);
+        const notesError = validateField('notes', formData.notes);
 
-        if (nameError || phoneError) {
-            setFieldErrors({ name: nameError, phone: phoneError });
+        if (nameError || phoneError || notesError) {
+            setFieldErrors({ name: nameError, phone: phoneError, notes: notesError });
             return;
         }
 
         setIsLoading(true);
         setError(null);
+
+        const message = `Preferred time: ${formData.time}. Notes: ${formData.notes}`;
 
         if (advisorId) {
             // Logic for direct requests to an advisor
@@ -64,7 +70,7 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
                     type: 'Callback',
                     name: formData.name,
                     phone: formData.phone,
-                    message: `Preferred time: ${formData.time}.`,
+                    message: message,
                     advisorId: advisorId,
                 });
                 await new Promise(res => setTimeout(res, 500));
@@ -81,7 +87,7 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
                 const response = await fetch('/api/callbacks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...formData, advisorName }),
+                    body: JSON.stringify({ ...formData, message, advisorName }),
                 });
 
                 if (!response.ok) {
@@ -123,6 +129,11 @@ const CallbackForm: React.FC<CallbackFormProps> = ({ advisorName, advisorId }) =
                     <label htmlFor="callback-phone" className={labelStyles}>Phone Number</label>
                     <input type="tel" name="phone" id="callback-phone" value={formData.phone} onChange={handleChange} onBlur={handleBlur} required className={`${inputStyles} ${fieldErrors.phone ? 'border-red-500' : 'border-gray-300'}`} />
                     {fieldErrors.phone && <p className="mt-1 text-sm text-red-600">{fieldErrors.phone}</p>}
+                </div>
+                <div>
+                    <label htmlFor="callback-notes" className={labelStyles}>Notes (required)</label>
+                    <textarea name="notes" id="callback-notes" value={formData.notes} onChange={handleChange} onBlur={handleBlur} required rows={3} className={`${inputStyles} ${fieldErrors.notes ? 'border-red-500' : 'border-gray-300'}`} placeholder="Please provide some details about what you'd like to discuss..."></textarea>
+                    {fieldErrors.notes && <p className="mt-1 text-sm text-red-600">{fieldErrors.notes}</p>}
                 </div>
                 <div>
                     <label htmlFor="callback-time" className={labelStyles}>Preferred Time</label>

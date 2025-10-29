@@ -77,9 +77,9 @@ async function getSystemInstructionForRole(role: Role, userId: number, db: any):
     let contextData = {};
     
     const allAdvisorLanguages = db.advisors.flatMap((a: any) => a.languages || []).filter(Boolean);
-    const supportedLanguages = [...new Set(allAdvisorLanguages)];
+    const supportedLanguages = [...new Set([...allAdvisorLanguages, 'Kinyarwanda', 'Arabic'])];
     
-    let baseInstruction = `Always respond in Tanzanian Swahili. First, detect the user's language. If their language is one of the supported languages (${supportedLanguages.join(', ')}), acknowledge it in your Swahili response before answering. You are a helpful AI assistant for New Holland Financial Group. Your user is a ${role}. Provide concise and helpful answers based on their role and the provided CRM data. Do not make up information if it's not in the data context.`;
+    let baseInstruction = `Your primary and most important task is to immediately detect the language the user is writing in. Once detected, you MUST respond ONLY in that language for the entire conversation. Supported languages are: ${supportedLanguages.join(', ')}. If the user writes in a language not on this list, you MUST respond in English. After identifying the language, act as a helpful AI assistant for New Holland Financial Group. Your user is a ${role}. Provide concise and helpful answers based on their role and the provided CRM data. Do not make up information if it's not in the data context.`;
 
     switch (role) {
         case Role.Advisor:

@@ -46,7 +46,7 @@ const CommissionsPage: React.FC = () => {
             'Health': '#eab308', // yellow-500
         };
 
-        // FIX: Explicitly typed the accumulator in the reduce function to ensure the `breakdown` object has a strong type.
+        // FIX: Explicitly typed the accumulator in the `reduce` function. This provides a strong type for the `breakdown` object, allowing TypeScript to correctly infer the types of `a` and `b` in the `sort` method.
         const breakdown = commissionsForUser.reduce<Record<string, { type: Policy['type'], amount: number, color: string }>>((acc, commission) => {
             const type = commission.policyType;
             if (!acc[type]) {

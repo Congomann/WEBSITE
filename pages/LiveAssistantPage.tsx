@@ -122,13 +122,13 @@ const LiveAssistantPage: React.FC = () => {
             outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
             
             const allAdvisorLanguages = advisors.flatMap(a => a.languages || []);
-            const supportedLanguages = [...new Set(allAdvisorLanguages)];
+            const supportedLanguages = [...new Set([...allAdvisorLanguages, 'Kinyarwanda', 'Arabic'])];
 
             const sessionPromise = ai.live.connect({
                 model: 'gemini-2.5-flash-native-audio-preview-09-2025',
                 config: {
                     responseModalities: [Modality.AUDIO],
-                    systemInstruction: `Always respond in Tanzanian Swahili. First, detect the user's spoken language. If their language is one of the supported languages (${supportedLanguages.join(', ')}), acknowledge it in your Swahili response before answering. Then, proceed to answer their question. You are a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features. You can also help users navigate the website. For example, if a user asks 'take me to the about page', you should call the navigate function with the path '/about'.`,
+                    systemInstruction: `Your primary and most important task is to immediately detect the language the user is speaking. Once detected, you MUST respond ONLY in that language for the entire conversation. Supported languages are: ${supportedLanguages.join(', ')}. If the user speaks a language not on this list, you MUST respond in English. After identifying the language, act as a friendly and helpful customer support agent for New Holland Financial Group. Answer questions about insurance products (life, auto, home, health, group benefits), financial planning, and real estate. Keep your answers concise and clear. Do not provide financial advice, but explain concepts and product features. You can also help users navigate the website. Only use the 'navigate' function if the user explicitly asks to be taken to a page, for example "take me to the about page" or "go to the contact page". For all other questions, provide a direct spoken answer.`,
                     tools: [{ functionDeclarations: [navigationFunctionDeclaration] }],
                     speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: selectedVoice } } },
                     inputAudioTranscription: {},
@@ -223,7 +223,7 @@ const LiveAssistantPage: React.FC = () => {
     
     useEffect(() => {
       historyEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [transcriptionHistory, currentTurn]);
+    }, [transcriptionHistory, currentTurn.assistant]);
 
     const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newVoice = e.target.value;
