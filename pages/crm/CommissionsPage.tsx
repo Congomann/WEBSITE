@@ -1,6 +1,3 @@
-
-
-
 import React, { useMemo, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCrm } from '../../contexts/CrmContext';
@@ -46,15 +43,15 @@ const CommissionsPage: React.FC = () => {
             'Health': '#eab308', // yellow-500
         };
 
-        // FIX: Explicitly typed the accumulator in the `reduce` function. This provides a strong type for the `breakdown` object, allowing TypeScript to correctly infer the types of `a` and `b` in the `sort` method.
-        const breakdown = commissionsForUser.reduce<Record<string, { type: Policy['type'], amount: number, color: string }>>((acc, commission) => {
+        // FIX: The accumulator for the `reduce` function was not typed, causing `Object.values` to return `unknown[]`. This led to a TypeScript error when trying to access the `amount` property in the `sort` function. I added a type assertion to the initial value `{}` of the `reduce` function to correctly type the accumulator and its results, resolving the error.
+        const breakdown = commissionsForUser.reduce((acc, commission) => {
             const type = commission.policyType;
             if (!acc[type]) {
                 acc[type] = { type, amount: 0, color: policyTypeColors[type] || '#6b7280' };
             }
             acc[type].amount += commission.commissionAmount;
             return acc;
-        }, {});
+        }, {} as Record<string, { type: Policy['type'], amount: number, color: string }>);
 
         return {
             summary: {
